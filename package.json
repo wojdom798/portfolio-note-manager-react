@@ -1,0 +1,49 @@
+{
+  "name": "portfolio__notes_manager_reactjs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Dominik Wojciechowski <dominik.wojciechowski798@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "build-dev": "webpack --config webpack.dev.config.ts --mode development",
+    "build-dev-w": "webpack --config webpack.dev.config.ts --mode development --watch",
+    "start-devserver": "node server.js",
+    "start-devserver-w": "nodemon server.js"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.18.9",
+    "@reduxjs/toolkit": "^1.8.3",
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.2",
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.0.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-transform-runtime": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-redux": "^7.1.24",
+    "@types/webpack": "^5.28.0",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "jest": "^28.1.3",
+    "node-sass": "^7.0.1",
+    "nodemon": "^2.0.19",
+    "sass-loader": "^13.0.2",
+    "style-loader": "^3.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  }
+}
