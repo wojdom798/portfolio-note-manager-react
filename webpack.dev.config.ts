@@ -32,8 +32,16 @@ const config: webpack.Configuration = {
                     "style-loader",
                     // Translates CSS into CommonJS
                     "css-loader",
+                    "postcss-loader",
                     // Compiles Sass to CSS
                     "sass-loader",
+                    
+                ],
+            },
+            {
+                test: /\.css$/i,
+                use: [
+                    "style-loader", "css-loader", "postcss-loader",
                 ],
             },
         ],
