@@ -20,6 +20,10 @@ app.get('/', function(req, res, next) {
 });
 
 
+const apiController = require("./server_controllers/api/apiController");
+app.use("/api", apiController);
+
+
 app.listen(portNumber);
 console.log(new Date().toLocaleString("pl-PL",
   { hour12: false }) + ", starting server on port:", portNumber);
