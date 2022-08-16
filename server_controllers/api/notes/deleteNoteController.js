@@ -11,8 +11,9 @@ const projectSettingsFileName = "project_settings.json";
 const settingsFilePath = path.join(__projectDir, projectSettingsFileName);
 const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
-// route: /api/notes/add
-router.post("/",
+
+// route: /api/notes/delete
+router.delete("/:id",
 async function (req, res)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
@@ -30,27 +31,22 @@ async function (req, res)
         
         queryArray = 
         [
-            `INSERT INTO note (title, contents, date_added, category_id, user_id) `,
-            `VALUES ( `,
-                `'${req.body.newNote.title}', `,
-                `'${req.body.newNote.contents}', `,
-                `'${req.body.newNote.date_added}', `,
-                `${req.body.newNote.category_id}, `,
-                `${req.body.newNote.user_id}); `,
-            `SELECT last_insert_rowid();`
+            `DELETE FROM note WHERE id = ${req.params.id};`
         ];
         for (let line of queryArray)
         {
             query += line;
         }
 
-        queryResult = await databaseHandle.run(query);
+        queryResult = await databaseHandle.all(query);
         await databaseHandle.close();
 
-        res.json({
+        console.log(queryResult);
+
+        res.json({  
             responseMsg: "Success",
             responseData: {
-                id: queryResult.lastID
+                deletedId: queryResult
             }
         });
     
@@ -59,7 +55,7 @@ async function (req, res)
     {
         console.error(error);
         res.status(404);
-        // res.send("<h1>404</h1><p>Something went wrong.</p>");
+        // res.send("<h1>404</h1>");
         res.json({
             responseMsg: "An error occured during the querying of data.",
             errorMsg: error.message
