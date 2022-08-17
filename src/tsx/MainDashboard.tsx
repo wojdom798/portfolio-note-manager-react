@@ -3,9 +3,13 @@ import Button from 'react-bootstrap/Button';
 // import Modal from 'react-bootstrap/Modal';
 
 import { store } from "../redux/store";
+import { fetchNotes } from "../redux/noteListSlice";
+import { fetchCategories } from "../redux/categorySlice";
 
 // import { fetchNotes } from "../redux/noteListSlice";
 
+import NoteList from "./notes/NoteList";
+import CategoryList from "./categories/CategoryList";
 
 import Navigation from "./Navigation";
 
@@ -16,6 +20,7 @@ function MainDashboard()
     useEffect(() =>
     {
         store.dispatch(fetchNotes);
+        store.dispatch(fetchCategories);
     }, []);
 
     function getCurrentView()
