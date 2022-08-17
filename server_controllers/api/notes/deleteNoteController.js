@@ -41,7 +41,7 @@ async function (req, res)
         queryResult = await databaseHandle.all(query);
         await databaseHandle.close();
 
-        console.log(queryResult);
+        // console.log(queryResult);
 
         res.json({  
             responseMsg: "Success",
