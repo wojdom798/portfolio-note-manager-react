@@ -1,9 +1,11 @@
 import { configureStore, Action } from "@reduxjs/toolkit";
 import noteListReducer from "./noteListSlice";
+import categoryListReducer from "./categorySlice";
 
 export const store = configureStore({
     reducer: {
-        noteList: noteListReducer
+        noteList: noteListReducer,
+        categoryList: categoryListReducer
     }
 });
 
