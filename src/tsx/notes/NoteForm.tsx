@@ -3,11 +3,16 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import helper from '../../helper';
 
+import { useAppSelector } from "../../redux/hooks";
+import { Category, selectCategoryList } from "../../redux/categorySlice";
+
 function NoteForm(props: any)
 {
     const [titleInput, setTitleInput] = useState("");
     const [contentsInput, setContentsInput] = useState("");
     const [dateAddedInput, setDateAddedInput] = useState("");
+    const [categoryInput, setCategoryInput] = useState<number>(-1);
+    const categories = useAppSelector(selectCategoryList);
 
     useEffect(() =>
     {
@@ -16,6 +21,7 @@ function NoteForm(props: any)
             setTitleInput(props.noteToEdit.title);
             setContentsInput(props.noteToEdit.contents);
             setDateAddedInput(props.noteToEdit.date_added);
+            setCategoryInput(props.noteToEdit.category_id);
         }
         else
         {
@@ -39,6 +45,10 @@ function NoteForm(props: any)
         {
             setDateAddedInput(event.target.value);
         }
+        else if (fieldName === "CATEGORY")
+        {
+            setCategoryInput(event.target.value);
+        }
     };
 
     function handleFormSubmit(event: any)
@@ -55,7 +65,7 @@ function NoteForm(props: any)
                 title: titleInput,
                 contents: contentsInput,
                 date_added: dateAddedInput,
-                category_id: 1,
+                category_id: categoryInput,
                 user_id: 1,
             }
             props.submitEditedNote(noteToEdit);
@@ -67,7 +77,7 @@ function NoteForm(props: any)
                     title: titleInput,
                     contents: contentsInput,
                     date_added: dateAddedInput,
-                    category_id: 1,
+                    category_id: categoryInput,
                     user_id: 1,
                 }
             };
@@ -99,6 +109,16 @@ function NoteForm(props: any)
         }
     }
 
+    function getCategoryOptions()
+    {
+        return Object.values(categories).map((item: Category) =>
+        {
+            return (
+                <option key={ item.id } value={ item.id }>{ item.name }</option>
+            );
+        });
+    }
+
     return (
         <Form>
             <Form.Group className="mb-3">
@@ -124,6 +144,17 @@ function NoteForm(props: any)
                     onChange={(event: any) => { handleNoteFormInputFieldChange(event, "DATE_ADDED") }}
                     id="note-dateadded-input"
                     type="text"/>
+            </Form.Group>
+            <Form.Group className="mb-3">
+                <Form.Label  htmlFor="note-category-input">Category</Form.Label>
+                <Form.Select
+                    aria-label="select category"
+                    value={categoryInput}
+                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "CATEGORY") }}
+                    id="note-category-input">
+                    {/* <option value={-1}>-- select category --</option> */}
+                    { getCategoryOptions() }
+                </Form.Select>
             </Form.Group>
             <Button
                 onClick={handleFormSubmit}

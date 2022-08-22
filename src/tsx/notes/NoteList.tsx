@@ -6,6 +6,7 @@ import NoteForm from './NoteForm';
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { add, remove, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
+import { selectCategoryList } from "../../redux/categorySlice";
 
 import { store } from "../../redux/store";
 
@@ -13,6 +14,7 @@ function NoteList(props: any)
 {
     // const [notes, setNotes] = useState([]);
     const notes = useAppSelector(selectNoteList);
+    const categories = useAppSelector(selectCategoryList);
     const dispatch = useAppDispatch();
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
     const [showModal, setShowModal] = useState(false);
@@ -126,6 +128,7 @@ function NoteList(props: any)
                     <span>delete</span>
                     </Button>
                     <p>{item.contents}</p>
+                    <p>category: {categories[item.category_id].name}</p>
                     <p>{item.date_added}</p>
                 </div>
             );

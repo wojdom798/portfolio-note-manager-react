@@ -19,8 +19,8 @@ function MainDashboard()
 
     useEffect(() =>
     {
-        store.dispatch(fetchNotes);
         store.dispatch(fetchCategories);
+        store.dispatch(fetchNotes);
     }, []);
 
     function getCurrentView()
