@@ -1,12 +1,16 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 
 import NoteForm from './NoteForm';
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { add, remove, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
 import { selectCategoryList } from "../../redux/categorySlice";
+import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/paginationSlice";
 
 import { store } from "../../redux/store";
 
@@ -15,10 +19,13 @@ function NoteList(props: any)
     // const [notes, setNotes] = useState([]);
     const notes = useAppSelector(selectNoteList);
     const categories = useAppSelector(selectCategoryList);
+    const pagination = useAppSelector(selectPagination);
     const dispatch = useAppDispatch();
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
+
+    // const [itemsPerPageInput, setItemsPerPageInput] = useState<number>(5);
 
     useEffect(() =>
     {
@@ -135,11 +142,71 @@ function NoteList(props: any)
         });
     }
 
+    function handlePaginationInputFieldChange(event: any, fieldName: any)
+    {
+        if (fieldName === "IPP")
+        {
+            if (typeof event.target.value === "string")
+            {
+                console.log(event.target.value);
+                // setItemsPerPageInput(Number(event.target.value));
+                dispatch(setItemsPerPage(Number(event.target.value)));
+                dispatch(setCurrentPage(1));
+                dispatch(fetchNotes);
+            }
+        }
+    }
+
+    function getPaginationButtons()
+    {
+        let paginationButtons: any = [];
+        let numOfPages = Math.ceil(pagination.numberOfAllNotes / pagination.itemsPerPage);
+        for (let i  = 0; i < numOfPages; i++)
+        {
+            const tempBtn = (
+                <ButtonGroup key={i} className="me-2" aria-label={`group #${i+1}`}>
+                    <Button
+                        onClick={(event: any) => handlePageBtnClick(event, i+1) }
+                    >{i+1}</Button>
+                </ButtonGroup>
+            );
+            paginationButtons.push(tempBtn);
+        }
+        return paginationButtons;
+    }
+
+    function handlePageBtnClick(event: any, pageNumber: number)
+    {
+        // console.log(`selected page: ${pageNumber}`);
+        dispatch(setCurrentPage(pageNumber));
+        dispatch(fetchNotes);
+    }
+
     if (!noteToEdit)
     {
         return (
         <Fragment>
             <Fragment>
+                <p>all notes: {pagination.numberOfAllNotes}</p>
+                <div className="pagination">
+                    <Form.Group className="mb-3">
+                        <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
+                        <Form.Select
+                            aria-label="select the number of items per page"
+                            value={pagination.itemsPerPage}
+                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
+                            id="pagination-ipp-input">
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </Form.Select>
+                    </Form.Group>
+                    <ButtonToolbar aria-label="Toolbar with button groups">
+                        { getPaginationButtons() }
+                    </ButtonToolbar>
+                </div>
                 {notesToElement()}
                 <Button
                     onClick={handleShowModal}
@@ -180,6 +247,26 @@ function NoteList(props: any)
         return (
         <Fragment>
             <Fragment>
+                <p>all notes: {pagination.numberOfAllNotes}</p>
+                <div className="pagination">
+                    <Form.Group className="mb-3">
+                        <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
+                        <Form.Select
+                            aria-label="select the number of items per page"
+                            value={pagination.itemsPerPage}
+                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
+                            id="pagination-ipp-input">
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </Form.Select>
+                    </Form.Group>
+                    <ButtonToolbar aria-label="Toolbar with button groups">
+                        { getPaginationButtons() }
+                    </ButtonToolbar>
+                </div>
                 {notesToElement()}
                 <Button
                     onClick={handleShowModal}

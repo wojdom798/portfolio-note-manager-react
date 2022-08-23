@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
 
+import { setNumberOfAllNotes } from "./paginationSlice";
+
 export interface Note
 {
     id: number;
@@ -43,18 +45,20 @@ export const noteListSlice = createSlice(
     }
 });
 
-export async function fetchNotes(dispatch: any, getState: any)
+export async function fetchNotes(dispatch: any, getState: () => RootState)
 {
+    const url = `/api/notes/get/?items-per-page=${getState().pagination.itemsPerPage}&page=${getState().pagination.currentPage}`;
     const init = {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
         }
     };
-    const response = await fetch("/api/notes/get", init);
+    // const response = await fetch("/api/notes/get", init);
+    const response = await fetch(url, init);
     if (!response.ok) throw new Error("Couldn't fetch notes from database");
     const data = await response.json();
-    console.log(data.responseData.notes);
+    // console.log(data.responseData.notes);
 
     let normalisedList = {};
     data.responseData.notes.forEach((item: any, index: number) =>
@@ -67,6 +71,7 @@ export async function fetchNotes(dispatch: any, getState: any)
 
     // dispatch(getFromDB(data.responseData.notes));
     dispatch(getFromDB(normalisedList));
+    dispatch(setNumberOfAllNotes(data.responseData.numberOfAllNotes));
 };
 
 export const { add, remove, edit, getFromDB } = noteListSlice.actions;

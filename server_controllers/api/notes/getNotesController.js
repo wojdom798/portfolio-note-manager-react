@@ -13,6 +13,8 @@ const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
 
 // route: /api/notes/get
+// or
+// /api/notes/get/?items-per-page=[...]&page=[...]
 router.get("/",
 async function (req, res)
 {
@@ -23,12 +25,27 @@ async function (req, res)
     let query = "";
     let queryResult;
 
-    try
+    let notes;
+    let numberOfAllNotes;
+
+    let pageOffset;
+    if (req.query.hasOwnProperty("items-per-page") &&
+        req.query.hasOwnProperty("page"))
     {
-        sqlite3.verbose();
-        const databaseHandle = await createDbConnection(
-            path.join(__projectDir, projectSettings.database.filename));
-        
+        pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+        queryArray = 
+        [
+            `SELECT * FROM note ORDER BY id ASC `,
+            `LIMIT ${req.query["items-per-page"]} `,
+            `OFFSET ${pageOffset};`
+        ];
+        for (let line of queryArray)
+        {
+            query += line;
+        }
+    }
+    else
+    {
         queryArray = 
         [
             `SELECT * FROM note ORDER BY id ASC;`
@@ -37,14 +54,46 @@ async function (req, res)
         {
             query += line;
         }
+    }
 
-        queryResult = await databaseHandle.all(query);
+    try
+    {
+        sqlite3.verbose();
+        const databaseHandle = await createDbConnection(
+            path.join(__projectDir, projectSettings.database.filename));
+        
+        // queryArray = 
+        // [
+        //     `SELECT * FROM note ORDER BY id ASC;`
+        // ];
+        // for (let line of queryArray)
+        // {
+        //     query += line;
+        // }
+
+        notes = await databaseHandle.all(query);
+
+        queryTable = 
+        [
+            `SELECT COUNT(*) count FROM note;`
+        ];
+        query = "";
+        for (let line of queryTable)
+        {
+            query += line;
+        }
+
+        queryResult = await databaseHandle.prepare(query);
+        numberOfAllNotes = (await queryResult.get()).count;
+        await queryResult.finalize();
+
         await databaseHandle.close();
 
         res.json({  
             responseMsg: "Success",
             responseData: {
-                notes: queryResult
+                notes: notes,
+                numberOfAllNotes: numberOfAllNotes
             }
         });
     

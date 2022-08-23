@@ -1,11 +1,13 @@
 import { configureStore, Action } from "@reduxjs/toolkit";
 import noteListReducer from "./noteListSlice";
 import categoryListReducer from "./categorySlice";
+import paginationReducer from "./paginationSlice";
 
 export const store = configureStore({
     reducer: {
         noteList: noteListReducer,
-        categoryList: categoryListReducer
+        categoryList: categoryListReducer,
+        pagination: paginationReducer
     }
 });
 
