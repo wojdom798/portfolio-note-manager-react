@@ -5,11 +5,13 @@ import Button from 'react-bootstrap/Button';
 import { store } from "../redux/store";
 import { fetchNotes } from "../redux/noteListSlice";
 import { fetchCategories } from "../redux/categorySlice";
+import { fetchTags } from "../redux/tagSlice";
 
 // import { fetchNotes } from "../redux/noteListSlice";
 
 import NoteList from "./notes/NoteList";
 import CategoryList from "./categories/CategoryList";
+import TagList from "./tags/TagList";
 
 import Navigation from "./Navigation";
 
@@ -20,15 +22,18 @@ function MainDashboard()
     useEffect(() =>
     {
         store.dispatch(fetchCategories);
+        store.dispatch(fetchTags);
         store.dispatch(fetchNotes);
     }, []);
 
     function getCurrentView()
     {
-        if (currentView === 0 || currentView > 1)
+        if (currentView === 0 || currentView > 2)
             return <NoteList />
         else if (currentView === 1)
             return <CategoryList />
+        else if (currentView === 2)
+            return <TagList />
     }
 
     function handleNavigationItemClick(menuItemIndex: number)
