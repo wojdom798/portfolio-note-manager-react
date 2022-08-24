@@ -28,3 +28,22 @@
     height: 100%;
     background-color: #3322FE;
 }
+
+.note-title
+{
+    display: inline-block;
+}
+
+.left-menu
+{
+  // flex-grow: 2;
+  // flex-basis: max-content;
+  min-width: 250px;
+  // border-right: 2px solid $app-dashboard-border-color;
+  border-right: 2px solid #333;
+  background: linear-gradient(#090c6a, #411349);
+  // height: 100vh;
+  position: relative;
+  z-index: 100;
+  box-shadow: 3px 0 10px #888;
+}
