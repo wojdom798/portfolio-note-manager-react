@@ -15,6 +15,8 @@ const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 // route: /api/notes/get
 // or
 // /api/notes/get/?items-per-page=[...]&page=[...]
+// or
+// /api/notes/get/?items-per-page=[...]&page=[...]&categories=[...]
 router.get("/",
 async function (req, res)
 {
@@ -25,6 +27,8 @@ async function (req, res)
     let query = "";
     let queryResult;
 
+    let filterStr = "";
+
     let notes;
     let numberOfAllNotes;
 
@@ -32,13 +36,39 @@ async function (req, res)
     if (req.query.hasOwnProperty("items-per-page") &&
         req.query.hasOwnProperty("page"))
     {
-        pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
-        queryArray = 
-        [
-            `SELECT * FROM note ORDER BY id ASC `,
-            `LIMIT ${req.query["items-per-page"]} `,
-            `OFFSET ${pageOffset};`
-        ];
+        if (req.query.hasOwnProperty("categories"))
+        {
+            const categories = JSON.parse(req.query["categories"]);
+            filterStr = "WHERE ";
+
+            for (let i = 0; i < categories.length; i++)
+            {
+                if (i === 0)
+                    filterStr += `category_id = ${categories[i]} `;
+                else
+                    filterStr += `OR category_id = ${categories[i]} `;
+            }
+
+            pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+            queryArray = 
+            [
+                `SELECT * FROM note `,
+                `${filterStr}`,
+                `ORDER BY id ASC `,
+                `LIMIT ${req.query["items-per-page"]} `,
+                `OFFSET ${pageOffset};`
+            ];
+        }
+        else
+        {
+            pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+            queryArray = 
+            [
+                `SELECT * FROM note ORDER BY id ASC `,
+                `LIMIT ${req.query["items-per-page"]} `,
+                `OFFSET ${pageOffset};`
+            ];
+        }
         for (let line of queryArray)
         {
             query += line;
@@ -73,10 +103,21 @@ async function (req, res)
 
         notes = await databaseHandle.all(query);
 
-        queryTable = 
-        [
-            `SELECT COUNT(*) count FROM note;`
-        ];
+        if (req.query.hasOwnProperty("categories"))
+        {
+            queryTable = 
+            [
+                `SELECT COUNT(*) count FROM note ${filterStr};`
+            ];
+        }
+        else
+        {
+            queryTable = 
+            [
+                `SELECT COUNT(*) count FROM note;`
+            ];
+        }
+
         query = "";
         for (let line of queryTable)
         {
@@ -93,7 +134,8 @@ async function (req, res)
             responseMsg: "Success",
             responseData: {
                 notes: notes,
-                numberOfAllNotes: numberOfAllNotes
+                numberOfAllNotes: numberOfAllNotes,
+                numberOfAllFilteredNotes: numberOfAllNotes
             }
         });
     
