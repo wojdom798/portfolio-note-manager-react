@@ -47,7 +47,12 @@ export const noteListSlice = createSlice(
 
 export async function fetchNotes(dispatch: any, getState: () => RootState)
 {
-    const url = `/api/notes/get/?items-per-page=${getState().pagination.itemsPerPage}&page=${getState().pagination.currentPage}`;
+    let url = `/api/notes/get/?items-per-page=`;
+    url += `${getState().pagination.itemsPerPage}`;
+    url += `&page=${getState().pagination.currentPage}`;
+    if (getState().filters.categories.length !== 0)
+        url += `&categories=${JSON.stringify(getState().filters.categories)}`;
+    
     const init = {
         method: "GET",
         headers: {
