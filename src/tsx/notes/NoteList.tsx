@@ -5,12 +5,18 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+
 import NoteForm from './NoteForm';
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { add, remove, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
-import { selectCategoryList } from "../../redux/categorySlice";
+import { Category, selectCategoryList } from "../../redux/categorySlice";
 import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/paginationSlice";
+import { setCategoriesFilter } from "../../redux/filterSlice";
 
 import { store } from "../../redux/store";
 
@@ -24,8 +30,108 @@ function NoteList(props: any)
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
-
     // const [itemsPerPageInput, setItemsPerPageInput] = useState<number>(5);
+
+    let popover = (
+        <Popover id="popover-basic">
+            <Popover.Header as="h3">select categories</Popover.Header>
+            <Popover.Body>
+                <Fragment>
+                <ButtonGroup aria-label="">
+                    <Button
+                        disabled
+                        onClick={handleFilterSelectAllCategoriesBtnClick}
+                        variant="outline-secondary">all</Button>
+                    <Button disabled variant="outline-secondary">none</Button>
+                </ButtonGroup>
+                <Form.Group className="mb-3">
+                    { getCategoriesAsCheckboxes() }
+                </Form.Group>
+                </Fragment>
+            </Popover.Body>
+        </Popover>
+    );
+
+    // const popover = () =>
+    // {
+    //     return (
+    //         <Popover id="popover-basic">
+    //             <Popover.Header as="h3">select categories</Popover.Header>
+    //             <Popover.Body>
+    //                 <Fragment>
+    //                 <ButtonGroup aria-label="">
+    //                     <Button
+    //                         disabled
+    //                         onClick={handleFilterSelectAllCategoriesBtnClick}
+    //                         variant="outline-secondary">all</Button>
+    //                     <Button disabled variant="outline-secondary">none</Button>
+    //                 </ButtonGroup>
+    //                 <Form.Group className="mb-3">
+    //                     { getCategoriesAsCheckboxes() }
+    //                 </Form.Group>
+    //                 </Fragment>
+    //             </Popover.Body>
+    //         </Popover>
+    //     );
+    // }
+    
+
+    function getCategoriesAsCheckboxes()
+    {
+        return Object.values(categories).map((category: Category) =>
+        {
+            if (store.getState().filters.categories.includes(category.id))
+            {
+                return (
+                    <Form.Check
+                        checked
+                        key={category.id}
+                        id={`category-chbx-${category.id}`}
+                        label={category.name}
+                        onChange={(event: any) => handleCategoryFilterChbxChange(event, category.id)}
+                        type="checkbox" />
+                );
+            }
+            else
+            {
+                return (
+                    <Form.Check
+                        key={category.id}
+                        id={`category-chbx-${category.id}`}
+                        label={category.name}
+                        onChange={(event: any) => handleCategoryFilterChbxChange(event, category.id)}
+                        type="checkbox" />
+                );
+            }
+        });
+    }
+
+    function handleApplyFiltersBtnClick()
+    {
+        dispatch(setCurrentPage(1));
+        dispatch(fetchNotes);
+    }
+
+    function handleCategoryFilterChbxChange(event: any, categoryId: number)
+    {
+        // if (event.target.checked)
+        if (!store.getState().filters.categories.includes(categoryId))
+        {
+            dispatch(setCategoriesFilter([...store.getState().filters.categories, categoryId]));
+        }
+        else
+        {
+            dispatch(setCategoriesFilter(store.getState().filters.categories.filter((c: number) => c !== categoryId)));
+        }
+    }
+
+    function handleFilterSelectAllCategoriesBtnClick()
+    {
+        // setFilters({
+        //     ...filters,
+        //     ctg: Object.values(categories).map(c => c.id)
+        // });
+    }
 
     useEffect(() =>
     {
@@ -187,8 +293,21 @@ function NoteList(props: any)
         return (
         <Fragment>
             <Fragment>
-                <p>all notes: {pagination.numberOfAllNotes}</p>
+                <div className="filters-container">
+                    {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
+                        <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
+                    </DropdownButton> */}
+                <h3>Filters</h3>
+                <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+                    <Button variant="primary">categories</Button>
+                </OverlayTrigger>
+                <Button
+                    variant="outline-primary"
+                    onClick={handleApplyFiltersBtnClick}
+                    >apply filters</Button>
+                </div>
                 <div className="pagination">
+                    <h5>all notes: {pagination.numberOfAllNotes}</h5>
                     <Form.Group className="mb-3">
                         <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
                         <Form.Select
@@ -247,8 +366,21 @@ function NoteList(props: any)
         return (
         <Fragment>
             <Fragment>
-                <p>all notes: {pagination.numberOfAllNotes}</p>
+                <div className="filters-container">
+                        {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
+                            <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
+                        </DropdownButton> */}
+                    <h3>Filters</h3>
+                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+                        <Button variant="primary">categories</Button>
+                    </OverlayTrigger>
+                    <Button
+                        variant="outline-primary"
+                        onClick={handleApplyFiltersBtnClick}
+                        >apply filters</Button>
+                </div>
                 <div className="pagination">
+                    <p>all notes: {pagination.numberOfAllNotes}</p>
                     <Form.Group className="mb-3">
                         <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
                         <Form.Select
