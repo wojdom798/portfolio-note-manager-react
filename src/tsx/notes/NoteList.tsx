@@ -11,6 +11,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 
 import NoteForm from './NoteForm';
+import DateTimeFilter from "../filters/DateTimeFilter";
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { add, remove, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
@@ -301,6 +302,7 @@ function NoteList(props: any)
                 <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
                     <Button variant="primary">categories</Button>
                 </OverlayTrigger>
+                <DateTimeFilter />
                 <Button
                     variant="outline-primary"
                     onClick={handleApplyFiltersBtnClick}
@@ -374,6 +376,7 @@ function NoteList(props: any)
                     <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
                         <Button variant="primary">categories</Button>
                     </OverlayTrigger>
+                    <DateTimeFilter />
                     <Button
                         variant="outline-primary"
                         onClick={handleApplyFiltersBtnClick}
