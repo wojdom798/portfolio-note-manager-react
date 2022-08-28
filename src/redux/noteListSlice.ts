@@ -50,8 +50,14 @@ export async function fetchNotes(dispatch: any, getState: () => RootState)
     let url = `/api/notes/get/?items-per-page=`;
     url += `${getState().pagination.itemsPerPage}`;
     url += `&page=${getState().pagination.currentPage}`;
+
     if (getState().filters.categories.length !== 0)
         url += `&categories=${JSON.stringify(getState().filters.categories)}`;
+    if (getState().filters.dateRange !== null)
+    {
+        url += `&date-range-start=${getState().filters.dateRange!.start}`;
+        url += `&date-range-end=${getState().filters.dateRange!.end}`;
+    }
     
     const init = {
         method: "GET",
