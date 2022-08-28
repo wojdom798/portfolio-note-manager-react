@@ -36,17 +36,36 @@ async function (req, res)
     if (req.query.hasOwnProperty("items-per-page") &&
         req.query.hasOwnProperty("page"))
     {
-        if (req.query.hasOwnProperty("categories"))
+        if (req.query.hasOwnProperty("categories") ||
+            (req.query.hasOwnProperty("date-range-start") &&
+            req.query.hasOwnProperty("date-range-end")))
         {
-            const categories = JSON.parse(req.query["categories"]);
-            filterStr = "WHERE ";
+            filterStr = `WHERE `;
 
-            for (let i = 0; i < categories.length; i++)
+            if (req.query.hasOwnProperty("categories"))
             {
-                if (i === 0)
-                    filterStr += `category_id = ${categories[i]} `;
-                else
-                    filterStr += `OR category_id = ${categories[i]} `;
+                const categories = JSON.parse(req.query["categories"]);
+                for (let i = 0; i < categories.length; i++)
+                {
+                    if (i === 0)
+                        filterStr += `(category_id = ${categories[i]} `;
+                    else if ((i === categories.length-1) && (categories.length > 1))
+                        filterStr += `OR category_id = ${categories[i]}) `;
+                    else
+                        filterStr += `OR category_id = ${categories[i]} `;
+                }
+            }
+            if (req.query.hasOwnProperty("categories") &&
+                req.query.hasOwnProperty("date-range-start"))
+            {
+                filterStr += `AND `;
+            }
+            if (req.query.hasOwnProperty("date-range-start"))
+            {
+                const dateRangeStartStr = JSON.parse(req.query["date-range-start"]);
+                const dateRangeEndStr = JSON.parse(req.query["date-range-end"]);
+                filterStr += `(strftime('%Y%m%d', date_added) >= '${dateRangeStartStr}' AND `;
+                filterStr += `strftime('%Y%m%d', date_added) <= '${dateRangeEndStr}') `;
             }
 
             pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
@@ -58,6 +77,8 @@ async function (req, res)
                 `LIMIT ${req.query["items-per-page"]} `,
                 `OFFSET ${pageOffset};`
             ];
+
+            // console.log(queryArray);
         }
         else
         {
@@ -100,10 +121,13 @@ async function (req, res)
         // {
         //     query += line;
         // }
-
+        
+        // console.log(query);
         notes = await databaseHandle.all(query);
 
-        if (req.query.hasOwnProperty("categories"))
+        if (req.query.hasOwnProperty("categories") ||
+            (req.query.hasOwnProperty("date-range-start") && 
+            req.query.hasOwnProperty("date-range-end")))
         {
             queryTable = 
             [
