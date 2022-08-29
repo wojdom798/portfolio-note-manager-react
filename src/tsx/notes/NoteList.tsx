@@ -9,13 +9,20 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
+import {
+    Stack as MuiStack,
+    Chip as MuiChip,
+    Button as MuiButton
+} from "@mui/material"
 
 import NoteForm from './NoteForm';
 import DateTimeFilter from "../filters/DateTimeFilter";
+import NoteTagManager from "./NoteTagManager";
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { add, remove, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
 import { Category, selectCategoryList } from "../../redux/categorySlice";
+import { Tag, selectTagList } from "../../redux/tagSlice";
 import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/paginationSlice";
 import { setCategoriesFilter } from "../../redux/filterSlice";
 
@@ -26,6 +33,7 @@ function NoteList(props: any)
     // const [notes, setNotes] = useState([]);
     const notes = useAppSelector(selectNoteList);
     const categories = useAppSelector(selectCategoryList);
+    const tags = useAppSelector(selectTagList);
     const pagination = useAppSelector(selectPagination);
     const dispatch = useAppDispatch();
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
@@ -221,11 +229,16 @@ function NoteList(props: any)
         setNoteToEdit(null);
     }
 
+    function handleAddTagsBtnClick(event: any, noteId: number)
+    {
+        console.log("adding tags to noteId: " + noteId);
+    }
+
     function notesToElement()
     {
         // console.log("notesToElement()");
         // console.log(Object.values(notes));
-        return Object.values(notes).map((item: any, index: number) => {
+        return Object.values(notes).map((item: Note, index: number) => {
             return (
                 <div className="note-container" key={item.id}>
                     <h3 className="note-title">{item.title}</h3>
@@ -241,9 +254,27 @@ function NoteList(props: any)
                             type="button">
                     <span>delete</span>
                     </Button>
+                    <MuiButton
+                        // onClick={(event: any) => { handleAddTagsBtnClick(event, item.id) }}
+                        onClick={(event: any) => { handleShowNoteTagManagerModal(event, item.id) }}
+                        size="small"
+                        variant="contained"
+                        style={ { textTransform: "lowercase" } }
+                    >manage tags</MuiButton>
                     <p>{item.contents}</p>
                     <p>category: {categories[item.category_id].name}</p>
                     <p>{item.date_added}</p>
+                    <div className="tag-container">
+                        <MuiStack direction="row" spacing={1} alignItems="center">
+                            { item.tagIds != null ?
+                                item.tagIds.map((id: number) =>
+                                { return (
+                                    <MuiChip key={id} label={tags[id].name} color="primary" />
+                                );}) :
+                                null
+                            }
+                        </MuiStack>
+                    </div>
                 </div>
             );
         });
@@ -288,6 +319,24 @@ function NoteList(props: any)
         dispatch(setCurrentPage(pageNumber));
         dispatch(fetchNotes);
     }
+
+    /********************************
+        TEMPORARY
+    ********************************/
+    const [showNoteTagManagerModal, setShowNoteTagManagerModal] = useState<boolean>(false);
+    const [noteToAddTagsTo, setNoteToAddTagsTo] = useState<number>(-1);
+    const handleShowNoteTagManagerModal = (event: any, noteId: number) =>
+    {
+        setNoteToEdit(null); // will close the previous modal if opened by chance
+        setNoteToAddTagsTo(noteId);
+        setShowNoteTagManagerModal(true);
+    };
+
+    const handleClosNoteTagManagereModal = () => setShowNoteTagManagerModal(false);
+    /********************************
+        END: TEMPORARY
+    ********************************/
+
 
     if (!noteToEdit)
     {
@@ -340,7 +389,30 @@ function NoteList(props: any)
                 </Button>
             </Fragment>
     
-            {/* modal dialog */}
+            {/* add/remove tags to/from note dialog */}
+            <Modal
+                show={showNoteTagManagerModal}
+                onHide={handleClosNoteTagManagereModal}
+                backdrop="static"
+                keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal title</Modal.Title>
+                </Modal.Header>
+    
+                <Modal.Body>
+                    <NoteTagManager
+                        noteId={noteToAddTagsTo}
+                    />
+                </Modal.Body>
+    
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClosNoteTagManagereModal}>Close</Button>
+                    <Button variant="primary" onClick={handleShowNoteTagManagerModal}>Save changes</Button>
+                </Modal.Footer>
+            </Modal>
+            {/* end: add/remove tags to/from note dialog */}
+    
+            {/* edit/add note modal dialog */}
             <Modal
                 show={showModal}
                 onHide={handleCloseModal}
@@ -359,7 +431,7 @@ function NoteList(props: any)
                     <Button variant="primary" onClick={handleCloseModal}>Save changes</Button>
                 </Modal.Footer>
             </Modal>
-            {/* end: modal dialog */}
+            {/* end: edit/add note modal dialog */}
         </Fragment>
         );
     }
@@ -413,7 +485,31 @@ function NoteList(props: any)
                 <span>&#x2B;</span>
                 </Button>
             </Fragment>
+            
+            {/* add/remove tags to/from note dialog */}
+            <Modal
+                show={showNoteTagManagerModal}
+                onHide={handleClosNoteTagManagereModal}
+                backdrop="static"
+                keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal title</Modal.Title>
+                </Modal.Header>
     
+                <Modal.Body>
+                    <NoteTagManager
+                        noteId={noteToAddTagsTo}
+                    />
+                </Modal.Body>
+    
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClosNoteTagManagereModal}>Close</Button>
+                    <Button variant="primary" onClick={handleShowNoteTagManagerModal}>Save changes</Button>
+                </Modal.Footer>
+            </Modal>
+            {/* end: add/remove tags to/from note dialog */}
+
+
             {/* modal dialog */}
             <Modal
                 show={showModal}
