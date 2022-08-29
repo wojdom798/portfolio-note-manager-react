@@ -71,9 +71,14 @@ async function (req, res)
             pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
             queryArray = 
             [
-                `SELECT * FROM note `,
-                `${filterStr}`,
-                `ORDER BY id ASC `,
+                `SELECT `,
+                `n.*, `,
+                `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
+                `FROM note n `,
+                `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                `${filterStr} `,
+                `GROUP BY n.id `,
+                `ORDER BY n.id ASC `,
                 `LIMIT ${req.query["items-per-page"]} `,
                 `OFFSET ${pageOffset};`
             ];
@@ -83,9 +88,21 @@ async function (req, res)
         else
         {
             pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+            // queryArray = 
+            // [
+            //     `SELECT * FROM note ORDER BY id ASC `,
+            //     `LIMIT ${req.query["items-per-page"]} `,
+            //     `OFFSET ${pageOffset};`
+            // ];
             queryArray = 
             [
-                `SELECT * FROM note ORDER BY id ASC `,
+                `SELECT `,
+                `n.*, `,
+                `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
+                `FROM note n `,
+                `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                `GROUP BY n.id `,
+                `ORDER BY n.id ASC `,
                 `LIMIT ${req.query["items-per-page"]} `,
                 `OFFSET ${pageOffset};`
             ];
@@ -97,9 +114,19 @@ async function (req, res)
     }
     else
     {
+        // queryArray = 
+        // [
+        //     `SELECT * FROM note ORDER BY id ASC;`
+        // ];
         queryArray = 
         [
-            `SELECT * FROM note ORDER BY id ASC;`
+            `SELECT `,
+            `n.*, `,
+            `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
+            `FROM note n `,
+            `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+            `GROUP BY n.id `,
+            `ORDER BY id ASC;`
         ];
         for (let line of queryArray)
         {
