@@ -11,6 +11,7 @@ export interface Note
     date_added: string;
     category_id: number;
     user_id: number;
+    tagIds: number[] | null;
 };
 
 export interface NoteListState
@@ -41,6 +42,20 @@ export const noteListSlice = createSlice(
         },
         getFromDB: (state, action: PayloadAction<any>) => {
             state.list = action.payload;
+        },
+        addTag: (state, action: PayloadAction<{ note: Note, tagId: number }>) =>
+        {
+            if (state.list[action.payload.note.id].tagIds)
+                state.list[action.payload.note.id].tagIds!.push(action.payload.tagId);
+            else
+                state.list[action.payload.note.id].tagIds = [ action.payload.tagId ];
+        },
+        removeTag: (state, action: PayloadAction<{ note: Note, tagId: number }>) =>
+        {
+            const index = state.list[action.payload.note.id].tagIds!.indexOf(action.payload.tagId);
+            state.list[action.payload.note.id].tagIds!.splice(index, 1);
+            if (state.list[action.payload.note.id].tagIds!.length === 0)
+                state.list[action.payload.note.id].tagIds = null;
         }
     }
 });
@@ -74,6 +89,12 @@ export async function fetchNotes(dispatch: any, getState: () => RootState)
     let normalisedList = {};
     data.responseData.notes.forEach((item: any, index: number) =>
     {
+        if (item.tags)
+        {
+            let tagArray = JSON.parse(item.tags);
+            item.tagIds = tagArray;
+            // console.log(item.tagIds);
+        }
         normalisedList = { ...normalisedList,  [item.id]: item};
     });
 
@@ -85,7 +106,7 @@ export async function fetchNotes(dispatch: any, getState: () => RootState)
     dispatch(setNumberOfAllNotes(data.responseData.numberOfAllNotes));
 };
 
-export const { add, remove, edit, getFromDB } = noteListSlice.actions;
+export const { add, remove, edit, getFromDB, addTag, removeTag } = noteListSlice.actions;
 export const selectNoteList = (state: RootState) => state.noteList.list;
 
 export default noteListSlice.reducer;
