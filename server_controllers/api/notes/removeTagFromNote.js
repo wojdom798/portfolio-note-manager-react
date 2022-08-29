@@ -11,9 +11,8 @@ const projectSettingsFileName = "project_settings.json";
 const settingsFilePath = path.join(__projectDir, projectSettingsFileName);
 const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
-
-// route: /api/notes/delete/:id
-router.delete("/:id",
+// route: /api/notes/remove-tag-from-note/:noteId/:tagId
+router.put("/:noteId/:tagId",
 async function (req, res)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
@@ -23,6 +22,9 @@ async function (req, res)
     let query = "";
     let queryResult;
 
+    const noteId = req.params.noteId;
+    const tagId = req.params.tagId;
+
     try
     {
         sqlite3.verbose();
@@ -31,22 +33,20 @@ async function (req, res)
         
         queryArray = 
         [
-            `DELETE FROM note WHERE id = ${req.params.id};`
+            `DELETE FROM note_tag WHERE (note_id = ${noteId} AND tag_id = ${tagId});`
         ];
         for (let line of queryArray)
         {
             query += line;
         }
 
-        queryResult = await databaseHandle.all(query);
+        queryResult = await databaseHandle.run(query);
         await databaseHandle.close();
 
-        // console.log(queryResult);
-
-        res.json({  
+        res.json({
             responseMsg: "Success",
             responseData: {
-                deletedId: queryResult
+                queryResult: queryResult
             }
         });
     
@@ -55,7 +55,7 @@ async function (req, res)
     {
         console.error(error);
         res.status(404);
-        // res.send("<h1>404</h1>");
+        // res.send("<h1>404</h1><p>Something went wrong.</p>");
         res.json({
             responseMsg: "An error occured during the querying of data.",
             errorMsg: error.message
