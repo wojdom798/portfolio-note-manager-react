@@ -41,6 +41,94 @@ function DateTimeFilter()
         ]
     };
 
+    function isLeapYear(year: number)
+    {
+        return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
+    }
+
+    function getDaysInYear(year: number)
+    {
+        return isLeapYear(year) ? 366 : 365;
+    }
+
+    function getNumberOfDaysInMonth(year: number, month: number)
+    {
+        const daysOfMonthArray: number[] = [
+            31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        ];
+        return daysOfMonthArray[month-1];
+    }
+
+    /**
+     * computes and returns the number of the first day of the week for a given month and year
+     * Monday = `1`, Tuesday = `2`, ..., Sunday = `7`
+     * @param {number} year
+     * @param {number} month
+     */
+    function fdm(year: number, month: number)
+    {
+        const baseDate =
+        {
+            month: 1,
+            year: 2000,
+            fdm: 6
+        };
+        const DAYS_IN_A_WEEK = 7;
+        let yearDifference = year - baseDate.year;
+        let monthDiff: number;
+        const isLeap = isLeapYear(year);
+        const daysOfMonthArray: number[] = [
+            31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        ];
+        let sumOfDays: number = baseDate.fdm;
+
+        if (yearDifference === 0)
+        {
+            if (month === baseDate.month) return baseDate.fdm;
+                monthDiff = month - baseDate.month;
+            if (monthDiff < 0) throw new Error("Month difference is less than 0.");
+            for (let i = 0; i < monthDiff; i++)
+            {
+                sumOfDays += daysOfMonthArray[i];
+            }
+            return (sumOfDays % DAYS_IN_A_WEEK) === 0 ? DAYS_IN_A_WEEK : sumOfDays % DAYS_IN_A_WEEK;
+        }
+        else if (yearDifference > 0)
+        {
+            sumOfDays = baseDate.fdm;
+            for (let i = 0; i < yearDifference; i++)
+                sumOfDays += getDaysInYear(baseDate.year + i);
+            for (let i = 0; i < month-1; i++)
+                sumOfDays += daysOfMonthArray[i];
+            return (sumOfDays % DAYS_IN_A_WEEK) === 0 ? DAYS_IN_A_WEEK : sumOfDays % DAYS_IN_A_WEEK;
+        }
+        else
+        {
+            yearDifference = Math.abs(yearDifference);
+            sumOfDays = baseDate.fdm;
+            for (let i = 1; i < yearDifference; i++)
+            {
+                if (isLeapYear(baseDate.year - i))
+                    sumOfDays -= 2; // 366 % 7 == 2
+                else
+                    sumOfDays -= 1; // 365 % 7 == 1
+            }
+            for (let i = daysOfMonthArray.length-1; i >= month-1; i--)
+            {
+                sumOfDays -= daysOfMonthArray[i];
+            }
+            // return (7 - Math.abs(sumOfDays-1) % 7) + 1;
+            return ((((sumOfDays-1) % DAYS_IN_A_WEEK) + DAYS_IN_A_WEEK) % DAYS_IN_A_WEEK) +1;
+        }
+        return -1;
+    }
+
+    const handleDebugBtnClick = () =>
+    {
+        const firstDay = fdm(selectedYear, selectedMonth);
+        console.log(`${months[selectedMonth-1]}, ${selectedYear}; fdm = ${firstDay}`);
+    };
+
     function getMonthMenuItems()
     {
         return months.map((monthName: string, index: number) =>
@@ -57,17 +145,25 @@ function DateTimeFilter()
     function handleIncreaseMonth()
     {
         if (selectedMonth + 1 > 12)
-            setSelectedMonth(12);
+        {
+            // setSelectedMonth(12);
+            setSelectedMonth(1);
+            setSelectedYear(selectedYear+1);
+        }
         else
-        setSelectedMonth(selectedMonth + 1);
+            setSelectedMonth(selectedMonth + 1);
     }
 
     function handleDecreaseMonth()
     {
         if (selectedMonth - 1 < 1)
-            setSelectedMonth(1);
+        {
+            // setSelectedMonth(1);
+            setSelectedMonth(12);
+            setSelectedYear(selectedYear-1);
+        }
         else
-        setSelectedMonth(selectedMonth - 1);
+            setSelectedMonth(selectedMonth - 1);
     }
 
     function handleIncreaseYear()
@@ -183,7 +279,7 @@ function DateTimeFilter()
             setSelectingEndDateActive(true);
         else
             setSelectingEndDateActive(false);
-    }   
+    }
 
     return (
         <div className="datetime-filter-main-container">
@@ -230,8 +326,10 @@ function DateTimeFilter()
             <div className="datetime-filter-body">
                 <div className="day-container">
                     { getDayNameElements() }
-                    { insertEmptyDayElements(5) }
-                    { insertDayElements(31) }
+                    {/* { insertEmptyDayElements(5) } */}
+                    { insertEmptyDayElements(fdm(selectedYear, selectedMonth)-1) }
+                    {/* { insertDayElements(31) } */}
+                    { insertDayElements(getNumberOfDaysInMonth(selectedYear, selectedMonth)) }
                 </div>
             </div>
             <div className="datetime-filter-footer">
@@ -250,6 +348,10 @@ function DateTimeFilter()
                     onClick={handleDateRangePickerApplyBtnClick}
                     variant="contained"
                 >OK</MuiButton>
+                <MuiButton
+                    onClick={handleDebugBtnClick}
+                    variant="contained"
+                >debug</MuiButton>
                 <div style={ {display: "block"} }>
                     <p>start date: {selectedStartDate}</p>
                     <p>end date: {selectedEndDate}</p>
