@@ -16,7 +16,7 @@ function NoteForm(props: any)
 
     useEffect(() =>
     {
-        if (props.hasOwnProperty("noteToEdit"))
+        if (props.noteToEdit)
         {
             setTitleInput(props.noteToEdit.title);
             setContentsInput(props.noteToEdit.contents);
@@ -58,7 +58,7 @@ function NoteForm(props: any)
         // console.log("title= " + titleInput);
         // console.log("contents= " + contentsInput);
         
-        if (props.hasOwnProperty("noteToEdit"))
+        if (props.noteToEdit)
         {
             const noteToEdit = {
                 id: props.noteToEdit.id,

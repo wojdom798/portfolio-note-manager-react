@@ -338,24 +338,9 @@ function NoteList(props: any)
     ********************************/
 
 
-    if (!noteToEdit)
-    {
-        return (
+    return (
+    <Fragment>
         <Fragment>
-            <Fragment>
-                <div className="filters-container">
-                    {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
-                        <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
-                    </DropdownButton> */}
-                <h3>Filters</h3>
-                <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                    <Button variant="primary">categories</Button>
-                </OverlayTrigger>
-                <DateTimeFilter />
-                <Button
-                    variant="outline-primary"
-                    onClick={handleApplyFiltersBtnClick}
-                    >apply filters</Button>
                 </div>
                 <div className="pagination">
                     <h5>all notes: {pagination.numberOfAllNotes}</h5>
@@ -434,109 +419,6 @@ function NoteList(props: any)
             {/* end: edit/add note modal dialog */}
         </Fragment>
         );
-    }
-    else
-    {
-        return (
-        <Fragment>
-            <Fragment>
-                <div className="filters-container">
-                        {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
-                            <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
-                        </DropdownButton> */}
-                    <h3>Filters</h3>
-                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                        <Button variant="primary">categories</Button>
-                    </OverlayTrigger>
-                    <DateTimeFilter />
-                    <Button
-                        variant="outline-primary"
-                        onClick={handleApplyFiltersBtnClick}
-                        >apply filters</Button>
-                </div>
-                <div className="pagination">
-                    <p>all notes: {pagination.numberOfAllNotes}</p>
-                    <Form.Group className="mb-3">
-                        <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
-                        <Form.Select
-                            aria-label="select the number of items per page"
-                            value={pagination.itemsPerPage}
-                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
-                            id="pagination-ipp-input">
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                        </Form.Select>
-                    </Form.Group>
-                    <ButtonToolbar aria-label="Toolbar with button groups">
-                        { getPaginationButtons() }
-                    </ButtonToolbar>
-                </div>
-                {notesToElement()}
-                <Button
-                    onClick={handleShowModal}
-                    variant="primary"
-                    className="floating-action-btn-round"
-                    type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal">
-                <span>&#x2B;</span>
-                </Button>
-            </Fragment>
-            
-            {/* add/remove tags to/from note dialog */}
-            <Modal
-                show={showNoteTagManagerModal}
-                onHide={handleClosNoteTagManagereModal}
-                backdrop="static"
-                keyboard={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-    
-                <Modal.Body>
-                    <NoteTagManager
-                        noteId={noteToAddTagsTo}
-                    />
-                </Modal.Body>
-    
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClosNoteTagManagereModal}>Close</Button>
-                    <Button variant="primary" onClick={handleShowNoteTagManagerModal}>Save changes</Button>
-                </Modal.Footer>
-            </Modal>
-            {/* end: add/remove tags to/from note dialog */}
-
-
-            {/* modal dialog */}
-            <Modal
-                show={showModal}
-                onHide={handleCloseModal}
-                backdrop="static"
-                keyboard={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    {/* display edit form */}
-                    <NoteForm
-                        noteToEdit={noteToEdit}
-                        submitEditedNote={handleSubmitEditedNote}
-                    />
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-                    <Button variant="primary" onClick={handleCloseModal}>Save changes</Button>
-                </Modal.Footer>
-            </Modal>
-            {/* end: modal dialog */}
-        </Fragment>
-        );
-    }
     
 }
 
