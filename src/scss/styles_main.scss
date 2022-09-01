@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import "./variables/fonts";
+@import "./variables/colors/colors_main";
 
 @import "~bootstrap/scss/bootstrap";
 
@@ -12,12 +13,13 @@
 body
 {
     font-size: 1rem;
-    font-family: 'Lato', sans-serif;
+    font-family: $main-font;
 }
 
 
 @import "./main_dashboard";
 @import "./view_navigation";
+@import "./components/pagination";
 @import "./note_list";
 @import "./datetime_filter";
 

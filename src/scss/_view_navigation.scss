@@ -15,6 +15,7 @@ $navmenu-menu-item-separator-color: #4285f4;
 
 .navmenu-main-container
 {
+  width: 100%;
   display: block;
   position: sticky;
   top: 0;
@@ -23,7 +24,10 @@ $navmenu-menu-item-separator-color: #4285f4;
 
 #navmenu-list // the <ul> element
 {
+  padding: 0;
+  margin: 0;
   list-style: none;
+  width: 100%;
   // background: linear-gradient(#090c6a, #61146e);
 }
 
@@ -34,7 +38,8 @@ $navmenu-menu-item-separator-color: #4285f4;
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 10px 2px;
+  padding: 10px 0px;
+  // padding: 10px 2px;
   // background-color: #0d47a1;
   background-color: transparent;
   color: $navmenu-menu-item-txt-color;
@@ -43,6 +48,13 @@ $navmenu-menu-item-separator-color: #4285f4;
   &:last-of-type
   {
     border-bottom: none;
+  }
+
+
+  &:hover
+  {
+    background-color: $main-navigation-active-item-bg-color;
+    color: #FAFAFA;
   }
 }
 
@@ -59,17 +71,34 @@ $navmenu-menu-item-separator-color: #4285f4;
   transition: background-color 70ms linear,
               color 70ms linear;
 
-  border-radius: 5px;
+  // border-radius: 5px;
+  border-radius: 0px;
 
-  &:hover
-  {
-    background-color: #FFF;
-    color: #222;
-  }
+  // &:hover
+  // {
+  //   background-color: #FFF;
+  //   color: #222;
+  // }
 }
 
-.navmenu-list-item.active .navmenu-btn
+// .navmenu-list-item.active .navmenu-btn
+.navmenu-list-item.active
 {
-  background-color: #FFF;
-  color: #222;
+  position: relative;
+  background-color: $main-navigation-active-item-bg-color;
+  color: #FAFAFA;
+}
+
+$size-1: 18px;
+.navmenu-list-item.active::after
+{
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 23px;
+  right: -10px;
+  background-color: #f3f5f6;
+  width: $size-1;
+  height: $size-1;
+  transform: rotate(45deg);
 }

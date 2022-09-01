@@ -49,11 +49,11 @@ function MainDashboard()
                     <Navigation
                         onNavigationItemClick={handleNavigationItemClick} />
                 </nav>
-                <main className="col-md-6 ms-sm-auto col-lg-8 px-md-4">
+                <main id="main-section" className="col-md-6 ms-sm-auto col-lg-8 px-md-4">
                     { getCurrentView() }
                 </main>
                 <nav className="col-md-3 col-lg-2 d-md-block bg-light collapse">
-                    column 3
+                    
                 </nav>
             </div>
 

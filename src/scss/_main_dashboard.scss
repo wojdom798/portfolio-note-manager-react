@@ -36,16 +36,20 @@
 
 .left-menu
 {
+    padding: 0;
+    margin: 0;
   // flex-grow: 2;
   // flex-basis: max-content;
   min-width: 250px;
   // border-right: 2px solid $app-dashboard-border-color;
-  border-right: 2px solid #333;
-  background: linear-gradient(#090c6a, #411349);
+  
+//   background: linear-gradient(#090c6a, #411349);
+  background-color: $left-side-bar-bg-color !important;
   // height: 100vh;
   position: relative;
   z-index: 100;
-  box-shadow: 3px 0 10px #888;
+//   border-right: 2px solid #333;
+//   box-shadow: 3px 0 10px #888;
 }
 
 
@@ -53,4 +57,9 @@
 .filters-container
 {
     border: 2px solid #777;
+}
+
+#main-section
+{
+    background-color: $main-bg-color;
 }
