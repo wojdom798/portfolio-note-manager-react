@@ -1,0 +1,57 @@
+.filters-main-container
+{
+    // border: 2px solid #777;
+    margin-top: 20px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    > *
+    {
+        margin-right: 7px;
+    }
+}
+
+.date-range-picker-init-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid $pagination-border-color;
+    background-color: #FAFAFA;
+    transition: border-color 120ms linear;
+
+    &:hover,
+    &:focus
+    {
+        border-color: darken($pagination-border-color, 20%);
+    }
+
+    .wrapper-1
+    {
+        border-right: 2px solid $pagination-border-color;
+    }
+
+    .wrapper-2
+    {
+        padding: 6px 10px;
+    }
+
+    .calendar-icon-container
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 7px;
+
+        .temporary-span
+        {
+            width: 20px;
+            height: 20px;
+            background-color: #222;
+            display: inline-block;
+        }
+    }
+}

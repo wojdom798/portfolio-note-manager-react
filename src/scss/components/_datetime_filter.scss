@@ -2,6 +2,7 @@
 {
     --datetimepicker-debug-border-size: 2px;
     --datetime-picker-container-height: 550px;
+    --datetime-picker-container-width: 550px;
     --datetime-picker-header-height: 70px;
     --datetime-picker-footer-height: 120px;
     --datetime-picker-body-height: calc(
@@ -13,7 +14,7 @@
 
 .datetime-filter-main-container
 {
-    width: 550px;
+    width: var(--datetime-picker-container-width);
     height: var(--datetime-picker-container-height);
     border: var(--datetimepicker-debug-border-size) dashed #FF2222;
 }
@@ -181,3 +182,10 @@ $date-picker-trigger-icon-hover-color: #222;
 }
 
 // /day-container
+
+
+.modal-custom-width
+{
+    max-width: none;
+    width: calc(var(--datetime-picker-container-width) + 30px);
+}

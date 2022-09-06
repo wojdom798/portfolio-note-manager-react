@@ -21,7 +21,8 @@ body
 @import "./view_navigation";
 @import "./components/pagination";
 @import "./note_list";
-@import "./datetime_filter";
+@import "./components/datetime_filter";
+@import "./components/filters";
 
 .floating-action-btn-round
 {
