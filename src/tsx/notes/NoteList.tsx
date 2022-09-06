@@ -348,19 +348,18 @@ function NoteList(props: any)
     return (
     <Fragment>
         <Fragment>
-            <div className="filters-container">
+            <div className="filters-main-container">
                 {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
                     <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
                 </DropdownButton> */}
-            <h3>Filters</h3>
-            <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                <Button variant="primary">categories</Button>
-            </OverlayTrigger>
-            <DateTimeFilter />
-            <Button
-                variant="outline-primary"
-                onClick={handleApplyFiltersBtnClick}
-                >apply filters</Button>
+                <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+                    <Button variant="primary">categories</Button>
+                </OverlayTrigger>
+                <DateTimeFilter />
+                <Button
+                    variant="outline-primary"
+                    onClick={handleApplyFiltersBtnClick}
+                    >apply filters</Button>
             </div>
             <div className="pagination-container-top-main">
                 <h5>all notes: {pagination.numberOfAllNotes}</h5>

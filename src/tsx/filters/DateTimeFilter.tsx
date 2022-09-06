@@ -8,9 +8,25 @@ import MuiTextField from "@mui/material/TextField";
 import MuiButtonGroup from "@mui/material/ButtonGroup";
 import MuiCheckbox from "@mui/material/Checkbox"
 import MuiFormControlLabel from "@mui/material/FormControlLabel"
+import ButtonBase from "@mui/material/ButtonBase";
+
+import {
+    Modal as BtsrpModal,
+    Button as BtsrpButton
+} from "react-bootstrap/";
+
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { selectFilters, setDateRangeFilter } from "../../redux/filterSlice";
+
+
+interface Date
+{
+    year: number;
+    month: number;
+    day: number;
+};
+
 
 function DateTimeFilter()
 {
@@ -21,8 +37,17 @@ function DateTimeFilter()
     const [selectedDay, selectDay] = useState<number>(1);
     const [isSelectingEndDateActive, setSelectingEndDateActive] = useState<boolean>(false);
 
-    const [selectedStartDate, setSelectedStartDate] = useState<string>("---");
-    const [selectedEndDate, setSelectedEndDate] = useState<string>("---");
+    // temporary
+    // const [selectedStartDate, setSelectedStartDate] = useState<string>("---");
+    // const [selectedEndDate, setSelectedEndDate] = useState<string>("---");
+    const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
+    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
+
+    const [draftDateStart, setDraftDateStart] = useState<Date | null>(null);
+    const [draftDateEnd, setDraftDateEnd] = useState<Date | null>(null);
+
+    // modal
+    const [isDateRangePickerModalOpen, setDateRangePickerModalOpen] = useState<boolean>(false);
 
     const months = [
         "January", "February", "March", "April", "May", "June", "July",
@@ -215,11 +240,17 @@ function DateTimeFilter()
                 classStr = "day day-number"
 
             dayElements.push(
-                <div
+                // <div
+                //     onClick={() => { handleDayClick(i+1) }}
+                //     key={i}
+                //     className={classStr}
+                // >{i+1}</div>
+                <ButtonBase
+                    component="div"
                     onClick={() => { handleDayClick(i+1) }}
                     key={i}
                     className={classStr}
-                >{i+1}</div>
+                >{i+1}</ButtonBase>
             );
         }
         return dayElements;
@@ -228,21 +259,19 @@ function DateTimeFilter()
     function handleDayClick(dayNumber: number)
     {
         selectDay(dayNumber);
+        const newDate: Date =
+        {
+            year: selectedYear,
+            month: selectedMonth,
+            day: dayNumber
+        };
         if (!isSelectingEndDateActive)
         {
-            setSelectedStartDate(
-                formatDateString(
-                    selectedYear,
-                    selectedMonth,
-                    dayNumber, ""));
+            setSelectedStartDate(newDate);
         }
         else
         {
-            setSelectedEndDate(
-                formatDateString(
-                    selectedYear,
-                    selectedMonth,
-                    dayNumber, ""));
+            setSelectedEndDate(newDate);
         }
     }
 
@@ -257,6 +286,17 @@ function DateTimeFilter()
         return str
     }
 
+    function formatDateString2(date: Date | null, separator = "")
+    {
+        if (date == null) return "null";
+        let str: string = "";
+        let yearStr = String(date.year);
+        let monthStr = date.month >= 10 ? String(date.month) : `0${String(date.month)}`;
+        let dayStr = date.day >= 10 ? String(date.day) : `0${String(date.day)}`;
+        str = `${yearStr}${separator}${monthStr}${separator}${dayStr}`;
+        return str
+    }
+
     function handleDateRangePickerApplyBtnClick()
     {
         // const dateRange = {
@@ -264,8 +304,8 @@ function DateTimeFilter()
         //     end: "20220822"
         // };
         const dateRange = {
-            start: selectedStartDate,
-            end: selectedEndDate
+            start: formatDateString2(selectedStartDate),
+            end: formatDateString2(selectedEndDate)
         };
         // console.log(dateRange);
         dispatch(setDateRangeFilter(dateRange));
@@ -281,83 +321,132 @@ function DateTimeFilter()
             setSelectingEndDateActive(false);
     }
 
+    // modal
+    function handleShowDateRangePickerModal()
+    {
+        setDateRangePickerModalOpen(true);
+    }
+
+    function handleHideDateRangePickerModal()
+    {
+        setDateRangePickerModalOpen(false);
+    }
+
+    function handleDateRangePickerApplyChangesBtnClick()
+    {
+
+    }
+    // end: modal
+
     return (
-        <div className="datetime-filter-main-container">
-            <div className="datetime-filter-header">
-                <div className="datetime-filter-main-interface">
-                    {/* <button>&#x3C;</button> */}
-                    <MuiButton
-                        onClick={handleDecreaseMonth}
-                        variant="outlined">&#x3C;</MuiButton>
+        <React.Fragment>
+        {/* <MuiButton
+            onClick={handleShowDateRangePickerModal}
+            variant="contained"
+        >select date range</MuiButton> */}
 
-                    <MuiFormControl>
-                        <MuiInputLabel id="select-month-label">Month</MuiInputLabel>
-                        <MuiSelect
-                            labelId="select-month-label"
-                            id="select-month"
-                            value={selectedMonth}
-                            onChange={(event: any) => { handleMonthSelectChange(event) }}
-                        >
-                            { getMonthMenuItems() }
-                        </MuiSelect>
-                    </MuiFormControl>
-
-                    {/* <button>&#x3E;</button> */}
-                    <MuiButton
-                        onClick={handleIncreaseMonth}
-                        variant="outlined">&#x3E;</MuiButton>
-                    <MuiTextField
-                        onChange={changeYearInput}
-                        label="Year"
-                        value={selectedYear}    
-                    />
-                    <MuiButtonGroup
-                        orientation="vertical"
-                    >
-                        <MuiButton
-                            onClick={handleIncreaseYear}
-                        >&#x2B;</MuiButton>
-                        <MuiButton
-                            onClick={handleDecreaseYear}
-                        >&#8722;</MuiButton>
-                    </MuiButtonGroup>
-                </div>
+        <div className="date-range-picker-init-container">
+            <div className="wrapper-1">
+            <div className="wrapper-2">
+                <span className="daterange-start">{selectedStartDate != null ? formatDateString2(selectedStartDate, "-") : "null"}</span>
+                <span> - </span>
+                <span className="daterange-end">{selectedEndDate != null ? formatDateString2(selectedEndDate, "-") : "null"}</span>
             </div>
-            <div className="datetime-filter-body">
-                <div className="day-container">
-                    { getDayNameElements() }
-                    {/* { insertEmptyDayElements(5) } */}
-                    { insertEmptyDayElements(fdm(selectedYear, selectedMonth)-1) }
-                    {/* { insertDayElements(31) } */}
-                    { insertDayElements(getNumberOfDaysInMonth(selectedYear, selectedMonth)) }
-                </div>
             </div>
-            <div className="datetime-filter-footer">
-                {/* <MuiCheckbox {...label} defaultChecked /> */}
-                <MuiFormControlLabel
-                    control={
-                        <MuiCheckbox
-                            onChange={handleIsSelectingEndDate} />
-                    }
-                    label="selecting end date" />
-                <MuiButton
-                    onClick={() => { console.log("cancel picking date range"); }}
-                    variant="text"
-                >Cancel</MuiButton>
-                <MuiButton
-                    onClick={handleDateRangePickerApplyBtnClick}
-                    variant="contained"
-                >OK</MuiButton>
-                <MuiButton
-                    onClick={handleDebugBtnClick}
-                    variant="contained"
-                >debug</MuiButton>
-                <div style={ {display: "block"} }>
-                    <p>start date: {selectedStartDate}</p>
-                    <p>end date: {selectedEndDate}</p>
-                </div>
+            <div className="calendar-icon-container">
+                <ButtonBase
+                    component="span"
+                    onClick={handleShowDateRangePickerModal}
+                    className="temporary-span"></ButtonBase>
             </div>
         </div>
+
+        <BtsrpModal
+            show={isDateRangePickerModalOpen}
+            onHide={handleHideDateRangePickerModal}
+            dialogClassName="modal-custom-width"
+            backdrop="static"
+            keyboard={false}>
+            <BtsrpModal.Body>
+            <div className="datetime-filter-main-container">
+                <div className="datetime-filter-header">
+                    <div className="datetime-filter-main-interface">
+                        {/* <button>&#x3C;</button> */}
+                        <MuiButton
+                            onClick={handleDecreaseMonth}
+                            variant="outlined">&#x3C;</MuiButton>
+
+                        <MuiFormControl>
+                            <MuiInputLabel id="select-month-label">Month</MuiInputLabel>
+                            <MuiSelect
+                                labelId="select-month-label"
+                                id="select-month"
+                                value={selectedMonth}
+                                onChange={(event: any) => { handleMonthSelectChange(event) }}
+                            >
+                                { getMonthMenuItems() }
+                            </MuiSelect>
+                        </MuiFormControl>
+
+                        {/* <button>&#x3E;</button> */}
+                        <MuiButton
+                            onClick={handleIncreaseMonth}
+                            variant="outlined">&#x3E;</MuiButton>
+                        <MuiTextField
+                            onChange={changeYearInput}
+                            label="Year"
+                            value={selectedYear}    
+                        />
+                        <MuiButtonGroup
+                            orientation="vertical"
+                        >
+                            <MuiButton
+                                onClick={handleIncreaseYear}
+                            >&#x2B;</MuiButton>
+                            <MuiButton
+                                onClick={handleDecreaseYear}
+                            >&#8722;</MuiButton>
+                        </MuiButtonGroup>
+                    </div>
+                </div>
+                <div className="datetime-filter-body">
+                    <div className="day-container">
+                        { getDayNameElements() }
+                        {/* { insertEmptyDayElements(5) } */}
+                        { insertEmptyDayElements(fdm(selectedYear, selectedMonth)-1) }
+                        {/* { insertDayElements(31) } */}
+                        { insertDayElements(getNumberOfDaysInMonth(selectedYear, selectedMonth)) }
+                    </div>
+                </div>
+                <div className="datetime-filter-footer">
+                    {/* <MuiCheckbox {...label} defaultChecked /> */}
+                    <MuiFormControlLabel
+                        control={
+                            <MuiCheckbox
+                                onChange={handleIsSelectingEndDate} />
+                        }
+                        label="selecting end date" />
+                    <MuiButton
+                        onClick={handleHideDateRangePickerModal}
+                        variant="text"
+                    >Cancel/close</MuiButton>
+                    <MuiButton
+                        onClick={handleDateRangePickerApplyBtnClick}
+                        variant="contained"
+                    >OK</MuiButton>
+                    <MuiButton
+                        onClick={handleDebugBtnClick}
+                        variant="contained"
+                    >debug</MuiButton>
+                    <div style={ {display: "block"} }>
+                        <p>start date: {selectedStartDate != null ? formatDateString2(selectedStartDate, "-") : "null"}</p>
+                        <p>end date: {selectedEndDate != null ? formatDateString2(selectedEndDate, "-") : "null"}</p>
+                    </div>
+                </div>
+            </div>
+            </BtsrpModal.Body>
+        </BtsrpModal>
+        </React.Fragment>
     );
 }
 
