@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
+import { createPortal } from "react-dom";
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -27,6 +28,8 @@ import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/p
 import { setCategoriesFilter } from "../../redux/filterSlice";
 
 import { store } from "../../redux/store";
+
+import MainModal from "../MainModal";
 
 function NoteList(props: any)
 {
@@ -344,6 +347,47 @@ function NoteList(props: any)
         END: TEMPORARY
     ********************************/
 
+    function renderModal()
+    {
+        if (showNoteTagManagerModal)
+        {
+            return (
+                <MainModal
+                    showModal={showNoteTagManagerModal}
+                    onHide={handleClosNoteTagManagereModal}
+                    title={"Add Tags To Note #?"}
+                    onApplyBtnClick={handleClosNoteTagManagereModal}
+                    applyBtnText={"Apply"}
+                    onCloseBtnClick={handleClosNoteTagManagereModal}
+                    closeBtnText={"Close"}
+                >
+                    <NoteTagManager
+                        noteId={noteToAddTagsTo}
+                    />
+                </MainModal>
+            );
+        }
+        else if (showModal) // edit/add note modal
+        {
+            return (
+                <MainModal
+                    showModal={showModal}
+                    onHide={handleCloseModal}
+                    title={"Add / Edit Note #?"}
+                    onApplyBtnClick={handleCloseModal}
+                    applyBtnText={"Apply"}
+                    onCloseBtnClick={handleCloseModal}
+                    closeBtnText={"Close"}
+                >
+                    <NoteForm
+                        noteToEdit={noteToEdit}
+                        updateNoteList={handleAddNoteToList} />
+                </MainModal>
+            );
+        }
+        return null;
+    }
+
 
     return (
     <Fragment>
@@ -414,51 +458,9 @@ function NoteList(props: any)
             </Button>
         </Fragment>
 
-        {/* add/remove tags to/from note dialog */}
-        <Modal
-            show={showNoteTagManagerModal}
-            onHide={handleClosNoteTagManagereModal}
-            backdrop="static"
-            keyboard={false}>
-            <Modal.Header closeButton>
-                <Modal.Title>Modal title</Modal.Title>
-            </Modal.Header>
+        
 
-            <Modal.Body>
-                <NoteTagManager
-                    noteId={noteToAddTagsTo}
-                />
-            </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClosNoteTagManagereModal}>Close</Button>
-                <Button variant="primary" onClick={handleShowNoteTagManagerModal}>Save changes</Button>
-            </Modal.Footer>
-        </Modal>
-        {/* end: add/remove tags to/from note dialog */}
-
-        {/* edit/add note modal dialog */}
-        <Modal
-            show={showModal}
-            onHide={handleCloseModal}
-            backdrop="static"
-            keyboard={false}>
-            <Modal.Header closeButton>
-                <Modal.Title>Modal title</Modal.Title>
-            </Modal.Header>
-
-            <Modal.Body>
-                <NoteForm
-                    noteToEdit={noteToEdit}
-                    updateNoteList={handleAddNoteToList} />
-            </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-                <Button variant="primary" onClick={handleCloseModal}>Save changes</Button>
-            </Modal.Footer>
-        </Modal>
-        {/* end: edit/add note modal dialog */}
+        { renderModal() }
     </Fragment>
     );
     
