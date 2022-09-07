@@ -385,7 +385,7 @@ function NoteList(props: any)
                 </MainModal>
             );
         }
-        return null;
+        return <MainModal />;
     }
 
 
