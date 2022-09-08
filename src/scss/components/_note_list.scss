@@ -1,0 +1,41 @@
+.note-container
+{
+    background: #FAFAFA;
+    border: 1px solid #DFDFDF;
+    margin-bottom: 15px;
+}
+
+.note-header-container
+{
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $left-side-bar-bg-color;
+    color: $main-bg-color;
+}
+
+.note-header-buttons-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.note-header-buttons-container > *
+{
+    margin-right: 5px;
+}
+
+.note-contents-container
+{
+    padding: 10px;
+}
+
+.note-contents-footer
+{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

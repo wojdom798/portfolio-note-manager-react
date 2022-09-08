@@ -14,7 +14,7 @@ import {
     Stack as MuiStack,
     Chip as MuiChip,
     Button as MuiButton
-} from "@mui/material"
+} from "@mui/material";
 
 import NoteForm from './NoteForm';
 import DateTimeFilter from "../filters/DateTimeFilter";
@@ -243,30 +243,42 @@ function NoteList(props: any)
         // console.log(Object.values(notes));
         return Object.values(notes).map((item: Note, index: number) => {
             return (
-                <div className="note-container" key={item.id}>
-                    <h3 className="note-title">{item.title}</h3>
-                    <Button
-                            onClick={ () => handleEditNoteButtonClick(item.id) }
-                            variant="warning"
-                            type="button">
-                    <span>edit</span>
-                    </Button>
-                    <Button
-                            onClick={ () => handleDeleteNote(item.id) }
-                            variant="danger"
-                            type="button">
-                    <span>delete</span>
-                    </Button>
-                    <MuiButton
-                        // onClick={(event: any) => { handleAddTagsBtnClick(event, item.id) }}
-                        onClick={(event: any) => { handleShowNoteTagManagerModal(event, item.id) }}
-                        size="small"
-                        variant="contained"
-                        style={ { textTransform: "lowercase" } }
-                    >manage tags</MuiButton>
-                    <p>{item.contents}</p>
-                    <p>category: {categories[item.category_id].name}</p>
-                    <p>{item.date_added}</p>
+                <div className="note-container col-md-auto ms-sm-auto col-lg-auto px-md-auto" key={item.id}>
+                    <div className="note-header-container">
+                        <h2 className="note-title">{item.title}</h2>
+                        <div className="note-header-buttons-container">
+                            <Button
+                                    onClick={ () => handleEditNoteButtonClick(item.id) }
+                                    variant="warning"
+                                    type="button">
+                            <span>edit</span>
+                            </Button>
+                            <Button
+                                    onClick={ () => handleDeleteNote(item.id) }
+                                    variant="danger"
+                                    type="button">
+                            <span>delete</span>
+                            </Button>
+                            <MuiButton
+                                // onClick={(event: any) => { handleAddTagsBtnClick(event, item.id) }}
+                                onClick={(event: any) => { handleShowNoteTagManagerModal(event, item.id) }}
+                                size="small"
+                                variant="contained"
+                                style={ { textTransform: "lowercase" } }
+                            >manage tags</MuiButton>
+                        </div>
+                    </div>
+
+                    <div className="note-contents-container">
+                        <p>{item.contents}</p>
+                        
+                    </div>
+                    
+                    <div className="note-contents-footer">
+                        <span>{item.date_added}</span>
+                        <span>{categories[item.category_id].name}</span>
+                    </div>
+                    
                     <div className="tag-container">
                         <MuiStack direction="row" spacing={1} alignItems="center">
                             { item.tagIds != null ?
