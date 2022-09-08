@@ -30,6 +30,7 @@ import { setCategoriesFilter } from "../../redux/filterSlice";
 import { store } from "../../redux/store";
 
 import MainModal from "../MainModal";
+import AlertList from "../alerts/AlertList";
 
 function NoteList(props: any)
 {
@@ -470,8 +471,10 @@ function NoteList(props: any)
             </Button>
         </Fragment>
 
+        {/* Alerts */}
+        <AlertList />
         
-
+        {/* Modals */}
         { renderModal() }
     </Fragment>
     );
