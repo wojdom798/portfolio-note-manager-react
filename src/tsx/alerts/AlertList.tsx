@@ -3,30 +3,25 @@ import {IonIcon} from "react-ion-icon";
 import { AlertTypes } from "./alertTypes";
 import Alert from "./Alert";
 
+// redux imports
+import { selectAlertList } from "../../redux/alertListSlice";
+import { useAppSelector } from "../../redux/hooks";
+
+
 function AlertList(props: any)
 {
+    const alerts = useAppSelector(selectAlertList);
+
     return (
         <div className="alert-list-main-container">
-
-            <Alert
-                title="Alert 1"
-                type={AlertTypes.Success}/>
-
-            <Alert
-                title="Alert 2"
-                type={AlertTypes.Success}/>
-
-            <Alert
-                title="Alert 3"
-                type={AlertTypes.Error}/>
-
-            <Alert
-                title="Alert 4"
-                type={AlertTypes.Warning}/>
-
-            <Alert
-                title="Alert 5"
-                type={AlertTypes.Info}/>
+            
+            { alerts.map((alert: any) =>
+                <Alert
+                    key={alert.id}
+                    id={alert.id}
+                    title={alert.message}
+                    type={alert.type}/> )
+            }
 
         </div>
     );
