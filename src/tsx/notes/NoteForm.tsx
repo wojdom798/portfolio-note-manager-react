@@ -3,8 +3,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import helper from '../../helper';
 
-import { useAppSelector } from "../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { Category, selectCategoryList } from "../../redux/categorySlice";
+import { add as addAlert } from "../../redux/alertListSlice";
+
+import { AlertTypes } from "../alerts/alertTypes";
 
 function NoteForm(props: any)
 {
@@ -13,6 +16,7 @@ function NoteForm(props: any)
     const [dateAddedInput, setDateAddedInput] = useState("");
     const [categoryInput, setCategoryInput] = useState<number>(-1);
     const categories = useAppSelector(selectCategoryList);
+    const dispatch = useAppDispatch();
 
     useEffect(() =>
     {
@@ -102,9 +106,24 @@ function NoteForm(props: any)
                     ...submittedData.newNote,
                     id: data.responseData.id,
                 });
+
+                const alert =
+                {
+                    id: (new Date()).getTime(),
+                    type: AlertTypes.Success,
+                    message: "New note has been created."
+                };
+                dispatch(addAlert(alert));
             })
             .catch(err => {
                 console.log("Error [NoteForm.tsx, handleFormSubmit()]: ", err.message);
+                const alert =
+                {
+                    id: (new Date()).getTime(),
+                    type: AlertTypes.Error,
+                    message: "Error, couldn't create new note."
+                };
+                dispatch(addAlert(alert));
             });
         }
     }
