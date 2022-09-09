@@ -4,6 +4,7 @@ import categoryListReducer from "./categorySlice";
 import tagListReducer from "./tagSlice";
 import paginationReducer from "./paginationSlice";
 import filterReducer from "./filterSlice";
+import alertListReducer from "./alertListSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         categoryList: categoryListReducer,
         tagList: tagListReducer,
         pagination: paginationReducer,
-        filters: filterReducer
+        filters: filterReducer,
+        alertList: alertListReducer
     }
 });
 
