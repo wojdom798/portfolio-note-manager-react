@@ -31,6 +31,8 @@ import { store } from "../../redux/store";
 
 import MainModal from "../MainModal";
 import AlertList from "../alerts/AlertList";
+import { AlertTypes } from "../alerts/alertTypes";
+import { add as addAlert } from "../../redux/alertListSlice";
 
 function NoteList(props: any)
 {
@@ -401,6 +403,17 @@ function NoteList(props: any)
         return <MainModal />;
     }
 
+    // debug
+    const handleOnAddAlertDebugBtnClick = () =>
+    {
+        const alertToAddDbg =
+        {
+            id: (new Date()).getTime(),
+            type: AlertTypes.Info,
+            message: "Some Event Happened"
+        }
+        dispatch(addAlert(alertToAddDbg));
+    };
 
     return (
     <Fragment>
@@ -417,6 +430,10 @@ function NoteList(props: any)
                     variant="outline-primary"
                     onClick={handleApplyFiltersBtnClick}
                     >apply filters</Button>
+                <Button
+                    variant="outline-primary"
+                    onClick={handleOnAddAlertDebugBtnClick}
+                    >add alert (debug)</Button>
             </div>
             <div className="pagination-container-top-main">
                 <h5>all notes: {pagination.numberOfAllNotes}</h5>
