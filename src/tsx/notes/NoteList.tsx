@@ -415,6 +415,96 @@ function NoteList(props: any)
         dispatch(addAlert(alertToAddDbg));
     };
 
+    // debug
+    const handleOnSignUpDebugBtnClick = async () =>
+    {
+        let alert;
+
+        // const url = `api/auth/login/`;
+        const url = `api/auth/sign-up/`;
+
+        const newUsers =
+        [
+            { username: "User 1", password: "123qwe99" },
+            { username: "User 2", password: "123qwe33" },
+        ];
+
+        const init = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newUsers[1])
+        };
+        try
+        {
+            const response = await fetch(url, init);
+            // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
+            const data = await response.json();
+            alert = 
+            {
+                id: (new Date()).getTime(),
+                type: AlertTypes.Info,
+                message: data.responseMsg
+            };
+            dispatch(addAlert(alert));
+        }
+        catch (error: any)
+        {
+            alert = 
+            {
+                id: (new Date()).getTime(),
+                type: AlertTypes.Error,
+                message: error.message
+            };
+            dispatch(addAlert(alert));
+        }
+    };
+
+    const handleOnLogInDebugBtnClick = async () =>
+    {
+        let alert;
+
+        const url = `api/auth/login/`;
+
+        const users =
+        [
+            { username: "User 1", password: "123qwe99" },
+            { username: "User 2", password: "123qwe33" },
+        ];
+
+        const init = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(users[1])
+        };
+        try
+        {
+            const response = await fetch(url, init);
+            // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
+            const data = await response.json();
+            alert = 
+            {
+                id: (new Date()).getTime(),
+                type: AlertTypes.Info,
+                message: data.responseMsg
+            };
+            dispatch(addAlert(alert));
+        }
+        catch (error: any)
+        {
+            alert = 
+            {
+                id: (new Date()).getTime(),
+                type: AlertTypes.Error,
+                message: error.message
+            };
+            dispatch(addAlert(alert));
+        }
+    };
+
     return (
     <Fragment>
         <Fragment>
@@ -434,6 +524,14 @@ function NoteList(props: any)
                     variant="outline-primary"
                     onClick={handleOnAddAlertDebugBtnClick}
                     >add alert (debug)</Button>
+                <Button
+                    variant="outline-secondary"
+                    onClick={handleOnSignUpDebugBtnClick}
+                    >sign up (debug)</Button>
+                <Button
+                    variant="outline-secondary"
+                    onClick={handleOnLogInDebugBtnClick}
+                    >log in (debug)</Button>
             </div>
             <div className="pagination-container-top-main">
                 <h5>all notes: {pagination.numberOfAllNotes}</h5>
