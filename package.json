@@ -24,6 +24,8 @@
     "connect-session-sequelize": "^7.1.5",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.2.0",
