@@ -74,9 +74,9 @@ const verifyCallback = async (username, password, done) =>
     crypto.pbkdf2(password, user.salt, 310000, 32, "sha256", function (err, hashedPswd) {
       if (err) return done(err);
       if (!crypto.timingSafeEqual(user.hashed_password, hashedPswd))
-        return done(null, false, { message: "Incorrect username or password" });
+        return done(null, false, { message: "Incorrect password" });
+      return done(null, user);
     });
-    return done(null, user);
   }
   catch (error) {
     return done(error);
