@@ -34,6 +34,9 @@ import AlertList from "../alerts/AlertList";
 import { AlertTypes } from "../alerts/alertTypes";
 import { add as addAlert } from "../../redux/alertListSlice";
 
+import UserLoginForm from "../users/UserLoginForm";
+import UserRegisterForm from "../users/UserRegisterForm";
+
 function NoteList(props: any)
 {
     // const [notes, setNotes] = useState([]);
@@ -46,6 +49,9 @@ function NoteList(props: any)
     const [showModal, setShowModal] = useState(false);
     const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
     // const [itemsPerPageInput, setItemsPerPageInput] = useState<number>(5);
+    const [isLoginFormActive, setIsLoginFormActive] = useState<boolean>(false);
+    const [isRegisterFormActive, setIsRegisterFormActive] = useState<boolean>(false);
+    const [user, setUser] = useState<string>("");
 
     let popover = (
         <Popover id="popover-basic">
@@ -400,8 +406,51 @@ function NoteList(props: any)
                 </MainModal>
             );
         }
+        else if (isLoginFormActive)
+        {
+            return (
+                <MainModal
+                    showModal={isLoginFormActive}
+                    onHide={handleCloseLoginModal}
+                    title={"Log In"}
+                    onApplyBtnClick={handleCloseLoginModal}
+                    applyBtnText={"Apply"}
+                    onCloseBtnClick={handleCloseLoginModal}
+                    closeBtnText={"Close"}
+                >
+                    <UserLoginForm onUserLoggedIn={(u: string) => { setUser(u) }} />
+                    {/* <UserLoginForm /> */}
+                </MainModal>
+            );
+        }
+        else if (isRegisterFormActive)
+        {
+            return (
+                <MainModal
+                    showModal={isRegisterFormActive}
+                    onHide={handleCloseRegisterModal}
+                    title={"Sign Up"}
+                    onApplyBtnClick={handleCloseRegisterModal}
+                    applyBtnText={"Apply"}
+                    onCloseBtnClick={handleCloseRegisterModal}
+                    closeBtnText={"Close"}
+                >
+                    <UserRegisterForm />
+                </MainModal>
+            );
+        }
         return <MainModal />;
     }
+
+    const handleCloseLoginModal = () =>
+    {
+        setIsLoginFormActive(false);
+    };
+
+    const handleCloseRegisterModal = () =>
+    {
+        setIsRegisterFormActive(false);
+    };
 
     // debug
     const handleOnAddAlertDebugBtnClick = () =>
@@ -505,9 +554,48 @@ function NoteList(props: any)
         }
     };
 
+    const handleUserLogOutBtnClick = async () =>
+    {
+        let alert;
+
+        const url = `api/auth/logout/`;
+
+        const init = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        try
+        {
+            const response = await fetch(url, init);
+            // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
+            const data = await response.json();
+            alert = 
+            {
+                id: (new Date()).getTime(),
+                type: AlertTypes.Info,
+                message: data.responseMsg
+            };
+            dispatch(addAlert(alert));
+            setUser("n/a");
+        }
+        catch (error: any)
+        {
+            alert = 
+            {
+                id: (new Date()).getTime(),
+                type: AlertTypes.Error,
+                message: error.message
+            };
+            dispatch(addAlert(alert));
+        }
+    };
+
     return (
     <Fragment>
         <Fragment>
+            <p>{`user: ${user}`}</p>
             <div className="filters-main-container">
                 {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
                     <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
@@ -526,12 +614,19 @@ function NoteList(props: any)
                     >add alert (debug)</Button>
                 <Button
                     variant="outline-secondary"
-                    onClick={handleOnSignUpDebugBtnClick}
+                    // onClick={handleOnSignUpDebugBtnClick}
+                    onClick={() => { setIsRegisterFormActive(true) }}
                     >sign up (debug)</Button>
                 <Button
                     variant="outline-secondary"
-                    onClick={handleOnLogInDebugBtnClick}
+                    // onClick={handleOnLogInDebugBtnClick}
+                    onClick={() => { setIsLoginFormActive(true) }}
                     >log in (debug)</Button>
+                <Button
+                    variant="outline-secondary"
+                    // onClick={handleOnLogInDebugBtnClick}
+                    onClick={handleUserLogOutBtnClick}
+                    >log out (debug)</Button>
             </div>
             <div className="pagination-container-top-main">
                 <h5>all notes: {pagination.numberOfAllNotes}</h5>
