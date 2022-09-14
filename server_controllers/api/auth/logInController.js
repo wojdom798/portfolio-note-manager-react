@@ -14,7 +14,7 @@ const passport = require("passport");
 
 // route: /api/auth/login
 router.post("/",
-passport.authenticate("local"),
+passport.authenticate("local", { failureRedirect: "/api/auth/unauthorized", failureMessage: false }),
 async function (req, res, next)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
@@ -22,6 +22,7 @@ async function (req, res, next)
 
     res.json({
         responseMsg: `Successfully authenticated ${req.body.username}`,
+        username: req.user.username
     });
 });
 
