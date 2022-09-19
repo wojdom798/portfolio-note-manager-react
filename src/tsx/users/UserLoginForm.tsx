@@ -54,6 +54,11 @@ function UserLoginForm(props: any)
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
             if (response.status === 401) alertType = AlertTypes.Error;
             const data = await response.json();
+
+            const userStr = JSON.stringify({ id: data.user.id, username: data.user.username });
+            // console.log(userStr);
+            localStorage.setItem("user", userStr);
+
             props.onUserLoggedIn(data.username);
             alert = 
             {

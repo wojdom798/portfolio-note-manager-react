@@ -14,16 +14,31 @@ import CategoryList from "./categories/CategoryList";
 import TagList from "./tags/TagList";
 
 import Navigation from "./Navigation";
+import UserLoginForm from "./users/UserLoginForm";
+
+interface User
+{
+    id: number;
+    username: string;
+};
 
 function MainDashboard()
 {
     const [currentView, setCurrentView] = useState(0);
+    const [user, setUser] = useState<User | null>();
 
     useEffect(() =>
     {
-        store.dispatch(fetchCategories);
-        store.dispatch(fetchTags);
-        store.dispatch(fetchNotes);
+        const userStr = localStorage.getItem("user");
+        // console.log(userStr)
+        const user = JSON.parse(userStr!) ;
+        setUser(user);
+        if (user)
+        {
+            store.dispatch(fetchCategories);
+            store.dispatch(fetchTags);
+            store.dispatch(fetchNotes);
+        }
     }, []);
 
     function getCurrentView()
@@ -42,22 +57,25 @@ function MainDashboard()
     }
     
     return (
-        // main-dashboard-container
-        <div className="container-fluid main-dashboard-container">
-            <div className="row">
-                <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse">
-                    <Navigation
-                        onNavigationItemClick={handleNavigationItemClick} />
-                </nav>
-                <main id="main-section" className="col-md-6 ms-sm-auto col-lg-8 px-md-4">
-                    { getCurrentView() }
-                </main>
-                <nav className="col-md-3 col-lg-2 d-md-block bg-light collapse">
-                    
-                </nav>
-            </div>
+          user ? (
+                <div className="container-fluid main-dashboard-container">
+                <div className="row">
+                    <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse">
+                        <Navigation
+                            onNavigationItemClick={handleNavigationItemClick} />
+                    </nav>
+                    <main id="main-section" className="col-md-6 ms-sm-auto col-lg-8 px-md-4">
+                        { getCurrentView() }
+                    </main>
+                    <nav className="col-md-3 col-lg-2 d-md-block bg-light collapse">
+                        
+                    </nav>
+                </div>
 
-        </div> // end: main-dashboard-container
+            </div> // end: main-dashboard-container
+            ) : (
+                <UserLoginForm />
+            )
     );
 }
 

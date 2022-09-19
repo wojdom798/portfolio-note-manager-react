@@ -20,9 +20,14 @@ async function (req, res, next)
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
 
+    // console.log("req.user =");
+    // console.log(req.user);
+    // console.log("req.session.passport.user =");
+    // console.log(req.session.passport.user);
+
     res.json({
-        responseMsg: `Successfully authenticated ${req.body.username}`,
-        username: req.user.username
+        responseMsg: `Successfully authenticated ${req.session.passport.user.username}`,
+        user: req.session.passport.user
     });
 });
 

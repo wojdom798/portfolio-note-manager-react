@@ -577,6 +577,7 @@ function NoteList(props: any)
                 type: AlertTypes.Info,
                 message: data.responseMsg
             };
+            localStorage.removeItem("user");
             dispatch(addAlert(alert));
             setUser("n/a");
         }

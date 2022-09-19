@@ -85,16 +85,6 @@ const verifyCallback = async (username, password, done) =>
 
 const strategy = new LocalStrategy(customFields, verifyCallback);
 
-passport.serializeUser(function(user, done)
-{
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done)
-{
-  done(null, user);
-});
-
 const app = express();
 const portNumber = process.env.PORT || 8001;
 
@@ -119,6 +109,28 @@ app.use(
 );
 
 passport.use(strategy);
+
+passport.serializeUser(function(user, done)
+{
+  process.nextTick(function()
+  {
+    console.log(`serializeUser() -> ${user}`);
+    console.log(user);
+    done(null, { id: user.id, username: user.username });
+  });
+});
+
+passport.deserializeUser(function(user, done)
+{
+  process.nextTick(function()
+  {
+    console.log(`deserializeUser() -> ${user}`);
+    console.log(user);
+    return done(null, user);
+  });
+  
+});
+
 app.use(passport.initialize());
 app.use(passport.session())
 
