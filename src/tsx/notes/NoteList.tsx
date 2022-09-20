@@ -21,11 +21,12 @@ import DateTimeFilter from "../filters/DateTimeFilter";
 import NoteTagManager from "./NoteTagManager";
 
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { add, remove, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
+import { add, remove as removeNote, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
 import { Category, selectCategoryList } from "../../redux/categorySlice";
 import { Tag, selectTagList } from "../../redux/tagSlice";
 import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/paginationSlice";
 import { setCategoriesFilter } from "../../redux/filterSlice";
+import { selectUser, remove as removeUser } from "../../redux/authSlice";
 
 import { store } from "../../redux/store";
 
@@ -44,6 +45,7 @@ function NoteList(props: any)
     const categories = useAppSelector(selectCategoryList);
     const tags = useAppSelector(selectTagList);
     const pagination = useAppSelector(selectPagination);
+    const loggedInUser = useAppSelector(selectUser);
     const dispatch = useAppDispatch();
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
     const [showModal, setShowModal] = useState(false);
@@ -207,7 +209,7 @@ function NoteList(props: any)
         const response = await fetch(url, init);
         if (!response.ok) throw new Error("Failed to delete a note.");
         // const data = await response.json();
-        dispatch(remove(id));
+        dispatch(removeNote(id));
     }
 
     function handleEditNoteButtonClick(noteId: number)
@@ -578,6 +580,7 @@ function NoteList(props: any)
                 message: data.responseMsg
             };
             localStorage.removeItem("user");
+            dispatch(removeUser());
             dispatch(addAlert(alert));
             setUser("n/a");
         }
@@ -596,7 +599,7 @@ function NoteList(props: any)
     return (
     <Fragment>
         <Fragment>
-            <p>{`user: ${user}`}</p>
+            <p>{`user: ${loggedInUser?.username}`}</p>
             <div className="filters-main-container">
                 {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
                     <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>

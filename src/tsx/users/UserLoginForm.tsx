@@ -7,6 +7,11 @@ import { useAppDispatch } from "../../redux/hooks";
 import { add as addAlert,  } from "../../redux/alertListSlice";
 import { AlertTypes } from "../alerts/alertTypes";
 
+import { 
+    selectUser,
+    set as setUser
+} from "../../redux/authSlice";
+
 function UserLoginForm(props: any)
 {
     const dispatch = useAppDispatch();
@@ -55,9 +60,11 @@ function UserLoginForm(props: any)
             if (response.status === 401) alertType = AlertTypes.Error;
             const data = await response.json();
 
-            const userStr = JSON.stringify({ id: data.user.id, username: data.user.username });
+            const user = { id: data.user.id, username: data.user.username };
+            const userStr = JSON.stringify(user);
             // console.log(userStr);
             localStorage.setItem("user", userStr);
+            dispatch(setUser(user));
 
             props.onUserLoggedIn(data.username);
             alert = 

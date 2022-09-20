@@ -3,9 +3,11 @@ import Button from 'react-bootstrap/Button';
 // import Modal from 'react-bootstrap/Modal';
 
 import { store } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchNotes } from "../redux/noteListSlice";
 import { fetchCategories } from "../redux/categorySlice";
 import { fetchTags } from "../redux/tagSlice";
+import { selectUser, set as setUserAuth } from "../redux/authSlice";
 
 // import { fetchNotes } from "../redux/noteListSlice";
 
@@ -16,6 +18,9 @@ import TagList from "./tags/TagList";
 import Navigation from "./Navigation";
 import UserLoginForm from "./users/UserLoginForm";
 
+
+
+
 interface User
 {
     id: number;
@@ -24,15 +29,18 @@ interface User
 
 function MainDashboard()
 {
+    const dispatch = useAppDispatch();
+    const loggedInUser = useAppSelector(selectUser);
     const [currentView, setCurrentView] = useState(0);
-    const [user, setUser] = useState<User | null>();
+    // const [user, setUser] = useState<User | null>();
 
     useEffect(() =>
     {
         const userStr = localStorage.getItem("user");
         // console.log(userStr)
         const user = JSON.parse(userStr!) ;
-        setUser(user);
+        // setUser(user);
+        dispatch(setUserAuth(user));
         if (user)
         {
             store.dispatch(fetchCategories);
@@ -57,8 +65,11 @@ function MainDashboard()
     }
     
     return (
-          user ? (
+        loggedInUser ? (
                 <div className="container-fluid main-dashboard-container">
+                    <button
+                     onClick={()=>{console.log(loggedInUser)}}
+                    >{"console.log user"}</button>
                 <div className="row">
                     <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse">
                         <Navigation
@@ -74,7 +85,12 @@ function MainDashboard()
 
             </div> // end: main-dashboard-container
             ) : (
-                <UserLoginForm />
+                <Fragment>
+                    <button
+                     onClick={()=>{console.log(loggedInUser)}}
+                    >{"console.log user"}</button>
+                    <UserLoginForm onUserLoggedIn={() => {console.log("onUserLoggedIn")}} />
+                </Fragment>
             )
     );
 }
