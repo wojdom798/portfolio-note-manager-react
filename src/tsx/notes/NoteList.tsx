@@ -26,7 +26,11 @@ import { Category, selectCategoryList } from "../../redux/categorySlice";
 import { Tag, selectTagList } from "../../redux/tagSlice";
 import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/paginationSlice";
 import { setCategoriesFilter } from "../../redux/filterSlice";
-import { selectUser, remove as removeUser } from "../../redux/authSlice";
+import {
+    selectUser,
+    remove as removeUser,
+    setWasUserLoggedOut
+} from "../../redux/authSlice";
 
 import { store } from "../../redux/store";
 
@@ -580,6 +584,8 @@ function NoteList(props: any)
                 message: data.responseMsg
             };
             localStorage.removeItem("user");
+            localStorage.setItem("wasUserLoggedOut", "true");
+            dispatch(setWasUserLoggedOut(true));
             dispatch(removeUser());
             dispatch(addAlert(alert));
             setUser("n/a");

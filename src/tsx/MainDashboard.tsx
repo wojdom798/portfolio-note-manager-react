@@ -7,7 +7,11 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchNotes } from "../redux/noteListSlice";
 import { fetchCategories } from "../redux/categorySlice";
 import { fetchTags } from "../redux/tagSlice";
-import { selectUser, set as setUserAuth } from "../redux/authSlice";
+import { 
+    selectUser,
+    set as setUserAuth,
+    selectWasUserLoggedOut
+} from "../redux/authSlice";
 
 // import { fetchNotes } from "../redux/noteListSlice";
 
@@ -17,6 +21,7 @@ import TagList from "./tags/TagList";
 
 import Navigation from "./Navigation";
 import UserLoginForm from "./users/UserLoginForm";
+import UserRegisterForm from "./users/UserRegisterForm";
 
 
 
@@ -31,12 +36,17 @@ function MainDashboard()
 {
     const dispatch = useAppDispatch();
     const loggedInUser = useAppSelector(selectUser);
+    const wasUserLoggedOut = useAppSelector(selectWasUserLoggedOut);
     const [currentView, setCurrentView] = useState(0);
     // const [user, setUser] = useState<User | null>();
+    // false = register form, true = login form
+    const [showLoginForm, setShowLoginForm] = useState<boolean>(false);
 
     useEffect(() =>
     {
         const userStr = localStorage.getItem("user");
+        const wasUserLoggedOutStorage = localStorage.getItem("wasUserLoggedOut");
+        if (wasUserLoggedOutStorage) setShowLoginForm(true);
         // console.log(userStr)
         const user = JSON.parse(userStr!) ;
         // setUser(user);
@@ -47,7 +57,7 @@ function MainDashboard()
             store.dispatch(fetchTags);
             store.dispatch(fetchNotes);
         }
-    }, []);
+    }, [wasUserLoggedOut]);
 
     function getCurrentView()
     {
@@ -63,6 +73,11 @@ function MainDashboard()
     {
         setCurrentView(menuItemIndex);
     }
+
+    const handleOnChangeFormTypeBtnClick = () =>
+    {
+        setShowLoginForm(!showLoginForm);
+    };
     
     return (
         loggedInUser ? (
@@ -84,13 +99,24 @@ function MainDashboard()
                 </div>
 
             </div> // end: main-dashboard-container
+            ) : showLoginForm ? (
+                <div className="main-container-login-signup">
+                    <UserLoginForm
+                        isolated={true}
+                        includeOptionalButton={true}
+                        optionalBtnText={"create new account"}
+                        handleOnOptionalBtnClick={handleOnChangeFormTypeBtnClick}
+                        onUserLoggedIn={() => {console.log("onUserLoggedIn")}} />
+                </div>
             ) : (
-                <Fragment>
-                    <button
-                     onClick={()=>{console.log(loggedInUser)}}
-                    >{"console.log user"}</button>
-                    <UserLoginForm onUserLoggedIn={() => {console.log("onUserLoggedIn")}} />
-                </Fragment>
+                <div className="main-container-login-signup">
+                    <UserRegisterForm
+                        isolated={true}
+                        includeOptionalButton={true}
+                        optionalBtnText={"I already have an account"}
+                        handleOnOptionalBtnClick={handleOnChangeFormTypeBtnClick}
+                        onUserLoggedIn={() => {console.log("onUserLoggedIn")}} />
+                </div>
             )
     );
 }

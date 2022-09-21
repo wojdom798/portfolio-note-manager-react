@@ -114,8 +114,8 @@ passport.serializeUser(function(user, done)
 {
   process.nextTick(function()
   {
-    console.log(`serializeUser() -> ${user}`);
-    console.log(user);
+    // console.log(`serializeUser() -> ${user}`);
+    // console.log(user);
     done(null, { id: user.id, username: user.username });
   });
 });
@@ -124,8 +124,8 @@ passport.deserializeUser(function(user, done)
 {
   process.nextTick(function()
   {
-    console.log(`deserializeUser() -> ${user}`);
-    console.log(user);
+    // console.log(`deserializeUser() -> ${user}`);
+    // console.log(user);
     return done(null, user);
   });
   

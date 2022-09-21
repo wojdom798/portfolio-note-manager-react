@@ -22,7 +22,7 @@ async function (req, res, next)
     let username = "";
     if (req.hasOwnProperty("user"))
         username = req.user.username;
-    console.log(`logging out - ${username}`);
+    // console.log(`logging out - ${username}`);
 
     req.logOut(function (err)
     {

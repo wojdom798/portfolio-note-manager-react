@@ -9,12 +9,14 @@ interface User
 
 interface IUserSliceState
 {
-    user: User | null
+    user: User | null;
+    wasUserLoggedOut: boolean;
 };
 
 const initialState: IUserSliceState =
 {
-    user: null
+    user: null,
+    wasUserLoggedOut: false
 };
 
 export const userSlice = createSlice(
@@ -29,10 +31,15 @@ export const userSlice = createSlice(
         remove: (state) =>
         {
             state.user = null;
+        },
+        setWasUserLoggedOut: (state, action: PayloadAction<boolean>) =>
+        {
+            state.wasUserLoggedOut = action.payload;
         }
     }
 });
 
 export default userSlice.reducer;
-export const { set, remove } = userSlice.actions;
+export const { set, remove, setWasUserLoggedOut } = userSlice.actions;
 export const selectUser = (state: RootState) => state.auth.user;
+export const selectWasUserLoggedOut = (state: RootState) => state.auth.wasUserLoggedOut;
