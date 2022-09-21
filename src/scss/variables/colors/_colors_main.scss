@@ -1,7 +1,8 @@
+$accent-color-1: #33dabd;
 
 $main-bg-color: #f3f5f6;
 $left-side-bar-bg-color: #3f4a59;
-$main-navigation-active-item-bg-color: #33dabd;
+$main-navigation-active-item-bg-color: $accent-color-1;
 
 // pagination
 $pagination-border-color: #AAA;

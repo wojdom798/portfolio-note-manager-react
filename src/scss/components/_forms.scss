@@ -1,0 +1,120 @@
+:root
+{
+    --isolated-form-border-color: #AAA;
+    --isolated-form-bg-color: #FEFEFE;
+    
+    --isolated-form-title-bg-color: #{$left-side-bar-bg-color};
+    --isolated-form-title-txt-color: #FEFEFE;
+
+    --isolated-form-input-bg-color: #FEFEFE;
+    --isolated-form-input-border-color: #CCC;
+    --isolated-form-input-txt-font: #{$main-font};
+    --isolated-form-bxshdw-color: #{darken($main-bg-color, 20%)};
+
+    --isolated-form-submit-btn-bg-color: #{darken($accent-color-1, 10%)};
+    --isolated-form-submit-btn-txt-color: #FFF;
+    --isolated-form-submit-btn-bg-color-hover: #{darken($accent-color-1, 20%)};
+}
+
+.form-container-isolated
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    // padding: 20px;
+    // min-height: 400px;
+    background-color: var(--isolated-form-bg-color);
+    border: 1px solid var(--isolated-form-border-color);
+    box-shadow: 0 0 10px var(--isolated-form-bxshdw-color);
+
+    input
+    {
+        display: block;
+        width: 100%;
+        outline: none;
+        border: none;
+        background-color: var(--isolated-form-input-bg-color);
+        border: 1px solid var(--isolated-form-input-border-color);
+        font-family: var(--isolated-form-input-txt-font);
+        font-size: 1rem;
+    }
+
+    input[type="text"],
+    input[type="password"]
+    {
+        padding: 7px 15px;
+    }
+
+    input[type="submit"]
+    {
+        margin-top: 40px;
+        padding: 7px 35px;
+        width: auto;
+        background-color: var(--isolated-form-submit-btn-bg-color);
+        border-color: var(--isolated-form-submit-btn-bg-color);
+        color: var(--isolated-form-submit-btn-txt-color);
+        border-radius: 2px;
+        transition: background-color 150ms linear,
+                    border-color 150ms linear;
+        word-spacing: .2em;
+        &:hover
+        {
+            background-color: var(--isolated-form-submit-btn-bg-color-hover);
+            border-color: var(--isolated-form-submit-btn-bg-color-hover);
+        }
+    }
+
+    label
+    {
+        display: none;
+    }
+}
+
+form,
+.form-row,
+.form-input-container
+{
+    width: 100%;
+}
+
+form
+{
+    padding: 30px 20px;
+}
+
+.form-title
+{
+    // margin-bottom: 30px;
+    padding: 10px 20px;
+    background-color: var(--isolated-form-title-bg-color);
+    color: var(--isolated-form-title-txt-color);
+}
+
+.form-row
+{
+    margin-bottom: 15px;
+    &:last-of-type
+    {
+        margin-bottom: 0;
+    }
+}
+
+.form-button-group
+{
+    display: flex;
+    justify-content: center;
+}
+
+.form-type-change-btn
+{
+    border: none;
+    outline: none;
+    background: none;
+    color: #2222FF;
+    opacity: .7;
+    &:hover
+    {
+        text-decoration: underline;
+    }
+}
