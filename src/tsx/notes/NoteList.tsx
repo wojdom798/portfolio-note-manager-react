@@ -408,7 +408,8 @@ function NoteList(props: any)
                 >
                     <NoteForm
                         noteToEdit={noteToEdit}
-                        updateNoteList={handleAddNoteToList} />
+                        updateNoteList={handleAddNoteToList}
+                        submitEditedNote={handleSubmitEditedNote}/>
                 </MainModal>
             );
         }
