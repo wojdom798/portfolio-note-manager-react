@@ -24,7 +24,10 @@ import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { add, remove as removeNote, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
 import { Category, selectCategoryList } from "../../redux/categorySlice";
 import { Tag, selectTagList } from "../../redux/tagSlice";
-import { setItemsPerPage, setCurrentPage, selectPagination } from "../../redux/paginationSlice";
+import {
+    setItemsPerPage, setCurrentPage,
+    selectPagination, setNumberOfAllNotes
+} from "../../redux/paginationSlice";
 import { setCategoriesFilter } from "../../redux/filterSlice";
 import {
     selectUser,
@@ -198,6 +201,7 @@ function NoteList(props: any)
         // let n: never[] = [...notes, newNote];
         // setNotes(n);
         dispatch(add(newNote));
+        dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes + 1));
     }
 
     async function handleDeleteNote(id: number)
@@ -214,6 +218,7 @@ function NoteList(props: any)
         if (!response.ok) throw new Error("Failed to delete a note.");
         // const data = await response.json();
         dispatch(removeNote(id));
+        dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes - 1));
     }
 
     function handleEditNoteButtonClick(noteId: number)
@@ -603,103 +608,172 @@ function NoteList(props: any)
         }
     };
 
-    return (
-    <Fragment>
+
+    if (pagination.numberOfAllNotes)
+    {
+        return (
         <Fragment>
-            <p>{`user: ${loggedInUser?.username}`}</p>
-            <div className="filters-main-container">
-                {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
-                    <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
-                </DropdownButton> */}
-                <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                    <Button variant="primary">categories</Button>
-                </OverlayTrigger>
-                <DateTimeFilter />
-                <Button
-                    variant="outline-primary"
-                    onClick={handleApplyFiltersBtnClick}
-                    >apply filters</Button>
-                <Button
-                    variant="outline-primary"
-                    onClick={handleOnAddAlertDebugBtnClick}
-                    >add alert (debug)</Button>
-                <Button
-                    variant="outline-secondary"
-                    // onClick={handleOnSignUpDebugBtnClick}
-                    onClick={() => { setIsRegisterFormActive(true) }}
-                    >sign up (debug)</Button>
-                <Button
-                    variant="outline-secondary"
-                    // onClick={handleOnLogInDebugBtnClick}
-                    onClick={() => { setIsLoginFormActive(true) }}
-                    >log in (debug)</Button>
-                <Button
-                    variant="outline-secondary"
-                    // onClick={handleOnLogInDebugBtnClick}
-                    onClick={handleUserLogOutBtnClick}
-                    >log out (debug)</Button>
-            </div>
-            <div className="pagination-container-top-main">
-                <h5>all notes: {pagination.numberOfAllNotes}</h5>
-                {/* <Form.Group className="mb-3">
-                    <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
-                    <Form.Select
-                        aria-label="select the number of items per page"
-                        value={pagination.itemsPerPage}
-                        onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
-                        id="pagination-ipp-input">
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={15}>15</option>
-                        <option value={20}>20</option>
-                        <option value={50}>50</option>
-                    </Form.Select>
-                </Form.Group> */}
+            <Fragment>
+                <p>{`user: ${loggedInUser?.username}`}</p>
+                <div className="filters-main-container">
+                    {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
+                        <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
+                    </DropdownButton> */}
+                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+                        <Button variant="primary">categories</Button>
+                    </OverlayTrigger>
+                    <DateTimeFilter />
+                    <Button
+                        variant="outline-primary"
+                        onClick={handleApplyFiltersBtnClick}
+                        >apply filters</Button>
+                    <Button
+                        variant="outline-primary"
+                        onClick={handleOnAddAlertDebugBtnClick}
+                        >add alert (debug)</Button>
+                    <Button
+                        variant="outline-secondary"
+                        // onClick={handleOnSignUpDebugBtnClick}
+                        onClick={() => { setIsRegisterFormActive(true) }}
+                        >sign up (debug)</Button>
+                    <Button
+                        variant="outline-secondary"
+                        // onClick={handleOnLogInDebugBtnClick}
+                        onClick={() => { setIsLoginFormActive(true) }}
+                        >log in (debug)</Button>
+                    <Button
+                        variant="outline-secondary"
+                        // onClick={handleOnLogInDebugBtnClick}
+                        onClick={handleUserLogOutBtnClick}
+                        >log out (debug)</Button>
+                </div>
+                <div className="pagination-container-top-main">
+                    <h5>all notes: {pagination.numberOfAllNotes}</h5>
+                    {/* <Form.Group className="mb-3">
+                        <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
+                        <Form.Select
+                            aria-label="select the number of items per page"
+                            value={pagination.itemsPerPage}
+                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
+                            id="pagination-ipp-input">
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </Form.Select>
+                    </Form.Group> */}
 
-                <div className="items-per-page-container">
-                    <label htmlFor="ipp-select">Items per page: </label>
-                    <select
-                        value={pagination.itemsPerPage}
-                        onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
-                        id="ipp-select"
-                    >
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={15}>15</option>
-                        <option value={20}>20</option>
-                        <option value={50}>50</option>
-                    </select>
+                    <div className="items-per-page-container">
+                        <label htmlFor="ipp-select">Items per page: </label>
+                        <select
+                            value={pagination.itemsPerPage}
+                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
+                            id="ipp-select"
+                        >
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+                    
                 </div>
-                
-            </div>
-            {notesToElement()}
-            <div className="pagination-container-bottom-main">
-                {/* <ButtonToolbar aria-label="Toolbar with button groups">
-                    { getPaginationButtons() }
-                </ButtonToolbar> */}
-                <div className="pagination-container-bottom">
-                    { getPaginationButtons() }
+                {notesToElement()}
+                <div className="pagination-container-bottom-main">
+                    {/* <ButtonToolbar aria-label="Toolbar with button groups">
+                        { getPaginationButtons() }
+                    </ButtonToolbar> */}
+                    <div className="pagination-container-bottom">
+                        { getPaginationButtons() }
+                    </div>
                 </div>
-            </div>
-            <Button
-                onClick={handleShowModal}
-                variant="primary"
-                className="floating-action-btn-round"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal">
-            <span>&#x2B;</span>
-            </Button>
+                <Button
+                    onClick={handleShowModal}
+                    variant="primary"
+                    className="floating-action-btn-round"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                <span>&#x2B;</span>
+                </Button>
+            </Fragment>
+
+            {/* Alerts */}
+            <AlertList />
+            
+            {/* Modals */}
+            { renderModal() }
         </Fragment>
+        );
+    }
+    else
+    {
+        return (
+        <Fragment>
+            <Fragment>
+                <p>{`user: ${loggedInUser?.username}`}</p>
+                <div className="filters-main-container">
+                    {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
+                        <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
+                    </DropdownButton> */}
+                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+                        <Button variant="primary">categories</Button>
+                    </OverlayTrigger>
+                    <DateTimeFilter />
+                    <Button
+                        variant="outline-primary"
+                        onClick={handleApplyFiltersBtnClick}
+                        >apply filters</Button>
+                    <Button
+                        variant="outline-primary"
+                        onClick={handleOnAddAlertDebugBtnClick}
+                        >add alert (debug)</Button>
+                    <Button
+                        variant="outline-secondary"
+                        // onClick={handleOnSignUpDebugBtnClick}
+                        onClick={() => { setIsRegisterFormActive(true) }}
+                        >sign up (debug)</Button>
+                    <Button
+                        variant="outline-secondary"
+                        // onClick={handleOnLogInDebugBtnClick}
+                        onClick={() => { setIsLoginFormActive(true) }}
+                        >log in (debug)</Button>
+                    <Button
+                        variant="outline-secondary"
+                        // onClick={handleOnLogInDebugBtnClick}
+                        onClick={handleUserLogOutBtnClick}
+                        >log out (debug)</Button>
+                </div>
+                <div className="empty-list-message-container">
+                    <div className="centered-container">
+                        <h3 className="title">Couldn't Find Any Notes For This Filter.</h3>
+                        <div className="message-container">
+                            <p className="message">Consider using some other filter.</p>
+                            <p className="message">If you haven't added any notes yet, <span className="add-new-note-span" onClick={handleShowModal}>click here to add one</span>.</p>
+                        </div>
+                    </div>
+                </div>
+                <Button
+                    onClick={handleShowModal}
+                    variant="primary"
+                    className="floating-action-btn-round"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                <span>&#x2B;</span>
+                </Button>
+            </Fragment>
 
-        {/* Alerts */}
-        <AlertList />
-        
-        {/* Modals */}
-        { renderModal() }
-    </Fragment>
-    );
-    
+            {/* Alerts */}
+            <AlertList />
+            
+            {/* Modals */}
+            { renderModal() }
+        </Fragment>
+        );
+    }
 }
 
 export default NoteList;

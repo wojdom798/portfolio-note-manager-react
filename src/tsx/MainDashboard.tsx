@@ -81,19 +81,19 @@ function MainDashboard()
     
     return (
         loggedInUser ? (
-                <div className="container-fluid main-dashboard-container">
+            <div className="container-fluid main-dashboard-container min-vh-100">
                     <button
                      onClick={()=>{console.log(loggedInUser)}}
                     >{"console.log user"}</button>
-                <div className="row">
-                    <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse">
+                <div className="row h-100">
+                    <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse h-100">
                         <Navigation
                             onNavigationItemClick={handleNavigationItemClick} />
                     </nav>
-                    <main id="main-section" className="col-md-6 ms-sm-auto col-lg-8 px-md-4">
+                    <main id="main-section" className="col-md-6 ms-sm-auto col-lg-8 px-md-4 h-100">
                         { getCurrentView() }
                     </main>
-                    <nav className="col-md-3 col-lg-2 d-md-block bg-light collapse">
+                    <nav className="col-md-3 col-lg-2 d-md-block bg-light collapse h-100">
                         
                     </nav>
                 </div>
