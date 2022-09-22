@@ -36,7 +36,7 @@ async function (req, res)
                 `'${req.body.newNote.contents}', `,
                 `'${req.body.newNote.date_added}', `,
                 `${req.body.newNote.category_id}, `,
-                `${req.body.newNote.user_id}); `,
+                `${req.session.passport.user.id}); `,
             `SELECT last_insert_rowid();`
         ];
         for (let line of queryArray)

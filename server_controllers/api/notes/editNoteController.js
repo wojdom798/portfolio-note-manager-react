@@ -42,7 +42,7 @@ async function (req, res)
             `contents = '${h.sanitizeText(noteToEdit.contents)}', `,
             `date_added = '${noteToEdit.date_added}', `,
             `category_id = ${noteToEdit.category_id}, `,
-            `user_id = ${noteToEdit.user_id} `,
+            `user_id = ${req.session.passport.user.id} `,
             `WHERE id = ${noteToEdit.id};`
         ];
         for (let line of queryTable)

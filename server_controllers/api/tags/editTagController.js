@@ -38,9 +38,9 @@ async function (req, res)
             `UPDATE tag `,
             `SET `,
             `name = '${h.sanitizeText(tagToEdit.name)}', `,
-            `date_added = '${tagToEdit.date_added}', `,
-            `user_id = ${tagToEdit.user_id} `,
-            `WHERE id = ${tagToEdit.id};`
+            `date_added = '${tagToEdit.date_added}' `,
+            `WHERE (user_id = ${req.session.passport.user.id}) AND `
+            `(id = ${tagToEdit.id});`
         ];
         for (let line of queryTable)
         {

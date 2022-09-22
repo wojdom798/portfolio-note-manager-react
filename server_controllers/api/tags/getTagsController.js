@@ -31,7 +31,9 @@ async function (req, res)
         
         queryArray = 
         [
-            `SELECT * FROM tag ORDER BY id ASC;`
+            `SELECT * FROM tag `,
+            `WHERE user_id = ${req.session.passport.user.id} `,
+            `ORDER BY id ASC;`,
         ];
         for (let line of queryArray)
         {

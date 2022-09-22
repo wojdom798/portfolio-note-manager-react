@@ -31,7 +31,9 @@ async function (req, res)
         
         queryArray = 
         [
-            `DELETE FROM tag WHERE id = ${req.params.id};`
+            `DELETE FROM tag `,
+            `WHERE (user_id = ${req.session.passport.user.id}) AND `,
+            `(id = ${req.params.id});`,
         ];
         for (let line of queryArray)
         {

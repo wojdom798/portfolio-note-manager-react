@@ -37,7 +37,7 @@ async function (req, res)
             `VALUES ( `,
                 `'${h.sanitizeText(req.body.newCategory.name)}', `,
                 `'${h.sanitizeText(req.body.newCategory.date_added)}', `,
-                `${req.body.newCategory.user_id}); `,
+                `${req.session.passport.user.id}); `,
             `SELECT last_insert_rowid();`
         ];
         for (let line of queryArray)

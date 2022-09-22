@@ -38,8 +38,7 @@ async function (req, res)
             `UPDATE category `,
             `SET `,
             `name = '${h.sanitizeText(categoryToEdit.name)}', `,
-            `date_added = '${categoryToEdit.date_added}', `,
-            `user_id = ${categoryToEdit.user_id} `,
+            `date_added = '${categoryToEdit.date_added}' `,
             `WHERE id = ${categoryToEdit.id};`
         ];
         for (let line of queryTable)

@@ -40,7 +40,7 @@ async function (req, res)
             (req.query.hasOwnProperty("date-range-start") &&
             req.query.hasOwnProperty("date-range-end")))
         {
-            filterStr = `WHERE `;
+            filterStr = `WHERE user_id = ${req.session.passport.user.id} AND `;
 
             if (req.query.hasOwnProperty("categories"))
             {
@@ -85,7 +85,7 @@ async function (req, res)
 
             // console.log(queryArray);
         }
-        else
+        else // no filters
         {
             pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
             // queryArray = 
@@ -101,6 +101,7 @@ async function (req, res)
                 `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
                 `FROM note n `,
                 `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                `WHERE user_id = ${req.session.passport.user.id} `,
                 `GROUP BY n.id `,
                 `ORDER BY n.id ASC `,
                 `LIMIT ${req.query["items-per-page"]} `,
@@ -112,7 +113,7 @@ async function (req, res)
             query += line;
         }
     }
-    else
+    else // no pagination
     {
         // queryArray = 
         // [
@@ -125,6 +126,7 @@ async function (req, res)
             `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
             `FROM note n `,
             `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+            `WHERE user_id = ${req.session.passport.user.id} `,
             `GROUP BY n.id `,
             `ORDER BY id ASC;`
         ];
@@ -165,7 +167,8 @@ async function (req, res)
         {
             queryTable = 
             [
-                `SELECT COUNT(*) count FROM note;`
+                `SELECT COUNT(*) count FROM note `,
+                `WHERE user_id = ${req.session.passport.user.id};`,
             ];
         }
 
