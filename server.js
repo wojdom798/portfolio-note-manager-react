@@ -141,7 +141,7 @@ app.get('/', function (req, res, next)
 });
 
 
-const apiController = require("./server_controllers/api/apiController");
+const apiController = require("./routes/api/apiRoutes");
 app.use("/api", apiController);
 
 

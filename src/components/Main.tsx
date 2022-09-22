@@ -40,13 +40,13 @@ function MainDashboard()
     const [currentView, setCurrentView] = useState(0);
     // const [user, setUser] = useState<User | null>();
     // false = register form, true = login form
-    const [showLoginForm, setShowLoginForm] = useState<boolean>(false);
+    const [shouldShowLoginForm, setShouldShowLoginForm] = useState<boolean>(false);
 
     useEffect(() =>
     {
         const userStr = localStorage.getItem("user");
         const wasUserLoggedOutStorage = localStorage.getItem("wasUserLoggedOut");
-        if (wasUserLoggedOutStorage) setShowLoginForm(true);
+        if (wasUserLoggedOutStorage) setShouldShowLoginForm(true);
         // console.log(userStr)
         const user = JSON.parse(userStr!) ;
         // setUser(user);
@@ -76,7 +76,7 @@ function MainDashboard()
 
     const handleOnChangeFormTypeBtnClick = () =>
     {
-        setShowLoginForm(!showLoginForm);
+        setShouldShowLoginForm(!shouldShowLoginForm);
     };
     
     return (
@@ -99,7 +99,7 @@ function MainDashboard()
                 </div>
 
             </div> // end: main-dashboard-container
-            ) : showLoginForm ? (
+            ) : shouldShowLoginForm ? (
                 <div className="main-container-login-signup">
                     <UserLoginForm
                         isolated={true}
