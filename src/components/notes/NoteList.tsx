@@ -1,27 +1,13 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { createPortal } from "react-dom";
-import Button from 'react-bootstrap/Button';
-import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
 
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
-import {
-    Stack as MuiStack,
-    Chip as MuiChip,
-    Button as MuiButton
-} from "@mui/material";
-
-import NoteForm from './NoteForm';
-import DateTimeFilter from "../filters/DateTimeFilter";
-import NoteTagManager from "./NoteTagManager";
-
+// Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { add, remove as removeNote, edit, fetchNotes, selectNoteList, Note } from "../../redux/noteListSlice";
+import { store } from "../../redux/store";
+import {
+    add, remove as removeNote,
+    edit, fetchNotes, selectNoteList, Note
+} from "../../redux/noteListSlice";
 import { Category, selectCategoryList } from "../../redux/categorySlice";
 import { Tag, selectTagList } from "../../redux/tagSlice";
 import {
@@ -34,16 +20,37 @@ import {
     remove as removeUser,
     setWasUserLoggedOut
 } from "../../redux/authSlice";
-
-import { store } from "../../redux/store";
-
-import MainModal from "../MainModal";
-import AlertList from "../alerts/AlertList";
-import { AlertTypes } from "../alerts/alertTypes";
 import { add as addAlert } from "../../redux/alertListSlice";
 
+// Type imports
+import { AlertTypes } from "../alerts/alertTypes";
+
+// App component imports
+import NoteForm from './NoteForm';
+import DateTimeFilter from "../filters/DateTimeFilter";
+import NoteTagManager from "./NoteTagManager";
+import MainModal from "../MainModal";
+import AlertList from "../alerts/AlertList";
 import UserLoginForm from "../users/UserLoginForm";
 import UserRegisterForm from "../users/UserRegisterForm";
+import FilterMenu from "../filters/FilterMenu";
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+
+// Material UI imports
+import {
+    Stack as MuiStack,
+    Chip as MuiChip,
+    Button as MuiButton
+} from "@mui/material";
+
 
 function NoteList(props: any)
 {
@@ -62,106 +69,6 @@ function NoteList(props: any)
     const [isRegisterFormActive, setIsRegisterFormActive] = useState<boolean>(false);
     const [user, setUser] = useState<string>("");
 
-    let popover = (
-        <Popover id="popover-basic">
-            <Popover.Header as="h3">select categories</Popover.Header>
-            <Popover.Body>
-                <Fragment>
-                <ButtonGroup aria-label="">
-                    <Button
-                        disabled
-                        onClick={handleFilterSelectAllCategoriesBtnClick}
-                        variant="outline-secondary">all</Button>
-                    <Button disabled variant="outline-secondary">none</Button>
-                </ButtonGroup>
-                <Form.Group className="mb-3">
-                    { getCategoriesAsCheckboxes() }
-                </Form.Group>
-                </Fragment>
-            </Popover.Body>
-        </Popover>
-    );
-
-    // const popover = () =>
-    // {
-    //     return (
-    //         <Popover id="popover-basic">
-    //             <Popover.Header as="h3">select categories</Popover.Header>
-    //             <Popover.Body>
-    //                 <Fragment>
-    //                 <ButtonGroup aria-label="">
-    //                     <Button
-    //                         disabled
-    //                         onClick={handleFilterSelectAllCategoriesBtnClick}
-    //                         variant="outline-secondary">all</Button>
-    //                     <Button disabled variant="outline-secondary">none</Button>
-    //                 </ButtonGroup>
-    //                 <Form.Group className="mb-3">
-    //                     { getCategoriesAsCheckboxes() }
-    //                 </Form.Group>
-    //                 </Fragment>
-    //             </Popover.Body>
-    //         </Popover>
-    //     );
-    // }
-    
-
-    function getCategoriesAsCheckboxes()
-    {
-        return Object.values(categories).map((category: Category) =>
-        {
-            if (store.getState().filters.categories.includes(category.id))
-            {
-                return (
-                    <Form.Check
-                        checked
-                        key={category.id}
-                        id={`category-chbx-${category.id}`}
-                        label={category.name}
-                        onChange={(event: any) => handleCategoryFilterChbxChange(event, category.id)}
-                        type="checkbox" />
-                );
-            }
-            else
-            {
-                return (
-                    <Form.Check
-                        key={category.id}
-                        id={`category-chbx-${category.id}`}
-                        label={category.name}
-                        onChange={(event: any) => handleCategoryFilterChbxChange(event, category.id)}
-                        type="checkbox" />
-                );
-            }
-        });
-    }
-
-    function handleApplyFiltersBtnClick()
-    {
-        dispatch(setCurrentPage(1));
-        dispatch(fetchNotes);
-    }
-
-    function handleCategoryFilterChbxChange(event: any, categoryId: number)
-    {
-        // if (event.target.checked)
-        if (!store.getState().filters.categories.includes(categoryId))
-        {
-            dispatch(setCategoriesFilter([...store.getState().filters.categories, categoryId]));
-        }
-        else
-        {
-            dispatch(setCategoriesFilter(store.getState().filters.categories.filter((c: number) => c !== categoryId)));
-        }
-    }
-
-    function handleFilterSelectAllCategoriesBtnClick()
-    {
-        // setFilters({
-        //     ...filters,
-        //     ctg: Object.values(categories).map(c => c.id)
-        // });
-    }
 
     useEffect(() =>
     {
@@ -615,18 +522,11 @@ function NoteList(props: any)
         <Fragment>
             <Fragment>
                 <p>{`user: ${loggedInUser?.username}`}</p>
+                <FilterMenu />
                 <div className="filters-main-container">
                     {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
                         <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
                     </DropdownButton> */}
-                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                        <Button variant="primary">categories</Button>
-                    </OverlayTrigger>
-                    <DateTimeFilter />
-                    <Button
-                        variant="outline-primary"
-                        onClick={handleApplyFiltersBtnClick}
-                        >apply filters</Button>
                     <Button
                         variant="outline-primary"
                         onClick={handleOnAddAlertDebugBtnClick}
@@ -714,18 +614,8 @@ function NoteList(props: any)
         <Fragment>
             <Fragment>
                 <p>{`user: ${loggedInUser?.username}`}</p>
+                <FilterMenu />
                 <div className="filters-main-container">
-                    {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
-                        <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
-                    </DropdownButton> */}
-                    <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-                        <Button variant="primary">categories</Button>
-                    </OverlayTrigger>
-                    <DateTimeFilter />
-                    <Button
-                        variant="outline-primary"
-                        onClick={handleApplyFiltersBtnClick}
-                        >apply filters</Button>
                     <Button
                         variant="outline-primary"
                         onClick={handleOnAddAlertDebugBtnClick}
