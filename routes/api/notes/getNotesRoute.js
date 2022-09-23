@@ -54,6 +54,7 @@ async function (req, res)
                     else
                         filterStr += `OR category_id = ${categories[i]} `;
                 }
+                filterStr += ") ";
             }
             if (req.query.hasOwnProperty("categories") &&
                 req.query.hasOwnProperty("date-range-start"))
