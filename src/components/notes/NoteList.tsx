@@ -473,6 +473,7 @@ function NoteList(props: any)
         }
     };
 
+    // duplicate code
     const handleUserLogOutBtnClick = async () =>
     {
         let alert;
@@ -521,7 +522,6 @@ function NoteList(props: any)
         return (
         <Fragment>
             <Fragment>
-                <p>{`user: ${loggedInUser?.username}`}</p>
                 <FilterMenu />
                 <div className="filters-main-container">
                     {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
@@ -613,7 +613,6 @@ function NoteList(props: any)
         return (
         <Fragment>
             <Fragment>
-                <p>{`user: ${loggedInUser?.username}`}</p>
                 <FilterMenu />
                 <div className="filters-main-container">
                     <Button
