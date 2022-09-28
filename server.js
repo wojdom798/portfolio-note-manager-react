@@ -141,8 +141,8 @@ app.get('/', function (req, res, next)
 });
 
 
-const apiController = require("./routes/api/apiRoutes");
-app.use("/api", apiController);
+const apiRoutes = require("./routes/api/apiRoutes");
+app.use("/api", apiRoutes);
 
 
 app.listen(portNumber);

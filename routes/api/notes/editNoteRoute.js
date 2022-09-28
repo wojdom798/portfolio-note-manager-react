@@ -12,7 +12,7 @@ const settingsFilePath = path.join(__projectDir, projectSettingsFileName);
 const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
 // helper functions
-const h = require(path.join(__projectDir, "server_controllers", "server_helper.js"));
+const h = require(path.join(__projectDir, "routes", "server_helper.js"));
 
 // route: /api/notes/edit
 router.put("/",
