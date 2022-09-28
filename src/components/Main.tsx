@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import Button from 'react-bootstrap/Button';
-// import Modal from 'react-bootstrap/Modal';
 
+// Redux imports
 import { store } from "../redux/store";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchNotes } from "../redux/noteListSlice";
@@ -12,19 +11,19 @@ import {
     set as setUserAuth,
     selectWasUserLoggedOut
 } from "../redux/authSlice";
-
 // import { fetchNotes } from "../redux/noteListSlice";
 
+// App component imports
 import NoteList from "./notes/NoteList";
 import CategoryList from "./categories/CategoryList";
 import TagList from "./tags/TagList";
-
 import Navigation from "./Navigation";
 import UserLoginForm from "./users/UserLoginForm";
 import UserRegisterForm from "./users/UserRegisterForm";
 
-
-
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+// import Modal from 'react-bootstrap/Modal';
 
 interface User
 {
@@ -82,9 +81,6 @@ function MainDashboard()
     return (
         loggedInUser ? (
             <div className="container-fluid main-dashboard-container min-vh-100">
-                    <button
-                     onClick={()=>{console.log(loggedInUser)}}
-                    >{"console.log user"}</button>
                 <div className="row h-100">
                     <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse h-100">
                         <Navigation
