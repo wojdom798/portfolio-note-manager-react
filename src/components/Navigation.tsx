@@ -10,6 +10,12 @@ import {
 } from "../redux/authSlice";
 import { add as addAlert } from "../redux/alertListSlice"
 
+// Helper function imports
+import {
+    setUserInStorage,
+    setWasUserLoggedOutInStorage
+} from "../localStorageUtils";
+
 // 3rd party component imports
 import { IonIcon } from "react-ion-icon";
 
@@ -82,8 +88,8 @@ function Navigation(props: any)
             const response = await fetch(url, init);
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
             const data = await response.json();
-            localStorage.removeItem("user");
-            localStorage.setItem("wasUserLoggedOut", "true");
+            setUserInStorage(null);
+            setWasUserLoggedOutInStorage(true);
             dispatch(setWasUserLoggedOut(true));
             dispatch(removeUser());
         }

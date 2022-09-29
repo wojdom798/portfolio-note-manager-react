@@ -1,16 +1,29 @@
 import React, { SyntheticEvent, useState } from "react";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import helper from '../../helper';
 
-import { useAppDispatch } from "../../redux/hooks";
-import { add as addAlert,  } from "../../redux/alertListSlice";
+// Type imports
 import { AlertTypes } from "../alerts/alertTypes";
 
+// Redux imports
+import { useAppDispatch } from "../../redux/hooks";
+import { add as addAlert,  } from "../../redux/alertListSlice";
 import { 
     selectUser,
     set as setUser
 } from "../../redux/authSlice";
+
+// Helper functions
+import helper from '../../helper';
+import {
+    setUserInStorage
+} from "../../localStorageUtils";
+
+// App component imports
+// [...]
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
 
 function UserLoginForm(props: any)
 {
@@ -60,10 +73,12 @@ function UserLoginForm(props: any)
             if (response.status === 401) alertType = AlertTypes.Error;
             const data = await response.json();
 
-            const user = { id: data.user.id, username: data.user.username };
-            const userStr = JSON.stringify(user);
-            // console.log(userStr);
-            localStorage.setItem("user", userStr);
+            const user = { 
+                id: data.user.id,
+                username: data.user.username
+            } as { id: number, username: string };
+
+            setUserInStorage(user); // save logged-in user to local storage
             dispatch(setUser(user));
 
             props.onUserLoggedIn(data.username);

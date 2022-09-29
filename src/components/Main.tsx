@@ -11,7 +11,14 @@ import {
     set as setUserAuth,
     selectWasUserLoggedOut
 } from "../redux/authSlice";
-// import { fetchNotes } from "../redux/noteListSlice";
+
+// Helper functions
+import {
+    createDefaultUserDataInStorage,
+    getUserDataFromStorage,
+    setUserInStorage,
+    setWasUserLoggedOutInStorage
+} from "../localStorageUtils";
 
 // App component imports
 import NoteList from "./notes/NoteList";
@@ -37,27 +44,33 @@ function MainDashboard()
     const loggedInUser = useAppSelector(selectUser);
     const wasUserLoggedOut = useAppSelector(selectWasUserLoggedOut);
     const [currentView, setCurrentView] = useState(0);
-    // const [user, setUser] = useState<User | null>();
     // false = register form, true = login form
     const [shouldShowLoginForm, setShouldShowLoginForm] = useState<boolean>(false);
 
     useEffect(() =>
     {
-        const userStr = localStorage.getItem("user");
-        const wasUserLoggedOutStorage = localStorage.getItem("wasUserLoggedOut");
-        if (wasUserLoggedOutStorage) setShouldShowLoginForm(true);
-        // console.log(userStr)
-        const user = JSON.parse(userStr!) ;
-        // setUser(user);
-        dispatch(setUserAuth(user));
-        if (user)
+        let userData;
+        try
         {
-            (async () =>
+            userData = getUserDataFromStorage();
+        }
+        catch (error)
+        {
+            userData = createDefaultUserDataInStorage();
+        }
+        finally
+        {
+            setShouldShowLoginForm(userData.wasUserLoggedOut);
+            dispatch(setUserAuth(userData.user));
+            if (userData.user)
             {
-                await store.dispatch(fetchCategories);
-                await store.dispatch(fetchTags);
-                await store.dispatch(fetchNotes);
-            })();
+                (async () =>
+                {
+                    await store.dispatch(fetchCategories);
+                    await store.dispatch(fetchTags);
+                    await store.dispatch(fetchNotes);
+                })();
+            }
         }
     }, [wasUserLoggedOut]);
 
