@@ -52,9 +52,12 @@ function MainDashboard()
         dispatch(setUserAuth(user));
         if (user)
         {
-            store.dispatch(fetchCategories);
-            store.dispatch(fetchTags);
-            store.dispatch(fetchNotes);
+            (async () =>
+            {
+                await store.dispatch(fetchCategories);
+                await store.dispatch(fetchTags);
+                await store.dispatch(fetchNotes);
+            })();
         }
     }, [wasUserLoggedOut]);
 
