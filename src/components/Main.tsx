@@ -11,6 +11,7 @@ import {
     set as setUserAuth,
     selectWasUserLoggedOut
 } from "../redux/authSlice";
+import { fetchMaxDateRange } from "../redux/filterSlice";
 
 // Helper functions
 import {
@@ -66,9 +67,10 @@ function MainDashboard()
             {
                 (async () =>
                 {
-                    await store.dispatch(fetchCategories);
-                    await store.dispatch(fetchTags);
-                    await store.dispatch(fetchNotes);
+                    await dispatch(fetchMaxDateRange);
+                    await dispatch(fetchCategories);
+                    await dispatch(fetchTags);
+                    await dispatch(fetchNotes);
                 })();
             }
         }

@@ -11,12 +11,14 @@ export interface Filter
 {
     categories: number[];
     dateRange: IDateRange | null;
+    dateRangeLimit: IDateRange | null;
 };
 
 const initialState: Filter =
 {
     categories: [],
-    dateRange: null
+    dateRange: null,
+    dateRangeLimit: null
 };
 
 export const filterSlice = createSlice(
@@ -31,11 +33,35 @@ export const filterSlice = createSlice(
         setDateRangeFilter: (state, action: PayloadAction<IDateRange | null>) =>
         {
             state.dateRange = action.payload;
+        },
+        setDateRangeLimit: (state, action: PayloadAction<IDateRange>) =>
+        {
+            state.dateRangeLimit = action.payload;
         }
     }
 });
 
-export const { setCategoriesFilter, setDateRangeFilter } = filterSlice.actions;
+export async function fetchMaxDateRange(dispatch: any, getState: () => RootState)
+{
+    const url = "/api/get-date-range";
+    const init = {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: "cors" as RequestMode
+    };
+    const response = await fetch(url, init);
+    const data = await response.json();
+    const dateRangeLimit =
+    {
+        start: data.responseData.minDate as string,
+        end: data.responseData.maxDate as string,
+    };
+    dispatch(setDateRangeLimit(dateRangeLimit));
+}
+
+export const { setCategoriesFilter, setDateRangeFilter, setDateRangeLimit } = filterSlice.actions;
 export const selectFilters = (state: RootState) => state.filters;
 
 export default filterSlice.reducer;

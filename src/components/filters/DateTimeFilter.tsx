@@ -1,4 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+
+// Redux imports
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { selectFilters, setDateRangeFilter } from "../../redux/filterSlice";
+
+// Bootstrap imports
+import {
+    Modal as BtsrpModal,
+    Button as BtsrpButton
+} from "react-bootstrap/";
+
+// Material Design imports
 import MuiButton from "@mui/material/Button";
 import MuiFormControl from "@mui/material/FormControl";
 import MuiInputLabel from "@mui/material/InputLabel";
@@ -9,15 +21,6 @@ import MuiButtonGroup from "@mui/material/ButtonGroup";
 import MuiCheckbox from "@mui/material/Checkbox"
 import MuiFormControlLabel from "@mui/material/FormControlLabel"
 import ButtonBase from "@mui/material/ButtonBase";
-
-import {
-    Modal as BtsrpModal,
-    Button as BtsrpButton
-} from "react-bootstrap/";
-
-
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { selectFilters, setDateRangeFilter } from "../../redux/filterSlice";
 
 
 interface Date
@@ -65,6 +68,23 @@ function DateTimeFilter()
             { long: "Sunday", short: "S" }
         ]
     };
+
+    useEffect(() =>
+    {
+        setSelectedStartDate(filters.dateRangeLimit ? convertStringToDate(filters.dateRangeLimit.start) : null);
+        setSelectedEndDate(filters.dateRangeLimit ? convertStringToDate(filters.dateRangeLimit.end) : null);
+    }, [filters]);
+
+    function convertStringToDate(date: string): Date
+    {
+        const dateStr = date.split(" ")[0] as string;
+        const splitDateStr = dateStr.split("-");
+        return {
+            year: parseInt(splitDateStr[0]),
+            month: parseInt(splitDateStr[1]),
+            day: parseInt(splitDateStr[2])
+        };
+    }
 
     function isLeapYear(year: number)
     {
