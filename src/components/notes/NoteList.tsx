@@ -34,6 +34,7 @@ import AlertList from "../alerts/AlertList";
 import UserLoginForm from "../users/UserLoginForm";
 import UserRegisterForm from "../users/UserRegisterForm";
 import FilterMenu from "../filters/FilterMenu";
+import Pagination from "../pagination/Pagination";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -222,52 +223,6 @@ function NoteList(props: any)
         });
     }
 
-    function handlePaginationInputFieldChange(event: any, fieldName: any)
-    {
-        if (fieldName === "IPP")
-        {
-            if (typeof event.target.value === "string")
-            {
-                console.log(event.target.value);
-                // setItemsPerPageInput(Number(event.target.value));
-                dispatch(setItemsPerPage(Number(event.target.value)));
-                dispatch(setCurrentPage(1));
-                dispatch(fetchNotes);
-            }
-        }
-    }
-
-    function getPaginationButtons()
-    {
-        let paginationButtons: any = [];
-        let numOfPages = Math.ceil(pagination.numberOfAllNotes / pagination.itemsPerPage);
-        for (let i  = 0; i < numOfPages; i++)
-        {
-            // const tempBtn = (
-            //     <ButtonGroup key={i} className="me-2" aria-label={`group #${i+1}`}>
-            //         <Button
-            //             onClick={(event: any) => handlePageBtnClick(event, i+1) }
-            //         >{i+1}</Button>
-            //     </ButtonGroup>
-            // );
-            const tempBtn = (
-                <button
-                    key={i}
-                    className={i+1 === pagination.currentPage ? "pagination-button active" : "pagination-button"}
-                    onClick={(event: any) => handlePageBtnClick(event, i+1) }
-                >{i+1}</button>
-            );
-            paginationButtons.push(tempBtn);
-        }
-        return paginationButtons;
-    }
-
-    function handlePageBtnClick(event: any, pageNumber: number)
-    {
-        // console.log(`selected page: ${pageNumber}`);
-        dispatch(setCurrentPage(pageNumber));
-        dispatch(fetchNotes);
-    }
 
     /********************************
         TEMPORARY
@@ -516,7 +471,7 @@ function NoteList(props: any)
         }
     };
 
-
+    
     if (pagination.numberOfAllNotes)
     {
         return (
@@ -547,48 +502,11 @@ function NoteList(props: any)
                         onClick={handleUserLogOutBtnClick}
                         >log out (debug)</Button>
                 </div>
-                <div className="pagination-container-top-main">
-                    <h5>all notes: {pagination.numberOfAllNotes}</h5>
-                    {/* <Form.Group className="mb-3">
-                        <Form.Label  htmlFor="pagination-ipp-input">items per page</Form.Label>
-                        <Form.Select
-                            aria-label="select the number of items per page"
-                            value={pagination.itemsPerPage}
-                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
-                            id="pagination-ipp-input">
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                        </Form.Select>
-                    </Form.Group> */}
 
-                    <div className="items-per-page-container">
-                        <label htmlFor="ipp-select">Items per page: </label>
-                        <select
-                            value={pagination.itemsPerPage}
-                            onChange={(event: any) => { handlePaginationInputFieldChange(event, "IPP") }}
-                            id="ipp-select"
-                        >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                        </select>
-                    </div>
-                    
-                </div>
-                {notesToElement()}
-                <div className="pagination-container-bottom-main">
-                    {/* <ButtonToolbar aria-label="Toolbar with button groups">
-                        { getPaginationButtons() }
-                    </ButtonToolbar> */}
-                    <div className="pagination-container-bottom">
-                        { getPaginationButtons() }
-                    </div>
-                </div>
+                <Pagination>
+                    {notesToElement()}
+                </Pagination>
+
                 <Button
                     onClick={handleShowModal}
                     variant="primary"
