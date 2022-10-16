@@ -56,9 +56,12 @@ function Pagination(props: any)
 
     function handlePageBtnClick(event: any, pageNumber: number)
     {
-        // console.log(`selected page: ${pageNumber}`);
-        dispatch(setCurrentPage(pageNumber));
-        dispatch(fetchNotes);
+        if (pageNumber !== pagination.currentPage)
+        {
+            // console.log(`selected page: ${pageNumber}`);
+            dispatch(setCurrentPage(pageNumber));
+            dispatch(fetchNotes);
+        }
     }
 
     return (
