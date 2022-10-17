@@ -71,19 +71,32 @@ function DateTimeFilter()
 
     useEffect(() =>
     {
-        setSelectedStartDate(filters.dateRangeLimit ? convertStringToDate(filters.dateRangeLimit.start) : null);
-        setSelectedEndDate(filters.dateRangeLimit ? convertStringToDate(filters.dateRangeLimit.end) : null);
+        setSelectedStartDate(filters.dateRange ? convertStringToDate(filters.dateRange!.start) : null);
+        setSelectedEndDate(filters.dateRange ? convertStringToDate(filters.dateRange!.end) : null);
     }, [filters]);
 
     function convertStringToDate(date: string): Date
     {
         const dateStr = date.split(" ")[0] as string;
         const splitDateStr = dateStr.split("-");
-        return {
-            year: parseInt(splitDateStr[0]),
-            month: parseInt(splitDateStr[1]),
-            day: parseInt(splitDateStr[2])
-        };
+
+        if (splitDateStr.length === 1)
+        {
+            // console.log("splitDateStr.length = 1");
+            return {
+                year: parseInt(splitDateStr[0].slice(0, 4)),
+                month: parseInt(splitDateStr[0].slice(4, 6)),
+                day: parseInt(splitDateStr[0].slice(6))
+            };
+        }
+        else
+        {
+            return {
+                year: parseInt(splitDateStr[0]),
+                month: parseInt(splitDateStr[1]),
+                day: parseInt(splitDateStr[2])
+            };
+        }
     }
 
     function isLeapYear(year: number)
@@ -287,11 +300,13 @@ function DateTimeFilter()
         };
         if (!isSelectingEndDateActive)
         {
-            setSelectedStartDate(newDate);
+            setDraftDateStart(newDate);
+            // setSelectedStartDate(newDate);
         }
         else
         {
-            setSelectedEndDate(newDate);
+            setDraftDateEnd(newDate);
+            // setSelectedEndDate(newDate);
         }
     }
 
@@ -324,8 +339,10 @@ function DateTimeFilter()
         //     end: "20220822"
         // };
         const dateRange = {
-            start: formatDateString2(selectedStartDate),
-            end: formatDateString2(selectedEndDate)
+            // start: formatDateString2(selectedStartDate),
+            // end: formatDateString2(selectedEndDate)
+            start: formatDateString2(draftDateStart),
+            end: formatDateString2(draftDateEnd)
         };
         // console.log(dateRange);
         dispatch(setDateRangeFilter(dateRange));
@@ -459,8 +476,8 @@ function DateTimeFilter()
                         variant="contained"
                     >debug</MuiButton>
                     <div style={ {display: "block"} }>
-                        <p>start date: {selectedStartDate != null ? formatDateString2(selectedStartDate, "-") : "null"}</p>
-                        <p>end date: {selectedEndDate != null ? formatDateString2(selectedEndDate, "-") : "null"}</p>
+                        <p>start date: {draftDateStart != null ? formatDateString2(draftDateStart, "-") : "null"}</p>
+                        <p>end date: {draftDateEnd != null ? formatDateString2(draftDateEnd, "-") : "null"}</p>
                     </div>
                 </div>
             </div>

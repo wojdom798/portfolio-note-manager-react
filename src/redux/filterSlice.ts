@@ -55,10 +55,12 @@ export async function fetchMaxDateRange(dispatch: any, getState: () => RootState
     const data = await response.json();
     const dateRangeLimit =
     {
-        start: data.responseData.minDate as string,
-        end: data.responseData.maxDate as string,
+        start: ((data.responseData.minDate as string).split(" ")[0] as string).split("-").join(""),
+        end: ((data.responseData.maxDate as string).split(" ")[0] as string).split("-").join(""),
     };
     dispatch(setDateRangeLimit(dateRangeLimit));
+    // set date range to maximum by default (page refresh)
+    dispatch(setDateRangeFilter(dateRangeLimit));
 }
 
 export const { setCategoriesFilter, setDateRangeFilter, setDateRangeLimit } = filterSlice.actions;
