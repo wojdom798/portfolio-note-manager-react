@@ -301,11 +301,13 @@ function DateTimeFilter()
         if (!isSelectingEndDateActive)
         {
             setDraftDateStart(newDate);
+            setSelectingEndDateActive(true);
             // setSelectedStartDate(newDate);
         }
         else
         {
             setDraftDateEnd(newDate);
+            setSelectingEndDateActive(false);
             // setSelectedEndDate(newDate);
         }
     }
@@ -346,16 +348,6 @@ function DateTimeFilter()
         };
         // console.log(dateRange);
         dispatch(setDateRangeFilter(dateRange));
-    }
-
-    // temporary
-    function handleIsSelectingEndDate(event: any)
-    {
-        // console.log(event.target.checked);
-        if (event.target.checked)
-            setSelectingEndDateActive(true);
-        else
-            setSelectingEndDateActive(false);
     }
 
     // modal
@@ -456,13 +448,6 @@ function DateTimeFilter()
                     </div>
                 </div>
                 <div className="datetime-filter-footer">
-                    {/* <MuiCheckbox {...label} defaultChecked /> */}
-                    <MuiFormControlLabel
-                        control={
-                            <MuiCheckbox
-                                onChange={handleIsSelectingEndDate} />
-                        }
-                        label="selecting end date" />
                     <MuiButton
                         onClick={handleHideDateRangePickerModal}
                         variant="text"
