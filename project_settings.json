@@ -1,5 +1,14 @@
 {
     "database": {
-        "filename": "db.sqlite3"
+        "sqlite": {
+            "filename": "db.sqlite3"
+        },
+        "postgresql": {
+            "user": "postgres",
+            "host": "localhost",
+            "database": "note_manager_app",
+            "password": "123qweasd!",
+            "port": 5433
+        }
     }
 }

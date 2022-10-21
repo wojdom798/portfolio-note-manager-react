@@ -20,6 +20,9 @@ const projectSettingsFileName = "project_settings.json";
 const settingsFilePath = path.join(__projectDir, projectSettingsFileName);
 const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
+const { Pool, Client } = require("pg");
+
+const postgresPool = new Pool(projectSettings.database.postgresql);
 
 function createDbConnection(filename)
 {
@@ -96,6 +99,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const maxAgeDebug20s = 20*1000;
+
 app.use(
   session({
     secret: "secret message", // env.secret
@@ -104,6 +109,7 @@ app.use(
     proxy: true,
     cookie: {
       maxAge: (1000 * 3600 * 12) // 12h
+      // maxAge: maxAgeDebug20s
     }
   }),
 );
@@ -140,6 +146,16 @@ app.get('/', function (req, res, next)
   res.sendFile('index.html', { root: path.join(__dirname, "public") });
 });
 
+app.get("/postgres-test", function(req, res, next)
+{
+  console.log(`Request: [${req.method}], `, req.originalUrl);
+  postgresPool.query("SELECT * FROM note", (err, queryResult) =>
+  {
+    if (err) res.json({msg: "error"});
+    res.json(queryResult.rows);
+  });
+});
+
 
 const apiRoutes = require("./routes/api/apiRoutes");
 app.use("/api", apiRoutes);
@@ -148,3 +164,6 @@ app.use("/api", apiRoutes);
 app.listen(portNumber);
 console.log(new Date().toLocaleString("pl-PL",
   { hour12: false }) + ", starting server on port:", portNumber);
+
+
+// postgresPool.end();
