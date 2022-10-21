@@ -1,5 +1,6 @@
 {
     "database": {
+        "selected_database": "postgresql",
         "sqlite": {
             "filename": "db.sqlite3"
         },
