@@ -11,6 +11,10 @@ const projectSettingsFileName = "project_settings.json";
 const settingsFilePath = path.join(__projectDir, projectSettingsFileName);
 const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
+const passport = require("passport");
+
+const { Pool, Client } = require("pg");
+const postgresPool = new Pool(projectSettings.database.postgresql);
 
 // route: /api/notes/get
 // or
@@ -18,6 +22,8 @@ const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 // or
 // /api/notes/get/?items-per-page=[...]&page=[...]&categories=[...]
 router.get("/",
+// passport.authenticate("local", { failureRedirect: "/api/auth/logout" }),
+// passport.authenticate("local", { failureRedirect: "/api/auth/unauthorized" }),
 async function (req, res)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
@@ -28,72 +34,101 @@ async function (req, res)
     let queryResult;
 
     let filterStr = "";
-
     let notes;
     let numberOfAllNotes;
-
     let pageOffset;
-    if (req.query.hasOwnProperty("items-per-page") &&
-        req.query.hasOwnProperty("page"))
+
+    // let userId = req.session.passport.user.id;
+    let userId = 1;
+
+    if (projectSettings.database.selected_database === "sqlite")
     {
-        if (req.query.hasOwnProperty("categories") ||
-            (req.query.hasOwnProperty("date-range-start") &&
-            req.query.hasOwnProperty("date-range-end")))
+        if (req.query.hasOwnProperty("items-per-page") &&
+            req.query.hasOwnProperty("page"))
         {
-            filterStr = `WHERE user_id = ${req.session.passport.user.id} AND `;
-
-            if (req.query.hasOwnProperty("categories"))
+            if (req.query.hasOwnProperty("categories") ||
+                (req.query.hasOwnProperty("date-range-start") &&
+                req.query.hasOwnProperty("date-range-end")))
             {
-                const categories = JSON.parse(req.query["categories"]);
-                for (let i = 0; i < categories.length; i++)
+                filterStr = `WHERE user_id = ${req.session.passport.user.id} AND `;
+
+                if (req.query.hasOwnProperty("categories"))
                 {
-                    if (i === 0)
-                        filterStr += `(category_id = ${categories[i]} `;
-                    else if ((i === categories.length-1) && (categories.length > 1))
-                        filterStr += `OR category_id = ${categories[i]}) `;
-                    else
-                        filterStr += `OR category_id = ${categories[i]} `;
+                    const categories = JSON.parse(req.query["categories"]);
+                    for (let i = 0; i < categories.length; i++)
+                    {
+                        if (i === 0)
+                            filterStr += `(category_id = ${categories[i]} `;
+                        else if ((i === categories.length-1) && (categories.length > 1))
+                            filterStr += `OR category_id = ${categories[i]}) `;
+                        else
+                            filterStr += `OR category_id = ${categories[i]} `;
+                    }
+                    filterStr += ") ";
                 }
-                filterStr += ") ";
-            }
-            if (req.query.hasOwnProperty("categories") &&
-                req.query.hasOwnProperty("date-range-start"))
-            {
-                filterStr += `AND `;
-            }
-            if (req.query.hasOwnProperty("date-range-start"))
-            {
-                const dateRangeStartStr = JSON.parse(req.query["date-range-start"]);
-                const dateRangeEndStr = JSON.parse(req.query["date-range-end"]);
-                filterStr += `(strftime('%Y%m%d', date_added) >= '${dateRangeStartStr}' AND `;
-                filterStr += `strftime('%Y%m%d', date_added) <= '${dateRangeEndStr}') `;
-            }
+                if (req.query.hasOwnProperty("categories") &&
+                    req.query.hasOwnProperty("date-range-start"))
+                {
+                    filterStr += `AND `;
+                }
+                if (req.query.hasOwnProperty("date-range-start"))
+                {
+                    const dateRangeStartStr = JSON.parse(req.query["date-range-start"]);
+                    const dateRangeEndStr = JSON.parse(req.query["date-range-end"]);
+                    filterStr += `(strftime('%Y%m%d', date_added) >= '${dateRangeStartStr}' AND `;
+                    filterStr += `strftime('%Y%m%d', date_added) <= '${dateRangeEndStr}') `;
+                }
 
-            pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
-            queryArray = 
-            [
-                `SELECT `,
-                `n.*, `,
-                `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
-                `FROM note n `,
-                `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
-                `${filterStr} `,
-                `GROUP BY n.id `,
-                `ORDER BY n.id ASC `,
-                `LIMIT ${req.query["items-per-page"]} `,
-                `OFFSET ${pageOffset};`
-            ];
+                pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+                queryArray = 
+                [
+                    `SELECT `,
+                    `n.*, `,
+                    `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
+                    `FROM note n `,
+                    `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                    `${filterStr} `,
+                    `GROUP BY n.id `,
+                    `ORDER BY n.id ASC `,
+                    `LIMIT ${req.query["items-per-page"]} `,
+                    `OFFSET ${pageOffset};`
+                ];
 
-            // console.log(queryArray);
+                // console.log(queryArray);
+            }
+            else // no filters
+            {
+                pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+                // queryArray = 
+                // [
+                //     `SELECT * FROM note ORDER BY id ASC `,
+                //     `LIMIT ${req.query["items-per-page"]} `,
+                //     `OFFSET ${pageOffset};`
+                // ];
+                queryArray = 
+                [
+                    `SELECT `,
+                    `n.*, `,
+                    `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
+                    `FROM note n `,
+                    `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                    `WHERE user_id = ${req.session.passport.user.id} `,
+                    `GROUP BY n.id `,
+                    `ORDER BY n.id ASC `,
+                    `LIMIT ${req.query["items-per-page"]} `,
+                    `OFFSET ${pageOffset};`
+                ];
+            }
+            for (let line of queryArray)
+            {
+                query += line;
+            }
         }
-        else // no filters
+        else // no pagination
         {
-            pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
             // queryArray = 
             // [
-            //     `SELECT * FROM note ORDER BY id ASC `,
-            //     `LIMIT ${req.query["items-per-page"]} `,
-            //     `OFFSET ${pageOffset};`
+            //     `SELECT * FROM note ORDER BY id ASC;`
             // ];
             queryArray = 
             [
@@ -104,107 +139,250 @@ async function (req, res)
                 `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
                 `WHERE user_id = ${req.session.passport.user.id} `,
                 `GROUP BY n.id `,
-                `ORDER BY n.id ASC `,
-                `LIMIT ${req.query["items-per-page"]} `,
-                `OFFSET ${pageOffset};`
+                `ORDER BY id ASC;`
             ];
-        }
-        for (let line of queryArray)
-        {
-            query += line;
-        }
-    }
-    else // no pagination
-    {
-        // queryArray = 
-        // [
-        //     `SELECT * FROM note ORDER BY id ASC;`
-        // ];
-        queryArray = 
-        [
-            `SELECT `,
-            `n.*, `,
-            `'[' || group_concat(nt.tag_id, ',') || ']' as tags `,
-            `FROM note n `,
-            `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
-            `WHERE user_id = ${req.session.passport.user.id} `,
-            `GROUP BY n.id `,
-            `ORDER BY id ASC;`
-        ];
-        for (let line of queryArray)
-        {
-            query += line;
-        }
-    }
-
-    try
-    {
-        sqlite3.verbose();
-        const databaseHandle = await createDbConnection(
-            path.join(__projectDir, projectSettings.database.filename));
-        
-        // queryArray = 
-        // [
-        //     `SELECT * FROM note ORDER BY id ASC;`
-        // ];
-        // for (let line of queryArray)
-        // {
-        //     query += line;
-        // }
-        
-        // console.log(query);
-        notes = await databaseHandle.all(query);
-
-        if (req.query.hasOwnProperty("categories") ||
-            (req.query.hasOwnProperty("date-range-start") && 
-            req.query.hasOwnProperty("date-range-end")))
-        {
-            queryTable = 
-            [
-                `SELECT COUNT(*) count FROM note ${filterStr};`
-            ];
-        }
-        else
-        {
-            queryTable = 
-            [
-                `SELECT COUNT(*) count FROM note `,
-                `WHERE user_id = ${req.session.passport.user.id};`,
-            ];
-        }
-
-        query = "";
-        for (let line of queryTable)
-        {
-            query += line;
-        }
-
-        queryResult = await databaseHandle.prepare(query);
-        numberOfAllNotes = (await queryResult.get()).count;
-        await queryResult.finalize();
-
-        await databaseHandle.close();
-
-        res.json({  
-            responseMsg: "Success",
-            responseData: {
-                notes: notes,
-                numberOfAllNotes: numberOfAllNotes,
-                numberOfAllFilteredNotes: numberOfAllNotes
+            for (let line of queryArray)
+            {
+                query += line;
             }
-        });
-    
+        }
+
+        try
+        {
+            sqlite3.verbose();
+            const databaseHandle = await createDbConnection(
+                path.join(__projectDir, projectSettings.database.sqlite.filename));
+            
+            // queryArray = 
+            // [
+            //     `SELECT * FROM note ORDER BY id ASC;`
+            // ];
+            // for (let line of queryArray)
+            // {
+            //     query += line;
+            // }
+            
+            // console.log(query);
+            notes = await databaseHandle.all(query);
+
+            if (req.query.hasOwnProperty("categories") ||
+                (req.query.hasOwnProperty("date-range-start") && 
+                req.query.hasOwnProperty("date-range-end")))
+            {
+                queryTable = 
+                [
+                    `SELECT COUNT(*) count FROM note ${filterStr};`
+                ];
+            }
+            else
+            {
+                queryTable = 
+                [
+                    `SELECT COUNT(*) count FROM note `,
+                    `WHERE user_id = ${req.session.passport.user.id};`,
+                ];
+            }
+
+            query = "";
+            for (let line of queryTable)
+            {
+                query += line;
+            }
+
+            queryResult = await databaseHandle.prepare(query);
+            numberOfAllNotes = (await queryResult.get()).count;
+            await queryResult.finalize();
+
+            await databaseHandle.close();
+
+            res.json({  
+                responseMsg: "Success",
+                responseData: {
+                    notes: notes,
+                    numberOfAllNotes: numberOfAllNotes,
+                    numberOfAllFilteredNotes: numberOfAllNotes
+                }
+            });
+        
+        }
+        catch (error)
+        {
+            console.error(error);
+            res.status(404);
+            // res.send("<h1>404</h1>");
+            res.json({
+                responseMsg: "An error occured during the querying of data.",
+                errorMsg: error.message
+            });
+        }
     }
-    catch (error)
+    else if (projectSettings.database.selected_database === "postgresql")
     {
-        console.error(error);
-        res.status(404);
-        // res.send("<h1>404</h1>");
-        res.json({
-            responseMsg: "An error occured during the querying of data.",
-            errorMsg: error.message
-        });
-    }
+        if (req.query.hasOwnProperty("items-per-page") &&
+            req.query.hasOwnProperty("page"))
+        {
+            if (req.query.hasOwnProperty("categories") ||
+                (req.query.hasOwnProperty("date-range-start") &&
+                req.query.hasOwnProperty("date-range-end")))
+            {
+                // filterStr = `WHERE user_id = ${req.session.passport.user.id} AND `;
+                filterStr = `WHERE user_id = ${userId} AND `;
+
+                if (req.query.hasOwnProperty("categories"))
+                {
+                    const categories = JSON.parse(req.query["categories"]);
+                    for (let i = 0; i < categories.length; i++)
+                    {
+                        if (i === 0)
+                            filterStr += `(category_id = ${categories[i]} `;
+                        else if ((i === categories.length-1) && (categories.length > 1))
+                            filterStr += `OR category_id = ${categories[i]}) `;
+                        else
+                            filterStr += `OR category_id = ${categories[i]} `;
+                    }
+                    filterStr += ") ";
+                }
+                if (req.query.hasOwnProperty("categories") &&
+                    req.query.hasOwnProperty("date-range-start"))
+                {
+                    filterStr += `AND `;
+                }
+                if (req.query.hasOwnProperty("date-range-start"))
+                {
+                    const dateRangeStartStr = JSON.parse(req.query["date-range-start"]);
+                    const dateRangeEndStr = JSON.parse(req.query["date-range-end"]);
+                    filterStr += `(TO_CHAR(date_added, 'YYYYMMDD') >= '${dateRangeStartStr}' AND `;
+                    filterStr += `TO_CHAR(date_added, 'YYYYMMDD') <= '${dateRangeEndStr}') `;
+                }
+
+                pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+                queryArray = 
+                [
+                    `SELECT `,
+                    `n.*, `,
+                    `TO_CHAR(n.date_added, 'YYYY-MM-DD HH24:MI:SS') AS date_added, `,
+                    `CONCAT('[', STRING_AGG(nt.tag_id::text, ','), ']') AS tags `,
+                    `FROM note n `,
+                    `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                    `${filterStr} `,
+                    `GROUP BY n.id, n.title, n.contents, n.date_added, n.category_id, n.user_id `,
+                    `ORDER BY n.id ASC `,
+                    `LIMIT ${req.query["items-per-page"]} `,
+                    `OFFSET ${pageOffset};`
+                ];
+
+                // console.log(queryArray);
+            }
+            else // no filters
+            {
+                pageOffset = req.query["items-per-page"] * (req.query["page"] - 1);
+                // queryArray = 
+                // [
+                //     `SELECT * FROM note ORDER BY id ASC `,
+                //     `LIMIT ${req.query["items-per-page"]} `,
+                //     `OFFSET ${pageOffset};`
+                // ];
+                queryArray = 
+                [
+                    `SELECT `,
+                    `n.*, `,
+                    `TO_CHAR(n.date_added, 'YYYY-MM-DD HH24:MI:SS') AS date_added, `,
+                    `CONCAT('[', STRING_AGG(nt.tag_id::text, ','), ']') AS tags `,
+                    `FROM note n `,
+                    `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                    // `WHERE user_id = ${req.session.passport.user.id} `,
+                    `WHERE user_id = ${userId} `,
+                    `GROUP BY n.id, n.title, n.contents, n.date_added, n.category_id, n.user_id `,
+                    `ORDER BY n.id ASC `,
+                    `LIMIT ${req.query["items-per-page"]} `,
+                    `OFFSET ${pageOffset};`
+                ];
+            }
+            for (let line of queryArray)
+            {
+                query += line;
+            }
+        }
+        else // no pagination
+        {
+            // queryArray = 
+            // [
+            //     `SELECT * FROM note ORDER BY id ASC;`
+            // ];
+            queryArray = 
+            [
+                `SELECT `,
+                `n.*, `,
+                `TO_CHAR(n.date_added, 'YYYY-MM-DD HH24:MI:SS') AS date_added, `,
+                `CONCAT('[', STRING_AGG(nt.tag_id::text, ','), ']') AS tags `,
+                `FROM note n `,
+                `LEFT JOIN note_tag nt ON n.id = nt.note_id `,
+                // `WHERE user_id = ${req.session.passport.user.id} `,
+                `WHERE user_id = ${userId} `,
+                `GROUP BY n.id, n.title, n.contents, n.date_added, n.category_id, n.user_id `,
+                `ORDER BY id ASC;`
+            ];
+            for (let line of queryArray)
+            {
+                query += line;
+            }
+        }
+
+        try
+        {
+            console.log(query);
+            notes = (await postgresPool.query(query)).rows;
+
+            if (req.query.hasOwnProperty("categories") ||
+                (req.query.hasOwnProperty("date-range-start") && 
+                req.query.hasOwnProperty("date-range-end")))
+            {
+                queryTable = 
+                [
+                    `SELECT COUNT(*) count FROM note ${filterStr};`
+                ];
+            }
+            else
+            {
+                queryTable = 
+                [
+                    `SELECT COUNT(*) count FROM note `,
+                    // `WHERE user_id = ${req.session.passport.user.id};`,
+                    `WHERE user_id = ${userId};`,
+                ];
+            }
+
+            query = "";
+            for (let line of queryTable)
+            {
+                query += line;
+            }
+
+
+            numberOfAllNotes = (await postgresPool.query(query)).rows;
+
+            res.json({  
+                responseMsg: "Success",
+                responseData: {
+                    notes: notes,
+                    numberOfAllNotes: numberOfAllNotes,
+                    numberOfAllFilteredNotes: numberOfAllNotes
+                }
+            });
+        
+        }
+        catch (error)
+        {
+            console.error(error);
+            res.status(404);
+            // res.send("<h1>404</h1>");
+            res.json({
+                responseMsg: "An error occured during the querying of data.",
+                errorMsg: error.message
+            });
+        }
+    } // end: else - database = postgres
+
 }); // end route
 
 
