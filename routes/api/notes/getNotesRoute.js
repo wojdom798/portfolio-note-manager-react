@@ -330,7 +330,7 @@ async function (req, res)
 
         try
         {
-            console.log(query);
+            // console.log(query);
             notes = (await postgresPool.query(query)).rows;
 
             if (req.query.hasOwnProperty("categories") ||
@@ -365,8 +365,8 @@ async function (req, res)
                 responseMsg: "Success",
                 responseData: {
                     notes: notes,
-                    numberOfAllNotes: numberOfAllNotes,
-                    numberOfAllFilteredNotes: numberOfAllNotes
+                    numberOfAllNotes: Number(numberOfAllNotes[0].count),
+                    numberOfAllFilteredNotes: Number(numberOfAllNotes[0].count)
                 }
             });
         
