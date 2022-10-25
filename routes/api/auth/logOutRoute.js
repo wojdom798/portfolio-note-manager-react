@@ -12,9 +12,7 @@ const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
 const passport = require("passport");
 
-// route: /api/auth/logout
-router.post("/",
-async function (req, res, next)
+async function logOutRoute(req, res, next)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
@@ -36,10 +34,15 @@ async function (req, res, next)
         {
             res.json({
                 responseMsg: `Successfully logged out user ${username}`,
-                username: username
+                username: username,
+                isUserLoggedOut: true
             });
         }
     });
-});
+}
+
+// route: /api/auth/logout
+router.post("/", logOutRoute),
+router.get("/", logOutRoute),
 
 module.exports = router;

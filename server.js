@@ -32,12 +32,45 @@ function createDbConnection(filename)
   });
 }
 
+let sequelize;
 
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "./db.sqlite3",
-  logging: false
-});
+(async function()
+{
+if (projectSettings.database.selected_database === "sqlite")
+{
+  sequelize = new Sequelize({
+    dialect: "sqlite",
+    storage: "./db.sqlite3",
+    logging: false
+  });
+}
+else if (projectSettings.database.selected_database === "postgresql")
+{
+  sequelize = new Sequelize(
+  projectSettings.database.postgresql.database,
+  projectSettings.database.postgresql.user,
+  projectSettings.database.postgresql.password,
+  {
+    host: projectSettings.database.postgresql.host,
+    port: projectSettings.database.postgresql.port,
+    dialect: "postgres",
+    logging: false
+  });
+
+  // sequelize = new Sequelize("postgres://postgres:123qweasd!@localhost:5433/note_manager_app");
+
+  // try {
+  //   await sequelize.authenticate();
+  //   console.log('Connection has been established successfully.');
+
+  //   const [results, metadata] = await sequelize.query("SELECT 23+7 AS sum_result;");
+  //   console.log(results);
+
+  // } catch (error) {
+  //   console.error('Unable to connect to the database:', error);
+  // }
+}
+})();
 
 
 // async function testDbSequelize()
@@ -67,10 +100,22 @@ const customFields =
 const verifyCallback = async (username, password, done) =>
 {
   try {
-    const databaseHandle = await createDbConnection(
-      path.join(__projectDir, projectSettings.database.filename));
-    let user = await databaseHandle.get("SELECT * FROM users WHERE username = ?", [username]);
-    await databaseHandle.close();
+    let user;
+    if (projectSettings.database.selected_database === "sqlite")
+    {
+      const databaseHandle = await createDbConnection(
+        path.join(__projectDir, projectSettings.database.sqlite.filename));
+      user = await databaseHandle.get("SELECT * FROM users WHERE username = ?", [username]);
+      await databaseHandle.close();
+      console.log(`user (sqlite) = `);
+      console.log(user)
+    }
+    else if (projectSettings.database.selected_database === "postgresql")
+    {
+      user = (await postgresPool.query(`SELECT * FROM users WHERE username = '${username}'`)).rows[0];
+      console.log(`user (postgres) = `);
+      console.log(user)
+    }
     if (!user)
       return done(null, false, { message: "Incorrect username or password" });
 

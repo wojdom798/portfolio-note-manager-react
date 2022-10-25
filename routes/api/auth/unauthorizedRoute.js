@@ -19,7 +19,7 @@ async function (req, res, next)
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
 
-    console.log(req)
+    // console.log(req)
     res.status(401);
     res.json({
         responseMsg: `unathorized route`,
