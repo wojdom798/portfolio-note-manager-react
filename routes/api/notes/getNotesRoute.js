@@ -38,8 +38,8 @@ async function (req, res)
     let numberOfAllNotes;
     let pageOffset;
 
-    // let userId = req.session.passport.user.id;
-    let userId = 1;
+    let userId = req.session.passport.user.id;
+    // let userId = 1;
 
     if (projectSettings.database.selected_database === "sqlite")
     {

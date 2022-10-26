@@ -28,8 +28,8 @@ async function (req, res)
     let query = "";
     let queryResult;
 
-    // let userId = req.session.passport.user.id;
-    let userId = 1;
+    let userId = req.session.passport.user.id;
+    // let userId = 1;
 
     if (projectSettings.database.selected_database === "sqlite")
     {
@@ -85,7 +85,7 @@ async function (req, res)
                 `TO_CHAR(MIN(nt.date_added), 'YYYY-MM-DD HH24:MI:SS') AS min_date, `,
                 `TO_CHAR(MAX(nt.date_added), 'YYYY-MM-DD HH24:MI:SS') AS max_date `,
                 `FROM note nt `,
-                `WHERE user_id = 1; `
+                `WHERE user_id = ${userId};`
             ];
             for (let line of queryArray)
             {
