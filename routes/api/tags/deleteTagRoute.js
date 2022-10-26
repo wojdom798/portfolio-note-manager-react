@@ -11,6 +11,8 @@ const projectSettingsFileName = "project_settings.json";
 const settingsFilePath = path.join(__projectDir, projectSettingsFileName);
 const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 
+const { Pool, Client } = require("pg");
+const postgresPool = new Pool(projectSettings.database.postgresql);
 
 // route: /api/tags/delete
 router.delete("/:id",
@@ -22,44 +24,79 @@ async function (req, res)
     let queryArray = [];
     let query = "";
     let queryResult;
+    let queryValues;
 
-    try
+    let userId = req.session.passport.user.id;
+
+
+    if (projectSettings.database.selected_database === "sqlite")
     {
-        sqlite3.verbose();
-        const databaseHandle = await createDbConnection(
-            path.join(__projectDir, projectSettings.database.filename));
-        
-        queryArray = 
-        [
-            `DELETE FROM tag `,
-            `WHERE (user_id = ${req.session.passport.user.id}) AND `,
-            `(id = ${req.params.id});`,
-        ];
-        for (let line of queryArray)
+        try
         {
-            query += line;
-        }
-
-        queryResult = await databaseHandle.all(query);
-        await databaseHandle.close();
-
-        res.json({  
-            responseMsg: "Success",
-            responseData: {
-                deletedId: queryResult
+            sqlite3.verbose();
+            const databaseHandle = await createDbConnection(
+                path.join(__projectDir, projectSettings.database.filename));
+            
+            queryArray = 
+            [
+                `DELETE FROM tag `,
+                `WHERE (user_id = ${req.session.passport.user.id}) AND `,
+                `(id = ${req.params.id});`,
+            ];
+            for (let line of queryArray)
+            {
+                query += line;
             }
-        });
-    
+
+            queryResult = await databaseHandle.all(query);
+            await databaseHandle.close();
+
+            res.json({  
+                responseMsg: "Success",
+                responseData: {
+                    deletedId: queryResult
+                }
+            });
+        
+        }
+        catch (error)
+        {
+            console.error(error);
+            res.status(404);
+            // res.send("<h1>404</h1>");
+            res.json({
+                responseMsg: "An error occured during the querying of data.",
+                errorMsg: error.message
+            });
+        }
     }
-    catch (error)
+    else if (projectSettings.database.selected_database === "postgresql")
     {
-        console.error(error);
-        res.status(404);
-        // res.send("<h1>404</h1>");
-        res.json({
-            responseMsg: "An error occured during the querying of data.",
-            errorMsg: error.message
-        });
+        try
+        {
+            query = "DELETE FROM tag WHERE (user_id = $1) AND (id = $2) RETURNING id;";
+            queryValues = [userId, req.params.id];
+
+            queryResult = (await postgresPool.query(query, queryValues)).rows[0];
+
+            res.json({  
+                responseMsg: "Success",
+                responseData: {
+                    deletedId: queryResult.id
+                }
+            });
+        
+        }
+        catch (error)
+        {
+            console.error(error);
+            res.status(404);
+            // res.send("<h1>404</h1>");
+            res.json({
+                responseMsg: "An error occured during the querying of data.",
+                errorMsg: error.message
+            });
+        }
     }
 }); // end route
 

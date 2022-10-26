@@ -29,8 +29,8 @@ async function (req, res)
     let query = "";
     let queryResult;
 
-    // let userId = req.session.passport.user.id;
-    let userId = 1;
+    let userId = req.session.passport.user.id;
+    // let userId = 1;
 
     if (projectSettings.database.selected_database === "sqlite")
     {
