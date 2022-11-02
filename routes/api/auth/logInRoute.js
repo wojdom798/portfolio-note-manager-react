@@ -29,7 +29,10 @@ async function (req, res, next)
 
     res.json({
         responseMsg: `Successfully authenticated ${req.session.passport.user.username}`,
-        user: req.session.passport.user,
+        user: {
+            id: req.session.passport.user.id,
+            username: req.session.passport.user.username
+        },
         sessionExpirationDate: req.session.cookie._expires
     });
 });
