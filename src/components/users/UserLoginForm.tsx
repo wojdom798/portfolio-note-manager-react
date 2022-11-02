@@ -14,7 +14,8 @@ import {
 // Helper functions
 import helper from '../../helper';
 import {
-    setUserInStorage
+    setUserInStorage,
+    setSessionExpirationDateInLocalStorage
 } from "../../localStorageUtils";
 
 // App component imports
@@ -79,6 +80,7 @@ function UserLoginForm(props: any)
             } as { id: number, username: string };
 
             setUserInStorage(user); // save logged-in user to local storage
+            setSessionExpirationDateInLocalStorage(new Date(`${data.sessionExpirationDate}`));
             dispatch(setUser(user));
 
             props.onUserLoggedIn(data.username);

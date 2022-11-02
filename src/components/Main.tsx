@@ -50,7 +50,7 @@ function MainDashboard()
 
     useEffect(() =>
     {
-        let userData;
+        let userData, sessionExpirationDate;
         try
         {
             userData = getUserDataFromStorage();
@@ -62,16 +62,25 @@ function MainDashboard()
         finally
         {
             setShouldShowLoginForm(userData.wasUserLoggedOut);
-            dispatch(setUserAuth(userData.user));
-            if (userData.user)
+
+            sessionExpirationDate = new Date(`${userData.sessionExpirationDate}`);
+            if ((new Date()) >= sessionExpirationDate)
             {
-                (async () =>
+                dispatch(setUserAuth(null));
+            }
+            else
+            {
+                dispatch(setUserAuth(userData.user));
+                if (userData.user)
                 {
-                    await dispatch(fetchMaxDateRange);
-                    await dispatch(fetchCategories);
-                    await dispatch(fetchTags);
-                    await dispatch(fetchNotes);
-                })();
+                    (async () =>
+                    {
+                        await dispatch(fetchMaxDateRange);
+                        await dispatch(fetchCategories);
+                        await dispatch(fetchTags);
+                        await dispatch(fetchNotes);
+                    })();
+                }
             }
         }
     }, [wasUserLoggedOut]);

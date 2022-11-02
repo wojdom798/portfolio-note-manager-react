@@ -3,7 +3,8 @@ export function createDefaultUserDataInStorage()
     const userData =
     {
         user: null,
-        wasUserLoggedOut: false
+        wasUserLoggedOut: false,
+        sessionExpirationDate: null
     };
     localStorage.setItem("userData", JSON.stringify(userData));
     return userData;
@@ -16,6 +17,7 @@ export function getUserDataFromStorage()
         {
             user: { id: number, username: string } | null;
             wasUserLoggedOut: boolean;
+            sessionExpirationDate: Date | null
         };
     */
     const userDataStr = localStorage.getItem("userData");
@@ -36,5 +38,12 @@ export function setWasUserLoggedOutInStorage(flag: boolean)
 {
     let userData = getUserDataFromStorage();
     userData.wasUserLoggedOut = flag;
+    localStorage.setItem("userData", JSON.stringify(userData));
+}
+
+export function setSessionExpirationDateInLocalStorage(expirationDate: Date | null)
+{
+    let userData = getUserDataFromStorage();
+    userData.sessionExpirationDate = expirationDate;
     localStorage.setItem("userData", JSON.stringify(userData));
 }

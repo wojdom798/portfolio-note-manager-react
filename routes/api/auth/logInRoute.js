@@ -20,6 +20,8 @@ async function (req, res, next)
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
 
+    // console.log(req.session.cookie._expires);
+
     // console.log("req.user =");
     // console.log(req.user);
     // console.log("req.session.passport.user =");
@@ -27,7 +29,8 @@ async function (req, res, next)
 
     res.json({
         responseMsg: `Successfully authenticated ${req.session.passport.user.username}`,
-        user: req.session.passport.user
+        user: req.session.passport.user,
+        sessionExpirationDate: req.session.cookie._expires
     });
 });
 
