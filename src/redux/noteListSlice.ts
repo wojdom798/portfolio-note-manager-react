@@ -36,6 +36,10 @@ export const noteListSlice = createSlice(
         {
             delete state.list[action.payload];
         },
+        removeAll: (state) =>
+        {
+            state.list = {};
+        },
         edit: (state, action: PayloadAction<Note>) =>
         {
             state.list[action.payload.id] = action.payload;
@@ -78,35 +82,49 @@ export async function fetchNotes(dispatch: any, getState: () => RootState)
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        mode: "cors" as RequestMode
+        // mode: "no-cors" as RequestMode
     };
     // const response = await fetch("/api/notes/get", init);
     const response = await fetch(url, init);
-    if (!response.ok) throw new Error("Couldn't fetch notes from database");
+    // if (!response.ok) throw new Error("Couldn't fetch notes from database");
     const data = await response.json();
-    // console.log(data.responseData.notes);
-
-    let normalisedList = {};
-    data.responseData.notes.forEach((item: any, index: number) =>
+    console.log(data.responseData.numberOfAllNotes);
+    if (data.hasOwnProperty("isUserLoggedOut"))
     {
-        if (item.tags)
+        console.log("user logged out when trying to fetch notes (session expired)");
+    }
+    else
+    {
+        let normalisedList = {};
+        data.responseData.notes.forEach((item: any, index: number) =>
         {
-            let tagArray = JSON.parse(item.tags);
-            item.tagIds = tagArray;
-            // console.log(item.tagIds);
-        }
-        normalisedList = { ...normalisedList,  [item.id]: item};
-    });
+            if (!item.tags || JSON.parse(item.tags).length === 0) item.tags = null;
+            if (item.tags)
+            {
+                let tagArray = JSON.parse(item.tags);
+                item.tagIds = tagArray;
+                // console.log(item.tagIds);
+            }
+            normalisedList = { ...normalisedList,  [item.id]: item};
+        });
 
-    // console.log("Normalised list = ");
-    // console.log(normalisedList);
+        console.log("Normalised list = ");
+        console.log(normalisedList);
 
-    // dispatch(getFromDB(data.responseData.notes));
-    dispatch(getFromDB(normalisedList));
-    dispatch(setNumberOfAllNotes(data.responseData.numberOfAllNotes));
+        // dispatch(getFromDB(data.responseData.notes));
+        dispatch(getFromDB(normalisedList));
+        console.log("all notes:");
+        console.log(data.responseData.numberOfAllNotes);
+        dispatch(setNumberOfAllNotes(data.responseData.numberOfAllNotes));
+    }
 };
 
-export const { add, remove, edit, getFromDB, addTag, removeTag } = noteListSlice.actions;
+export const { 
+    add, remove, removeAll, edit,
+    getFromDB, addTag, removeTag
+} = noteListSlice.actions;
 export const selectNoteList = (state: RootState) => state.noteList.list;
 
 export default noteListSlice.reducer;

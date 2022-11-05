@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { store } from "../../redux/store";
 import {
     add, remove as removeNote,
+    removeAll as removeAllNotes,
     edit, fetchNotes, selectNoteList, Note
 } from "../../redux/noteListSlice";
 import { Category, selectCategoryList } from "../../redux/categorySlice";
@@ -108,8 +109,22 @@ function NoteList(props: any)
     {
         // let n: never[] = [...notes, newNote];
         // setNotes(n);
-        dispatch(add(newNote));
-        dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes + 1));
+
+        if (pagination.numberOfAllNotes % pagination.itemsPerPage === 0)
+        {
+            const numOfPages = Math.ceil(pagination.numberOfAllNotes / pagination.itemsPerPage);
+            // remove all notes only from RAM (redux store)
+            // items inside the database will remain unaffected
+            dispatch(removeAllNotes());
+            dispatch(add(newNote));
+            dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes + 1));
+            dispatch(setCurrentPage(numOfPages + 1));
+        }
+        else
+        {
+            dispatch(add(newNote));
+            dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes + 1));
+        }
     }
 
     async function handleDeleteNote(id: number)
@@ -125,8 +140,19 @@ function NoteList(props: any)
         const response = await fetch(url, init);
         if (!response.ok) throw new Error("Failed to delete a note.");
         // const data = await response.json();
-        dispatch(removeNote(id));
-        dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes - 1));
+
+        const numOfNotesOnCurrentPage = Object.keys(notes).length;
+        if (numOfNotesOnCurrentPage === 1)
+        {
+            dispatch(removeNote(id));
+            dispatch(setCurrentPage(pagination.currentPage - 1));
+            dispatch(fetchNotes);
+        }
+        else
+        {
+            dispatch(removeNote(id));
+            dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes - 1));
+        }
     }
 
     function handleEditNoteButtonClick(noteId: number)
