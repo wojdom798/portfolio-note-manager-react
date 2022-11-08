@@ -1,13 +1,24 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import helper from '../../helper';
+import { createPortal } from "react-dom";
 
+// Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { Category, selectCategoryList } from "../../redux/categorySlice";
+import { selectCategoryList } from "../../redux/categorySlice";
 import { add as addAlert } from "../../redux/alertListSlice";
 
-import { AlertTypes } from "../alerts/alertTypes";
+// Type imports
+import { AlertTypesEnum, ICategory } from "../../types";
+
+// Helper funtions / Utils
+import helper from '../../helper';
+
+// App component imports
+// [...]
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
 
 function NoteForm(props: any)
 {
@@ -110,7 +121,7 @@ function NoteForm(props: any)
                 const alert =
                 {
                     id: (new Date()).getTime(),
-                    type: AlertTypes.Success,
+                    type: AlertTypesEnum.Success,
                     message: "New note has been created."
                 };
                 dispatch(addAlert(alert));
@@ -120,7 +131,7 @@ function NoteForm(props: any)
                 const alert =
                 {
                     id: (new Date()).getTime(),
-                    type: AlertTypes.Error,
+                    type: AlertTypesEnum.Error,
                     message: "Error, couldn't create new note."
                 };
                 dispatch(addAlert(alert));
@@ -130,7 +141,7 @@ function NoteForm(props: any)
 
     function getCategoryOptions()
     {
-        return Object.values(categories).map((item: Category) =>
+        return Object.values(categories).map((item: ICategory) =>
         {
             return (
                 <option key={ item.id } value={ item.id }>{ item.name }</option>

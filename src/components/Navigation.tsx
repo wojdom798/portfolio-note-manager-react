@@ -10,6 +10,9 @@ import {
 } from "../redux/authSlice";
 import { add as addAlert } from "../redux/alertListSlice"
 
+// Type imports
+import { AlertTypesEnum } from "../types";
+
 // Helper function imports
 import {
     setUserInStorage,
@@ -20,7 +23,6 @@ import {
 import { IonIcon } from "react-ion-icon";
 
 // Component imports
-import { AlertTypes } from "./alerts/alertTypes"
 import Alert from "./alerts/Alert";
 
 
@@ -98,7 +100,7 @@ function Navigation(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Error,
+                type: AlertTypesEnum.Error,
                 message: error.message
             };
             dispatch(addAlert(alert));

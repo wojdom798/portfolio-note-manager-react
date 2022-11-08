@@ -1,13 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import type { AlertTypes } from "../components/alerts/alertTypes";
-
-interface Alert
-{
-    id: number;
-    type: AlertTypes;
-    message: string;
-}
+import { Alert } from "../types";
 
 interface IAlertListState
 {

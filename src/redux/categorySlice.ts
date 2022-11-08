@@ -1,13 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-
-export interface Category
-{
-    id: number;
-    name: string;
-    date_added: string;
-    user_id: number;
-};
+import { Category } from "../types";
 
 export interface CategoryListState
 {
@@ -47,19 +40,23 @@ export async function fetchCategories(dispatch: any)
 {
     const init = {
         method: "GET",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
+        mode: "cors" as RequestMode
+        // mode: "no-cors" as RequestMode
     };
     const response = await fetch("api/categories/get", init);
-    if (!response.ok) throw new Error("Couldn't fetch categories from database.");
-    const data = await response.json();
-
-    let normalisedList = {};
-    data.responseData.categories.forEach((item: Category) =>
+    // if (!response.ok) throw new Error("Couldn't fetch categories from database.");
+    if (response.ok)
     {
-        normalisedList = { ...normalisedList, [item.id]: item };
-    });
-    
-    dispatch(getFromDb(normalisedList));
+        const data = await response.json();
+        let normalisedList = {};
+        data.responseData.categories.forEach((item: Category) =>
+        {
+            normalisedList = { ...normalisedList, [item.id]: item };
+        });
+        
+        dispatch(getFromDb(normalisedList));
+    }
 }
 
 export const { add, edit, remove, getFromDb } = categoryListSlice.actions;

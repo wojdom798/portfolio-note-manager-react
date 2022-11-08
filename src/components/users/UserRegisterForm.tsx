@@ -1,11 +1,22 @@
 import React, { SyntheticEvent, useState } from "react";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import helper from '../../helper';
 
+// Type imports
+import { AlertTypesEnum } from "../../types";
+
+// Redux imports
 import { useAppDispatch } from "../../redux/hooks";
 import { add as addAlert,  } from "../../redux/alertListSlice";
-import { AlertTypes } from "../alerts/alertTypes";
+
+// Helper functions
+import helper from '../../helper';
+
+// App component imports
+// [...]
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
 
 function UserRegiserForm(props: any)
 {
@@ -43,7 +54,7 @@ function UserRegiserForm(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Error,
+                type: AlertTypesEnum.Error,
                 message: "passwords don't match"
             };
             dispatch(addAlert(alert));
@@ -66,10 +77,10 @@ function UserRegiserForm(props: any)
             };
             try
             {
-                let alertType: AlertTypes = AlertTypes.Success;
+                let alertType: AlertTypesEnum = AlertTypesEnum.Success;
                 const response = await fetch(url, init);
                 // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
-                if (response.status === 401) alertType = AlertTypes.Error;
+                if (response.status === 401) alertType = AlertTypesEnum.Error;
                 const data = await response.json();
                 alert = 
                 {
@@ -84,7 +95,7 @@ function UserRegiserForm(props: any)
                 alert = 
                 {
                     id: (new Date()).getTime(),
-                    type: AlertTypes.Error,
+                    type: AlertTypesEnum.Error,
                     message: error.message
                 };
                 dispatch(addAlert(alert));

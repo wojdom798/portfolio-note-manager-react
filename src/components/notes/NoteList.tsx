@@ -7,10 +7,10 @@ import { store } from "../../redux/store";
 import {
     add, remove as removeNote,
     removeAll as removeAllNotes,
-    edit, fetchNotes, selectNoteList, Note
+    edit, fetchNotes, selectNoteList
 } from "../../redux/noteListSlice";
-import { Category, selectCategoryList } from "../../redux/categorySlice";
-import { Tag, selectTagList } from "../../redux/tagSlice";
+import { selectCategoryList } from "../../redux/categorySlice";
+import { selectTagList } from "../../redux/tagSlice";
 import {
     setItemsPerPage, setCurrentPage,
     selectPagination, setNumberOfAllNotes
@@ -24,7 +24,7 @@ import {
 import { add as addAlert } from "../../redux/alertListSlice";
 
 // Type imports
-import { AlertTypes } from "../alerts/alertTypes";
+import { AlertTypesEnum, INote } from "../../types";
 
 // App component imports
 import NoteForm from './NoteForm';
@@ -65,7 +65,7 @@ function NoteList(props: any)
     const dispatch = useAppDispatch();
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
+    const [noteToEdit, setNoteToEdit] = useState<INote | null>(null);
     // const [itemsPerPageInput, setItemsPerPageInput] = useState<number>(5);
     const [isLoginFormActive, setIsLoginFormActive] = useState<boolean>(false);
     const [isRegisterFormActive, setIsRegisterFormActive] = useState<boolean>(false);
@@ -105,7 +105,7 @@ function NoteList(props: any)
 
     const handleCloseModal = () => setShowModal(false);
 
-    function handleAddNoteToList(newNote: Note)
+    function handleAddNoteToList(newNote: INote)
     {
         // let n: never[] = [...notes, newNote];
         // setNotes(n);
@@ -162,7 +162,7 @@ function NoteList(props: any)
         setShowModal(true);
     }
 
-    async function handleSubmitEditedNote(editedNote: Note)
+    async function handleSubmitEditedNote(editedNote: INote)
     {
         console.log("edited note:");
         console.log(editedNote);
@@ -195,7 +195,7 @@ function NoteList(props: any)
     {
         // console.log("notesToElement()");
         // console.log(Object.values(notes));
-        return Object.values(notes).map((item: Note, index: number) => {
+        return Object.values(notes).map((item: INote, index: number) => {
             return (
                 <div className="note-container col-md-auto ms-sm-auto col-lg-auto px-md-auto" key={item.id}>
                     <div className="note-header-container">
@@ -275,7 +275,7 @@ function NoteList(props: any)
                 <MainModal
                     showModal={showNoteTagManagerModal}
                     onHide={handleClosNoteTagManagereModal}
-                    title={"Add Tags To Note #?"}
+                    title={"Add Tags To INote #?"}
                     onApplyBtnClick={handleClosNoteTagManagereModal}
                     applyBtnText={"Apply"}
                     onCloseBtnClick={handleClosNoteTagManagereModal}
@@ -293,7 +293,7 @@ function NoteList(props: any)
                 <MainModal
                     showModal={showModal}
                     onHide={handleCloseModal}
-                    title={"Add / Edit Note #?"}
+                    title={"Add / Edit INote #?"}
                     onApplyBtnClick={handleCloseModal}
                     applyBtnText={"Apply"}
                     onCloseBtnClick={handleCloseModal}
@@ -358,7 +358,7 @@ function NoteList(props: any)
         const alertToAddDbg =
         {
             id: (new Date()).getTime(),
-            type: AlertTypes.Info,
+            type: AlertTypesEnum.Info,
             message: "Some Event Happened"
         }
         dispatch(addAlert(alertToAddDbg));
@@ -393,7 +393,7 @@ function NoteList(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Info,
+                type: AlertTypesEnum.Info,
                 message: data.responseMsg
             };
             dispatch(addAlert(alert));
@@ -403,7 +403,7 @@ function NoteList(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Error,
+                type: AlertTypesEnum.Error,
                 message: error.message
             };
             dispatch(addAlert(alert));
@@ -437,7 +437,7 @@ function NoteList(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Info,
+                type: AlertTypesEnum.Info,
                 message: data.responseMsg
             };
             dispatch(addAlert(alert));
@@ -447,7 +447,7 @@ function NoteList(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Error,
+                type: AlertTypesEnum.Error,
                 message: error.message
             };
             dispatch(addAlert(alert));
@@ -475,7 +475,7 @@ function NoteList(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Info,
+                type: AlertTypesEnum.Info,
                 message: data.responseMsg
             };
             localStorage.removeItem("user");
@@ -490,7 +490,7 @@ function NoteList(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Error,
+                type: AlertTypesEnum.Error,
                 message: error.message
             };
             dispatch(addAlert(alert));

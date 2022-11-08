@@ -8,7 +8,7 @@ import { selectCategoryList, } from "../../redux/categorySlice";
 import { selectFilters, setCategoriesFilter } from "../../redux/filterSlice";
 
 // Type imports
-import { Category } from "../../redux/categorySlice";
+import { ICategory } from "../../types";
 
 // App component imports
 import DateTimeFilter from "./DateRangeFilter";
@@ -30,7 +30,7 @@ export default function FilterMenu(props: any)
 
     function renderCategoriesAsCheckboxes()
     {
-        return Object.values(categories).map((category: Category) =>
+        return Object.values(categories).map((category: ICategory) =>
         {
             if (filters.categories.includes(category.id))
             {

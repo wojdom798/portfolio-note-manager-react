@@ -1,27 +1,35 @@
 import React, { Fragment, useState, useEffect } from "react";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Card from "react-bootstrap/Card";
 
+// Redux imports
+import { store } from "../../redux/store";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
     add as addCategory,
     edit as editCategory,
     remove as deleteCategory,
     fetchCategories,
-    selectCategoryList,
-    Category
+    selectCategoryList
 } from "../../redux/categorySlice";
 
-import { store } from "../../redux/store";
+// Type imports
+import { ICategory } from "../../types";
+
+// App component imports
 import CategoryForm from "./CategoryForm";
+
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Card from "react-bootstrap/Card";
+
+
 
 function CategoryList(props: any)
 {
     const categories = useAppSelector(selectCategoryList);
     const dispatch = useAppDispatch();
     const [showModal, setShowModal] = useState(false);
-    const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
+    const [categoryToEdit, setCategoryToEdit] = useState<ICategory | null>(null);
 
     useEffect(() =>
     {
@@ -83,7 +91,7 @@ function CategoryList(props: any)
         }
     }
 
-    function handleAddNewCategoryFormSubmit(newCategory: Category)
+    function handleAddNewCategoryFormSubmit(newCategory: ICategory)
     {
         let apiUrl = "/api/categories/add";
         let payload = JSON.stringify({ newCategory: newCategory });
@@ -107,7 +115,7 @@ function CategoryList(props: any)
         });
     }
 
-    async function handleEditCategoryFormSubmit(categoryToEdit: Category)
+    async function handleEditCategoryFormSubmit(categoryToEdit: ICategory)
     {
         let payload = JSON.stringify({ categoryToEdit: categoryToEdit });
 

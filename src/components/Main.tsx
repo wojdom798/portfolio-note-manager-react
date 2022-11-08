@@ -33,12 +33,6 @@ import UserRegisterForm from "./users/UserRegisterForm";
 import Button from 'react-bootstrap/Button';
 // import Modal from 'react-bootstrap/Modal';
 
-interface User
-{
-    id: number;
-    username: string;
-};
-
 function MainDashboard()
 {
     const dispatch = useAppDispatch();

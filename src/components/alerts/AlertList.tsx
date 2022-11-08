@@ -1,6 +1,5 @@
 import React from "react";
 import {IonIcon} from "react-ion-icon";
-import { AlertTypes } from "./alertTypes";
 import Alert from "./Alert";
 
 // redux imports

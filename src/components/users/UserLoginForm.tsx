@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useState } from "react";
 
 // Type imports
-import { AlertTypes } from "../alerts/alertTypes";
+import { AlertTypesEnum } from "../../types";
 
 // Redux imports
 import { useAppDispatch } from "../../redux/hooks";
@@ -68,10 +68,10 @@ function UserLoginForm(props: any)
         };
         try
         {
-            let alertType: AlertTypes = AlertTypes.Success;
+            let alertType: AlertTypesEnum = AlertTypesEnum.Success;
             const response = await fetch(url, init);
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
-            if (response.status === 401) alertType = AlertTypes.Error;
+            if (response.status === 401) alertType = AlertTypesEnum.Error;
             const data = await response.json();
 
             const user = { 
@@ -97,7 +97,7 @@ function UserLoginForm(props: any)
             alert = 
             {
                 id: (new Date()).getTime(),
-                type: AlertTypes.Error,
+                type: AlertTypesEnum.Error,
                 message: error.message
             };
             dispatch(addAlert(alert));

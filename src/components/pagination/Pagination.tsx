@@ -8,6 +8,9 @@ import {
     selectPagination
 } from "../../redux/paginationSlice";
 
+// Type imports
+// [...]
+
 
 function Pagination(props: any)
 {

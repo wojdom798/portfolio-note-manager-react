@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 
-import { Tag, selectTagList } from "../../redux/tagSlice"
+// Redux imports
+import { selectTagList } from "../../redux/tagSlice"
 import { selectNoteList, addTag, removeTag } from "../../redux/noteListSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 
+// Type imports
+import { ITag } from "../../types";
+
+// Material UI imports
 import
 {
     Box as MuiBox, Tabs as MuiTabs, Tab as MuiTab,
     Typography as MuiTypography,
     Stack as MuiStack, Chip as MuiChip,
 } from "@mui/material";
+
 
 function NoteTagManager(props: any)
 {
@@ -59,7 +65,7 @@ function NoteTagManager(props: any)
 
         if (!note.tagIds)
         {
-            return Object.values(tags)!.map((tag: Tag) =>
+            return Object.values(tags)!.map((tag: ITag) =>
             {
                 const tagElement = (
                     <MuiChip
@@ -74,7 +80,7 @@ function NoteTagManager(props: any)
         else
         {
             let arrayToReturn: JSX.Element[] = [];
-            Object.values(tags)!.forEach((tag: Tag) =>
+            Object.values(tags)!.forEach((tag: ITag) =>
             {
                 if (!(note.tagIds!.includes(tag.id)))
                 {

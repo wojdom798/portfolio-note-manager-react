@@ -1,42 +1,40 @@
 import React, { useState, useEffect } from "react";
-import {IonIcon} from "react-ion-icon";
-import { AlertTypes } from "./alertTypes";
 
-// redux
+// Redux imports
 import { remove as removeAlert } from "../../redux/alertListSlice";
 import { useAppDispatch } from "../../redux/hooks";
 
-interface AlertPropTypes
-{
-    id: number;
-    type: AlertTypes;
-    title: string;
-};
+// Type imports
+import { AlertProps, AlertTypesEnum } from "../../types";
 
-const renderAlertIcon = (type: AlertTypes) =>
+// Ion Icon imports
+import { IonIcon } from "react-ion-icon";
+
+
+const renderAlertIcon = (type: AlertTypesEnum) =>
 {
-    if (type === AlertTypes.Success)
+    if (type === AlertTypesEnum.Success)
     {
         return (
         <div className="alert-icon-container alert-success">
             <IonIcon name="checkmark-outline"></IonIcon>
         </div>);
     }
-    else if (type === AlertTypes.Error)
+    else if (type === AlertTypesEnum.Error)
     {
         return (
         <div className="alert-icon-container alert-error">
             <IonIcon name="skull-outline"></IonIcon>
         </div>);
     }
-    else if (type === AlertTypes.Warning)
+    else if (type === AlertTypesEnum.Warning)
     {
         return (
         <div className="alert-icon-container alert-warning">
             <IonIcon name="warning-outline"></IonIcon>
         </div>);
     }
-    else if (type === AlertTypes.Info)
+    else if (type === AlertTypesEnum.Info)
     {
         return (
         <div className="alert-icon-container alert-info">
@@ -46,7 +44,7 @@ const renderAlertIcon = (type: AlertTypes) =>
     
 };
 
-function Alert({ id, type, title }: AlertPropTypes)
+function Alert({ id, type, title }: AlertProps)
 {
     const dispatch = useAppDispatch();
     const [timeLeftProgress, setTimeLeftProgress] = useState<number>(100);

@@ -1,26 +1,32 @@
 import React, { useState, useEffect, Fragment } from "react";
 
+// Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import {
     add as addTag,
     edit as editTag,
     remove as deleteTag,
-    selectTagList,
-    Tag
+    selectTagList
 } from "../../redux/tagSlice";
 
+// Type imports
+import { ITag } from "../../types";
+
+// App component imports
 import TagForm from "./TagForm";
 
+// Bootstrap imports
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Card from "react-bootstrap/Card";
+
 
 function TagList()
 {
     const tags = useAppSelector(selectTagList);
     const dispatch = useAppDispatch();
     const [showModal, setShowModal] = useState(false);
-    const [tagToEdit, setTagToEdit] = useState<Tag | null>(null);
+    const [tagToEdit, setTagToEdit] = useState<ITag | null>(null);
 
     useEffect(() =>
     {
@@ -82,7 +88,7 @@ function TagList()
         }
     }
 
-    function handleAddNewTagFormSubmit(newTag: Tag)
+    function handleAddNewTagFormSubmit(newTag: ITag)
     {
         let apiUrl = "/api/tags/add";
         let payload = JSON.stringify({ newTag: newTag });
@@ -106,7 +112,7 @@ function TagList()
         });
     }
 
-    async function handleEditTagFormSubmit(tagToEdit: Tag)
+    async function handleEditTagFormSubmit(tagToEdit: ITag)
     {
         let payload = JSON.stringify({ tagToEdit: tagToEdit });
 

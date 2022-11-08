@@ -1,20 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
+import { Note } from "../types";
 
 import { setNumberOfAllNotes } from "./paginationSlice";
 
-export interface Note
-{
-    id: number;
-    title: string;
-    contents: string;
-    date_added: string;
-    category_id: number;
-    user_id: number;
-    tagIds: number[] | null;
-};
 
-export interface NoteListState
+interface NoteListState
 {
     list: { [key: number]: Note };
 };

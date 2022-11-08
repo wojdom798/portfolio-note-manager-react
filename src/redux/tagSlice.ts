@@ -1,13 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
+import { Tag } from "../types";
 
-export interface Tag
-{
-    id: number;
-    name: string;
-    date_added: string;
-    user_id: number;
-};
 
 export interface TagListState
 {
@@ -47,19 +41,23 @@ export async function fetchTags(dispatch: any)
 {
     const init = {
         method: "GET",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
+        mode: "cors" as RequestMode
+        // mode: "no-cors" as RequestMode
     };
     const response = await fetch("api/tags/get", init);
-    if (!response.ok) throw new Error("Couldn't fetch tags from database.");
-    const data = await response.json();
-
-    let normalizedList = {};
-    data.responseData.tags.forEach((item: Tag) =>
+    // if (!response.ok) throw new Error("Couldn't fetch tags from database.");
+    if (response.ok)
     {
-        normalizedList = { ...normalizedList, [item.id]: item };
-    });
+        const data = await response.json();
+        let normalizedList = {};
+        data.responseData.tags.forEach((item: Tag) =>
+        {
+            normalizedList = { ...normalizedList, [item.id]: item };
+        });
 
-    dispatch(getFromDB(normalizedList));
+        dispatch(getFromDB(normalizedList));
+    }
 }
 
 export const { add, edit, remove, getFromDB } = tagListSlice.actions;

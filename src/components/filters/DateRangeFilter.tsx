@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Type imports
-// import { Date } from "../../types";
+import { IDate } from "../../types";
 
 // Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
@@ -27,13 +27,6 @@ import ButtonBase from "@mui/material/ButtonBase";
 
 // helper functions/utils imports
 import helper from "../../helper";
-
-interface Date
-{
-    year: number;
-    month: number;
-    day: number;
-};
 
 const months = [
     "January", "February", "March", "April", "May", "June", "July",
@@ -61,10 +54,10 @@ function DateRangeFilter()
     const [activeDay, setActiveDay] = useState<number>(1);
     const [isSelectingEndDateActive, setSelectingEndDateActive] = useState<boolean>(false);
     
-    const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
-    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
-    const [draftDateStart, setDraftDateStart] = useState<Date | null>(null);
-    const [draftDateEnd, setDraftDateEnd] = useState<Date | null>(null);
+    const [selectedStartDate, setSelectedStartDate] = useState<IDate | null>(null);
+    const [selectedEndDate, setSelectedEndDate] = useState<IDate | null>(null);
+    const [draftDateStart, setDraftDateStart] = useState<IDate | null>(null);
+    const [draftDateEnd, setDraftDateEnd] = useState<IDate | null>(null);
 
     // modal
     const [isDateRangePickerModalOpen, setDateRangePickerModalOpen] = useState<boolean>(false);
@@ -191,7 +184,7 @@ function DateRangeFilter()
     function handleDayClick(dayNumber: number)
     {
         setActiveDay(dayNumber);
-        const newDate: Date =
+        const newDate: IDate =
         {
             year: activeYear,
             month: activeMonth,
