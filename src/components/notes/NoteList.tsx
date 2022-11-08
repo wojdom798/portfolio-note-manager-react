@@ -28,7 +28,7 @@ import { AlertTypes } from "../alerts/alertTypes";
 
 // App component imports
 import NoteForm from './NoteForm';
-import DateTimeFilter from "../filters/DateTimeFilter";
+import DateTimeFilter from "../filters/DateRangeFilter";
 import NoteTagManager from "./NoteTagManager";
 import MainModal from "../MainModal";
 import AlertList from "../alerts/AlertList";

@@ -11,7 +11,7 @@ import { selectFilters, setCategoriesFilter } from "../../redux/filterSlice";
 import { Category } from "../../redux/categorySlice";
 
 // App component imports
-import DateTimeFilter from "./DateTimeFilter";
+import DateTimeFilter from "./DateRangeFilter";
 
 // Bootstrap imports
 import {

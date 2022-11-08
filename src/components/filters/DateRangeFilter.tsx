@@ -52,7 +52,7 @@ const daysOfTheWeek = {
     ]
 };
 
-function DateTimeFilter()
+function DateRangeFilter()
 {
     const dispatch = useAppDispatch();
     const filters = useAppSelector(selectFilters);
@@ -342,4 +342,4 @@ function DateTimeFilter()
     );
 }
 
-export default DateTimeFilter;
+export default DateRangeFilter;
