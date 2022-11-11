@@ -26,11 +26,16 @@ export const paginationSlice = createSlice(
         setNumberOfAllNotes: (state, action: PayloadAction<number>) =>
         {
             state.numberOfAllNotes = action.payload;
+        },
+        reset: (state) =>
+        {
+            state.currentPage = 1;
+            state.numberOfAllNotes = -1;
         }
     }
 });
 
-export const { setItemsPerPage, setCurrentPage, setNumberOfAllNotes } = paginationSlice.actions;
+export const { setItemsPerPage, setCurrentPage, setNumberOfAllNotes, reset } = paginationSlice.actions;
 export const selectPagination = (state: RootState) => state.pagination;
 
 export default paginationSlice.reducer;

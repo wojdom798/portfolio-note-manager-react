@@ -10,6 +10,11 @@ import {
     selectUser,
     set as setUser
 } from "../../redux/authSlice";
+import { fetchNotes } from "../../redux/noteListSlice";
+import { fetchCategories } from "../../redux/categorySlice";
+import { fetchTags } from "../../redux/tagSlice";
+import { fetchMaxDateRange } from "../../redux/filterSlice";
+
 
 // Helper functions
 import helper from '../../helper';
@@ -82,6 +87,11 @@ function UserLoginForm(props: any)
             setUserInStorage(user); // save logged-in user to local storage
             setSessionExpirationDateInLocalStorage(new Date(`${data.sessionExpirationDate}`));
             dispatch(setUser(user));
+
+            await dispatch(fetchMaxDateRange);
+            await dispatch(fetchCategories);
+            await dispatch(fetchTags);
+            await dispatch(fetchNotes);
 
             props.onUserLoggedIn(data.username);
             alert = 

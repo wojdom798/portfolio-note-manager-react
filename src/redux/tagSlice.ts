@@ -30,6 +30,10 @@ export const tagListSlice = createSlice(
         {
             delete state.tags[action.payload];
         },
+        removeAll: (state) =>
+        {
+            state.tags = {};
+        },
         getFromDB: (state, action: PayloadAction<{ [key: number]: ITag }>) =>
         {
             state.tags = action.payload;
@@ -60,7 +64,7 @@ export async function fetchTags(dispatch: any)
     }
 }
 
-export const { add, edit, remove, getFromDB } = tagListSlice.actions;
+export const { add, edit, remove, removeAll, getFromDB } = tagListSlice.actions;
 export const selectTagList = (state: RootState) => state.tagList.tags;
 
 export default tagListSlice.reducer;

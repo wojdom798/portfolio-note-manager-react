@@ -29,6 +29,10 @@ export const categoryListSlice = createSlice(
         {
             delete state.categories[action.payload];
         },
+        removeAll: (state) =>
+        {
+            state.categories = {};
+        },
         getFromDb: (state, action: PayloadAction<any>) =>
         {
             state.categories = action.payload;
@@ -59,7 +63,7 @@ export async function fetchCategories(dispatch: any)
     }
 }
 
-export const { add, edit, remove, getFromDb } = categoryListSlice.actions;
+export const { add, edit, remove, removeAll, getFromDb } = categoryListSlice.actions;
 export const selectCategoryList = (state: RootState) => state.categoryList.categories;
 
 export default categoryListSlice.reducer;

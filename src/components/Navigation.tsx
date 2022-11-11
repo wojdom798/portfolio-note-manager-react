@@ -9,6 +9,10 @@ import {
     setWasUserLoggedOut
 } from "../redux/authSlice";
 import { add as addAlert } from "../redux/alertListSlice"
+import { removeAll as removeNotes } from "../redux/noteListSlice";
+import { removeAll as removeCategories } from "../redux/categorySlice";
+import { removeAll as removeTags } from "../redux/tagSlice";
+import { reset as resetPagination } from "../redux/paginationSlice";
 
 // Type imports
 import { AlertTypesEnum } from "../types";
@@ -90,6 +94,10 @@ function Navigation(props: any)
             const response = await fetch(url, init);
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
             const data = await response.json();
+            dispatch(removeNotes());
+            dispatch(removeCategories());
+            dispatch(removeTags());
+            dispatch(resetPagination());
             setUserInStorage(null);
             setWasUserLoggedOutInStorage(true);
             dispatch(setWasUserLoggedOut(true));
