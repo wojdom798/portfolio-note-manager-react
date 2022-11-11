@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { Note } from "../types";
+import { INote } from "../types";
 
 import { setNumberOfAllNotes } from "./paginationSlice";
 
 
 interface NoteListState
 {
-    list: { [key: number]: Note };
+    list: { [key: number]: INote };
 };
 
 const initialState: NoteListState =
@@ -20,7 +20,7 @@ export const noteListSlice = createSlice(
     name: "notelist",
     initialState,
     reducers: {
-        add: (state, action: PayloadAction<Note>) => {
+        add: (state, action: PayloadAction<INote>) => {
             state.list = {...state.list, [action.payload.id]: action.payload}
         },
         remove: (state, action: PayloadAction<number>) =>
@@ -31,21 +31,21 @@ export const noteListSlice = createSlice(
         {
             state.list = {};
         },
-        edit: (state, action: PayloadAction<Note>) =>
+        edit: (state, action: PayloadAction<INote>) =>
         {
             state.list[action.payload.id] = action.payload;
         },
         getFromDB: (state, action: PayloadAction<any>) => {
             state.list = action.payload;
         },
-        addTag: (state, action: PayloadAction<{ note: Note, tagId: number }>) =>
+        addTag: (state, action: PayloadAction<{ note: INote, tagId: number }>) =>
         {
             if (state.list[action.payload.note.id].tagIds)
                 state.list[action.payload.note.id].tagIds!.push(action.payload.tagId);
             else
                 state.list[action.payload.note.id].tagIds = [ action.payload.tagId ];
         },
-        removeTag: (state, action: PayloadAction<{ note: Note, tagId: number }>) =>
+        removeTag: (state, action: PayloadAction<{ note: INote, tagId: number }>) =>
         {
             const index = state.list[action.payload.note.id].tagIds!.indexOf(action.payload.tagId);
             state.list[action.payload.note.id].tagIds!.splice(index, 1);

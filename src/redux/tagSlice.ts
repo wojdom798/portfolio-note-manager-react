@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { Tag } from "../types";
+import { ITag } from "../types";
 
 
 export interface TagListState
 {
-    tags: { [key: number]: Tag }
+    tags: { [key: number]: ITag }
 };
 
 const initialState: TagListState =
@@ -18,11 +18,11 @@ export const tagListSlice = createSlice(
     name: "taglist",
     initialState,
     reducers: {
-        add: (state, action: PayloadAction<Tag>) =>
+        add: (state, action: PayloadAction<ITag>) =>
         {
             state.tags = { ...state.tags, [action.payload.id]: action.payload };
         },
-        edit: (state, action: PayloadAction<Tag>) =>
+        edit: (state, action: PayloadAction<ITag>) =>
         {
             state.tags[action.payload.id] = action.payload;
         },
@@ -30,7 +30,7 @@ export const tagListSlice = createSlice(
         {
             delete state.tags[action.payload];
         },
-        getFromDB: (state, action: PayloadAction<{ [key: number]: Tag }>) =>
+        getFromDB: (state, action: PayloadAction<{ [key: number]: ITag }>) =>
         {
             state.tags = action.payload;
         }
@@ -51,7 +51,7 @@ export async function fetchTags(dispatch: any)
     {
         const data = await response.json();
         let normalizedList = {};
-        data.responseData.tags.forEach((item: Tag) =>
+        data.responseData.tags.forEach((item: ITag) =>
         {
             normalizedList = { ...normalizedList, [item.id]: item };
         });

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { User } from "../types";
+import { IUser } from "../types";
 
 interface IUserSliceState
 {
-    user: User | null;
+    user: IUser | null;
     wasUserLoggedOut: boolean;
 };
 
@@ -19,7 +19,7 @@ export const userSlice = createSlice(
     name: "user",
     initialState,
     reducers: {
-        set: (state, action: PayloadAction<User | null>) =>
+        set: (state, action: PayloadAction<IUser | null>) =>
         {
             state.user = action.payload;
         },

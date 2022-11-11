@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { IDateRange, Filter } from "../types";
+import { IDateRange, IFilter } from "../types";
 
-const initialState: Filter =
+const initialState: IFilter =
 {
     categories: [],
     dateRange: null,

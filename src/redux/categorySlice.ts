@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { Category } from "../types";
+import { ICategory } from "../types";
 
 export interface CategoryListState
 {
-    categories: { [key: number]: Category }
+    categories: { [key: number]: ICategory }
 };
 
 const initialState: CategoryListState =
@@ -17,11 +17,11 @@ export const categoryListSlice = createSlice(
     name: "categorylist",
     initialState,
     reducers: {
-        add: (state, action: PayloadAction<Category>) =>
+        add: (state, action: PayloadAction<ICategory>) =>
         {
             state.categories = {...state.categories, [action.payload.id]: action.payload};
         },
-        edit: (state, action: PayloadAction<Category>) =>
+        edit: (state, action: PayloadAction<ICategory>) =>
         {
             state.categories[action.payload.id] = action.payload;
         },
@@ -50,7 +50,7 @@ export async function fetchCategories(dispatch: any)
     {
         const data = await response.json();
         let normalisedList = {};
-        data.responseData.categories.forEach((item: Category) =>
+        data.responseData.categories.forEach((item: ICategory) =>
         {
             normalisedList = { ...normalisedList, [item.id]: item };
         });

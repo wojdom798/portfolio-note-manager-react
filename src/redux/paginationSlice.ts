@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { Pagination } from "../types";
+import { IPagination } from "../types";
 
 
-const initialState: Pagination =
+const initialState: IPagination =
 {
     itemsPerPage: 5,
     currentPage: 1,
