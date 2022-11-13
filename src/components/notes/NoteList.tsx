@@ -504,30 +504,6 @@ function NoteList(props: any)
         <Fragment>
             <Fragment>
                 <FilterMenu />
-                <div className="filters-main-container">
-                    {/* <DropdownButton id="filters-categories-dropdown-btn" title="categories">
-                        <Dropdown.Item as={Form.Check}>abcdef</Dropdown.Item>
-                    </DropdownButton> */}
-                    <Button
-                        variant="outline-primary"
-                        onClick={handleOnAddAlertDebugBtnClick}
-                        >add alert (debug)</Button>
-                    <Button
-                        variant="outline-secondary"
-                        // onClick={handleOnSignUpDebugBtnClick}
-                        onClick={() => { setIsRegisterFormActive(true) }}
-                        >sign up (debug)</Button>
-                    <Button
-                        variant="outline-secondary"
-                        // onClick={handleOnLogInDebugBtnClick}
-                        onClick={() => { setIsLoginFormActive(true) }}
-                        >log in (debug)</Button>
-                    <Button
-                        variant="outline-secondary"
-                        // onClick={handleOnLogInDebugBtnClick}
-                        onClick={handleUserLogOutBtnClick}
-                        >log out (debug)</Button>
-                </div>
 
                 <Pagination>
                     {notesToElement()}
@@ -558,27 +534,7 @@ function NoteList(props: any)
         <Fragment>
             <Fragment>
                 <FilterMenu />
-                <div className="filters-main-container">
-                    <Button
-                        variant="outline-primary"
-                        onClick={handleOnAddAlertDebugBtnClick}
-                        >add alert (debug)</Button>
-                    <Button
-                        variant="outline-secondary"
-                        // onClick={handleOnSignUpDebugBtnClick}
-                        onClick={() => { setIsRegisterFormActive(true) }}
-                        >sign up (debug)</Button>
-                    <Button
-                        variant="outline-secondary"
-                        // onClick={handleOnLogInDebugBtnClick}
-                        onClick={() => { setIsLoginFormActive(true) }}
-                        >log in (debug)</Button>
-                    <Button
-                        variant="outline-secondary"
-                        // onClick={handleOnLogInDebugBtnClick}
-                        onClick={handleUserLogOutBtnClick}
-                        >log out (debug)</Button>
-                </div>
+
                 <div className="empty-list-message-container">
                     <div className="centered-container">
                         <h3 className="title">Couldn't Find Any Notes For This Filter.</h3>
@@ -588,6 +544,7 @@ function NoteList(props: any)
                         </div>
                     </div>
                 </div>
+                
                 <Button
                     onClick={handleShowModal}
                     variant="primary"
