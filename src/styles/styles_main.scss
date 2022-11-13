@@ -3,22 +3,13 @@
 
 @import "~bootstrap/scss/bootstrap";
 
-*
-{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body
-{
-    font-size: 1rem;
-    font-family: $main-font;
-}
+@import "reset";
 
 
-@import "./main_dashboard";
-@import "./view_navigation";
+// @import "./main_dashboard";
+@import "./app_main_layout";
+
+@import "./main_navigation";
 @import "./components/pagination";
 @import "./components/note_list";
 @import "./components/datetime_filter";
@@ -26,25 +17,5 @@ body
 @import "./components/alerts";
 @import "./components/forms";
 @import "./components/empty_list_message_box";
-@import "./components/navbar_user_logout";
 
-.floating-action-btn-round
-{
-    position: fixed;
-    bottom: 70px;
-    right: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-weight: bold;
-
-    box-shadow: 1px 1px 5px 0 #555;
-
-    span
-    {
-        display: inline-block;
-    }
-}
+@import "./components/buttons";

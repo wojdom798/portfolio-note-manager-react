@@ -1,3 +1,34 @@
+:root
+{
+    --accent-color: #33dabd;
+
+    //***************************************************************
+    //                     Main App Container
+    //***************************************************************
+    --app-main-navigation-bg-color: #3f4a59;
+    --app-main-section-bg-color: #f3f5f6;
+
+
+    //***************************************************************
+    //                     Main App Navigation
+    //***************************************************************
+    --navmenu-item-txt-color: #FEFEFE;
+    --navmenu-item-hover-txt-color: #FFF;
+    --navmenu-item-hover-bg-color: var(--accent-color);
+    --navmenu-item-active-bg-color: var(--accent-color);
+    --navmenu-item-separator-color: #313841;
+    --navmenu-item-bg-color: var(--app-main-section-bg-color);
+
+    // user info
+    --navmenu-user-header-txt-color: #FAFAFA;
+    // logout button
+    --navmenu-logout-btn-bg-color: var(--accent-color);
+    --navmenu-logout-btn-hover-bg-color: #21b69c;
+    --navmenu-logout-btn-txt-color: #FFF;
+    --navmenu-logout-btn-shadow-color: #333;
+    
+}
+
 $accent-color-1: #33dabd;
 
 $main-bg-color: #f3f5f6;

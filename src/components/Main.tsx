@@ -101,21 +101,18 @@ function MainDashboard()
     
     return (
         loggedInUser ? (
-            <div className="container-fluid main-dashboard-container min-vh-100">
-                <div className="row h-100">
-                    <nav className="left-menu col-md-3 col-lg-2 d-md-block bg-light collapse h-100">
-                        <Navigation
-                            onNavigationItemClick={handleNavigationItemClick} />
-                    </nav>
-                    <main id="main-section" className="col-md-6 ms-sm-auto col-lg-8 px-md-4 h-100">
-                        { getCurrentView() }
-                    </main>
-                    <nav className="col-md-3 col-lg-2 d-md-block bg-light collapse h-100">
-                        
-                    </nav>
+            <div className="app-main-container">
+                <div className="app-navigation-container">
+                    <Navigation
+                        onNavigationItemClick={handleNavigationItemClick} />
                 </div>
-
-            </div> // end: main-dashboard-container
+                <main id="main-section" className="app-main-section">
+                    { getCurrentView() }
+                </main>
+                <nav className="item-navigation">
+                        
+                </nav>
+            </div> // end: app-main-container
             ) : shouldShowLoginForm ? (
                 <div className="main-container-login-signup">
                     <UserLoginForm

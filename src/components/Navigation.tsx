@@ -69,7 +69,7 @@ function Navigation(props: any)
                     <button
                         className="navmenu-btn"
                         onClick={() => handleMenuItemClick(index)}
-                    >{item}</button>
+                    ><span>{item}</span></button>
                 </li>
             );
         });
@@ -116,11 +116,12 @@ function Navigation(props: any)
     }
 
     return (
-        <div className="navmenu-main-container">
-            <div className="user-logout-container">
+        <div className="navmenu-sticky-container">
+            <div className="navmenu-user-container">
                 <h3 className="username-header">{loggedInUser!.username}</h3>
                 <div className="logout-button-container">
                     <button onClick={handleLogOutBtnCLick}>
+                        <span>log out</span>
                         <IonIcon name="log-out-outline"></IonIcon>
                     </button>
                 </div>

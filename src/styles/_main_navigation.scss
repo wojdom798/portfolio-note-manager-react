@@ -1,0 +1,136 @@
+:root
+{
+  --navmenu-item-selector-size: 18px;
+}
+
+.navmenu-sticky-container
+{
+  width: 100%;
+  display: block;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+#navmenu-list // the <ul> element
+{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.navmenu-list-item
+{
+  width: 100%;
+  background-color: transparent;
+  color: var(--navmenu-item-txt-color);
+  // border-bottom: 1px solid var(--navmenu-item-separator-color);
+
+  &:last-of-type
+  {
+    border-bottom: none;
+  }
+
+  &.active
+  {
+    position: relative;
+  }
+
+  &.active .navmenu-btn
+  {
+    background-color: var(--navmenu-item-hover-bg-color);
+    color: var(--navmenu-item-hover-txt-color);
+  }
+
+  &.active::after
+  {
+    content: "";
+    width: var(--navmenu-item-selector-size);
+    height: var(--navmenu-item-selector-size);
+    display: inline-block;
+    position: absolute;
+    top: 23px;
+    right: -10px;
+    background-color: var(--navmenu-item-bg-color);
+    transform: rotate(45deg);
+  }
+}
+
+.navmenu-btn
+{
+  padding: 20px 10px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  font-family: var(--main-font);
+  color: inherit;
+  text-align: left;
+  border-radius: 0px;
+  transition: background-color 70ms linear,
+    color 70ms linear;
+
+  &:hover
+  {
+    background-color: var(--navmenu-item-hover-bg-color);
+    color: var(--navmenu-item-hover-txt-color);
+  }
+}
+
+
+.navmenu-user-container
+{
+  padding: 10px 0;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  .username-header
+  {
+    padding: 5px 10px;
+    margin: 0;
+    display: inline-block;
+    color: var(--navmenu-user-header-txt-color);
+  }
+
+  .logout-button-container
+  {
+    height: 100%;
+    display: inline-block;
+  }
+
+  button
+  {
+    padding: 4px 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    background: none;
+    background-color: var(--navmenu-logout-btn-bg-color);
+    background-color: var(--app-main-navigation-bg-color);
+    color: var(--navmenu-logout-btn-txt-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: var(--main-font);
+    transition: background-color 110ms linear;
+    box-shadow: 1px 1px 5px var(--navmenu-logout-btn-shadow-color);
+
+    &:hover
+    {
+      background-color: var(--navmenu-logout-btn-hover-bg-color);
+    }
+
+    span
+    {
+      font-size: 1rem;
+      font-weight: normal;
+      margin-right: 7px;
+    }
+  }
+}
