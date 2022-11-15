@@ -68,7 +68,7 @@ function Pagination(props: any)
     }
 
     return (
-        <Fragment>
+        <div className="pagination-main-container">
             <div className="pagination-container-top-main">
                 <h5>all notes: {pagination.numberOfAllNotes}</h5>
                 <div className="items-per-page-container">
@@ -98,7 +98,7 @@ function Pagination(props: any)
                     { getPaginationButtons() }
                 </div>
             </div>
-        </Fragment>
+        </div>
     );
 }
 

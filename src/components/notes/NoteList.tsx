@@ -197,7 +197,7 @@ function NoteList(props: any)
         // console.log(Object.values(notes));
         return Object.values(notes).map((item: INote, index: number) => {
             return (
-                <div className="note-container col-md-auto ms-sm-auto col-lg-auto px-md-auto" key={item.id}>
+                <div className="note-container" key={item.id}>
                     <div className="note-header-container">
                         <h2 className="note-title">{item.title}</h2>
                         <div className="note-header-buttons-container">
@@ -506,7 +506,9 @@ function NoteList(props: any)
                 <FilterMenu />
 
                 <Pagination>
-                    {notesToElement()}
+                    <div className="note-list-container">
+                        { notesToElement() }
+                    </div>
                 </Pagination>
 
                 <Button

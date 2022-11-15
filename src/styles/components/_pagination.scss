@@ -1,3 +1,12 @@
+.pagination-main-container
+{
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: space-between;
+    flex-grow: 1;
+}
+
 .pagination-container-top-main
 {
     // border: 3px dashed #2222FF; // debug
@@ -37,7 +46,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 70px;
+    margin-bottom: 20px;
+    margin-top: auto;
 }
 
 .pagination-container-bottom

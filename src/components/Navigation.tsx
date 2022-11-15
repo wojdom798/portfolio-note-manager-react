@@ -23,8 +23,9 @@ import {
     setWasUserLoggedOutInStorage
 } from "../localStorageUtils";
 
-// 3rd party component imports
+// 3rd party imports
 import { IonIcon } from "react-ion-icon";
+import { useMediaQuery } from "react-responsive";
 
 // Component imports
 import Alert from "./alerts/Alert";
@@ -36,6 +37,8 @@ function Navigation(props: any)
     const loggedInUser = useAppSelector(selectUser);
     const [menuItems, setMenuItems] = useState<string[]>([]);
     const [activeMenuItem, setActiveMenuItem] = useState(0);
+    const isMobile = useMediaQuery({ query: "(max-width: 800px)" });
+    const [isMobileNavActive, setIsMobileNavActive] = useState<boolean>(false);
 
     useEffect(() =>
     {
@@ -46,6 +49,8 @@ function Navigation(props: any)
             "Tags",
             "Settings"
         ];
+
+        // console.log(`isMobile=${isMobile}`);
 
         setMenuItems(menuItems);
 
@@ -116,22 +121,36 @@ function Navigation(props: any)
     }
 
     return (
-        <div className="navmenu-sticky-container">
-            <div className="navmenu-user-container">
-                <h3 className="username-header">{loggedInUser!.username}</h3>
-                <div className="logout-button-container">
-                    <button onClick={handleLogOutBtnCLick}>
-                        <span>log out</span>
-                        <IonIcon name="log-out-outline"></IonIcon>
-                    </button>
+        <div className="app-navigation-container">
+            <button
+                className="mobile-navbar-toggle-btn"
+                onClick={() => setIsMobileNavActive(!isMobileNavActive)}
+            >
+                <IonIcon name="menu-outline"></IonIcon>
+            </button>
+            
+            <div className={isMobileNavActive ? "navigation-blur-overlay active" : "navigation-blur-overlay"}></div>
+
+            <div className={isMobileNavActive ? "navmenu-sticky-container active" : "navmenu-sticky-container"}>
+                <div className="navmenu-user-container">
+                    <h3 className="username-header">{loggedInUser!.username}</h3>
+                    <div className="logout-button-container">
+                        <button
+                            className="logout-button"
+                            onClick={handleLogOutBtnCLick}
+                        >
+                            <span>log out</span>
+                            <IonIcon name="log-out-outline"></IonIcon>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <nav>
-                <ul id="navmenu-list">
-                    {menuItemsToElements()}
-                </ul>
-            </nav>
-        </div>
+                <nav>
+                    <ul className="navmenu-list">
+                        { menuItemsToElements() }
+                    </ul>
+                </nav>
+            </div> {/* end: navmenu-sticky-container */}
+        </div> // end: app-navigation-container
     );
 }
 

@@ -102,16 +102,14 @@ function MainDashboard()
     return (
         loggedInUser ? (
             <div className="app-main-container">
-                <div className="app-navigation-container">
-                    <Navigation
-                        onNavigationItemClick={handleNavigationItemClick} />
-                </div>
+                <Navigation
+                    onNavigationItemClick={handleNavigationItemClick} />
                 <main id="main-section" className="app-main-section">
                     { getCurrentView() }
                 </main>
-                <nav className="item-navigation">
+                {/* <nav className="item-navigation">
                         
-                </nav>
+                </nav> */}
             </div> // end: app-main-container
             ) : shouldShowLoginForm ? (
                 <div className="main-container-login-signup">

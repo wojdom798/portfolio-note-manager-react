@@ -5,12 +5,12 @@
     //***************************************************************
     //                     Main App Container
     //***************************************************************
-    --app-main-navigation-bg-color: #3f4a59;
+    --main-navigation-bg-color: #3f4a59;
     --app-main-section-bg-color: #f3f5f6;
 
 
     //***************************************************************
-    //                     Main App Navigation
+    //                     Main Navigation
     //***************************************************************
     --navmenu-item-txt-color: #FEFEFE;
     --navmenu-item-hover-txt-color: #FFF;
@@ -20,12 +20,30 @@
     --navmenu-item-bg-color: var(--app-main-section-bg-color);
 
     // user info
-    --navmenu-user-header-txt-color: #FAFAFA;
+    --main-navigation-user-header-txt-color: #FAFAFA;
     // logout button
     --navmenu-logout-btn-bg-color: var(--accent-color);
-    --navmenu-logout-btn-hover-bg-color: #21b69c;
+    --navmenu-logout-btn-bg-color: var(--main-navigation-bg-color);
+    // --navmenu-logout-btn-hover-bg-color: #21b69c;
+    --navmenu-logout-btn-hover-bg-color: var(--accent-color);
     --navmenu-logout-btn-txt-color: #FFF;
     --navmenu-logout-btn-shadow-color: #333;
+    --main-navigation-mobile-bg-color: #FAFAFA;
+    // shadow 1: the horizontal mobile menu bar
+    --main-navigation-mobile-shadow-color: #777;
+    // shadow 2: the vertical mobile menu bar
+    --main-navigation-mobile-shadow-2-color: #555;
+    // mobile-navbar-toggle-btn
+    --main-navigation-mobile-button-focus-bg-color: #E2E2E2;
+    --main-navigation-mobile-button-border-color: #333;
+    --main-navigation-mobile-button-icon-color: #333;
+    --main-navigation-mobile-button-icon-hover-color: #222;
+    --main-navigation-mobile-menuitem-selected-left-border-color: #00b0ff;
+    --main-navigation-mobile-menuitem-selected-left-border-color: var(--accent-color);
+    --main-navigation-mobile-menuitem-selected-bg-color: #465263;
+    --main-navigation-menuitem-btn-bg-color: var(--main-navigation-bg-color);
+    --main-navigation-menuitem-btn-txt-color: #FAFAFA;
+    --main-navigation-menuitem-separator-color: #323b47;
     
 }
 
