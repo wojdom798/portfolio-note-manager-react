@@ -45,6 +45,29 @@
     --main-navigation-menuitem-btn-txt-color: #FAFAFA;
     --main-navigation-menuitem-separator-color: #323b47;
     
+
+    //***************************************************************
+    //                     Multi-Action Button
+    //***************************************************************
+    // open/close action list button
+    --multi-action-btn-bg-color: #EEE;
+    --multi-action-btn-hover-bg-color: #FEFEFE;
+    --multi-action-btn-icon-color: var(--main-navigation-bg-color);
+    --multi-action-btn-shadow-color: #333;
+    --multi-action-btn-border-color: #333;
+    // list container
+    --multi-action-btn-action-list-bg-color: #FFF;
+    // --multi-action-btn-action-list-border-color: #333;
+    --multi-action-btn-action-list-border-color: #999;
+    // action
+    --multi-action-btn-action-bg-color: var(--multi-action-btn-action-list-bg-color);
+    --multi-action-btn-action-txt-color: #444;
+    --multi-action-btn-action-hover-bg-color: #f2f3f6;
+    --multi-action-btn-action-separator-color: #999;
+    // action warning
+    --multi-action-btn-action-hover-bg-warning-color: #ff8585;
+    // --multi-action-btn-action-hover-txt-warning-color: #FAFAFA;
+    --multi-action-btn-action-hover-txt-warning-color: #d50000;
 }
 
 $accent-color-1: #33dabd;

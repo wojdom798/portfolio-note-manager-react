@@ -49,6 +49,13 @@ export interface IFilter
     dateRangeLimit: IDateRange | null;
 };
 
+export interface MultiActionButtonProps
+{
+    onEditAction: () => void;
+    onDeleteAction: () => void;
+    onManageTagsAction: () => void;
+};
+
 export interface INote
 {
     id: number;
@@ -59,6 +66,13 @@ export interface INote
     user_id: number;
     tagIds: number[] | null;
 };
+
+export enum NoteActionTypesEnum
+{
+    EDIT = "EDIT",
+    DELETE = "DELETE",
+    MANAGE_TAGS = "MANAGE_TAGS"
+}
 
 export interface IPagination
 {

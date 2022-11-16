@@ -1,0 +1,93 @@
+.multi-action-btn-container
+{
+    position: relative;
+}
+
+.multi-action-btn
+{
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--main-font);
+    font-size: 1.5rem;
+    background-color: var(--multi-action-btn-bg-color);
+    box-shadow: 2px 2px 3px var(--multi-action-btn-shadow-color);
+    outline: none;
+    border: 2px dashed transparent;
+    border-radius: 50%;
+    transition: background-color 130ms linear,
+                border-color 130ms linear;
+
+    ion-icon
+    {
+        color: var(--multi-action-btn-icon-color);
+    }
+
+    &:focus,
+    &:hover
+    {
+        --multi-action-btn-focus-border-color: #333;
+        // --multi-action-btn-focus-border-color: var(--accent-color);
+        border-color: var(--multi-action-btn-focus-border-color);
+        background-color: var(--multi-action-btn-hover-bg-color);
+    }
+}
+
+.action-list-container
+{
+    visibility: hidden;
+    overflow: hidden;
+
+    min-width: max-content;
+    // height: 70px;
+
+    position: absolute;
+    top: 35px;
+    right: 7px;
+    z-index: 99;
+
+    border: 1px solid var(--multi-action-btn-action-list-border-color);
+    border-radius: 3px;
+    background-color: var(--multi-action-btn-action-list-bg-color);
+    box-shadow: 2px 2px 4px #999;
+
+    &.active
+    {
+        visibility: visible;
+    }
+}
+
+.multi-action-btn__action
+{
+    padding: 5px 13px;
+    font-family: var(--main-font);
+    font-size: 1rem;
+    color: var(--multi-action-btn-action-txt-color);
+    background-color: var(--multi-action-btn-action-bg-color);
+    border: none;
+    border-right: 1px solid var(--multi-action-btn-action-separator-color);
+    transition: background-color 80ms linear,
+                color 80ms linear;
+
+    &:last-of-type
+    {
+        border-right: none;
+    }
+
+    &:focus,
+    &:hover
+    {
+        background-color: var(--multi-action-btn-action-hover-bg-color);
+    }
+}
+
+.multi-action-btn__action--warning
+{
+    &:focus,
+    &:hover
+    {
+        background-color: var(--multi-action-btn-action-hover-bg-warning-color);
+        color: var(--multi-action-btn-action-hover-txt-warning-color);
+    }
+}

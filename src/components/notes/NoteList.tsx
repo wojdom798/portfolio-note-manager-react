@@ -24,7 +24,7 @@ import {
 import { add as addAlert } from "../../redux/alertListSlice";
 
 // Type imports
-import { AlertTypesEnum, INote } from "../../types";
+import { AlertTypesEnum, INote, NoteActionTypesEnum } from "../../types";
 
 // App component imports
 import NoteForm from './NoteForm';
@@ -36,6 +36,7 @@ import UserLoginForm from "../users/UserLoginForm";
 import UserRegisterForm from "../users/UserRegisterForm";
 import FilterMenu from "../filters/FilterMenu";
 import Pagination from "../pagination/Pagination";
+import MultiActionButton from "./MultiActionButton";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -127,7 +128,7 @@ function NoteList(props: any)
         }
     }
 
-    async function handleDeleteNote(id: number)
+    async function deleteNote(id: number)
     {
         // console.log("deleting note id = " + id);
         const url = `/api/notes/delete/${id}`;
@@ -191,6 +192,23 @@ function NoteList(props: any)
         console.log("adding tags to noteId: " + noteId);
     }
 
+    function handleActionClick(type: NoteActionTypesEnum, noteId: number)
+    {
+        switch (type)
+        {
+            case (NoteActionTypesEnum.EDIT):
+                setNoteToEdit(notes[noteId]);
+                setShowModal(true);
+                break;
+            case (NoteActionTypesEnum.DELETE):
+                deleteNote(noteId);
+                break;
+            case (NoteActionTypesEnum.MANAGE_TAGS):
+                showNoteTagManagerModal(noteId);
+                break;
+        }
+    }
+
     function notesToElement()
     {
         // console.log("notesToElement()");
@@ -201,25 +219,11 @@ function NoteList(props: any)
                     <div className="note-header-container">
                         <h2 className="note-title">{item.title}</h2>
                         <div className="note-header-buttons-container">
-                            <Button
-                                    onClick={ () => handleEditNoteButtonClick(item.id) }
-                                    variant="warning"
-                                    type="button">
-                            <span>edit</span>
-                            </Button>
-                            <Button
-                                    onClick={ () => handleDeleteNote(item.id) }
-                                    variant="danger"
-                                    type="button">
-                            <span>delete</span>
-                            </Button>
-                            <MuiButton
-                                // onClick={(event: any) => { handleAddTagsBtnClick(event, item.id) }}
-                                onClick={(event: any) => { handleShowNoteTagManagerModal(event, item.id) }}
-                                size="small"
-                                variant="contained"
-                                style={ { textTransform: "lowercase" } }
-                            >manage tags</MuiButton>
+                            <MultiActionButton
+                                onEditAction={() => handleActionClick(NoteActionTypesEnum.EDIT, item.id)}
+                                onDeleteAction={() => handleActionClick(NoteActionTypesEnum.DELETE, item.id)}
+                                onManageTagsAction={() => handleActionClick(NoteActionTypesEnum.MANAGE_TAGS, item.id)}
+                            />
                         </div>
                     </div>
 
@@ -253,27 +257,27 @@ function NoteList(props: any)
     /********************************
         TEMPORARY
     ********************************/
-    const [showNoteTagManagerModal, setShowNoteTagManagerModal] = useState<boolean>(false);
+    const [isOpenedNoteTagManagerModal, setIsOpenedNoteTagManagerModal] = useState<boolean>(false);
     const [noteToAddTagsTo, setNoteToAddTagsTo] = useState<number>(-1);
-    const handleShowNoteTagManagerModal = (event: any, noteId: number) =>
+    const showNoteTagManagerModal = (noteId: number) =>
     {
         setNoteToEdit(null); // will close the previous modal if opened by chance
         setNoteToAddTagsTo(noteId);
-        setShowNoteTagManagerModal(true);
+        setIsOpenedNoteTagManagerModal(true);
     };
 
-    const handleClosNoteTagManagereModal = () => setShowNoteTagManagerModal(false);
+    const handleClosNoteTagManagereModal = () => setIsOpenedNoteTagManagerModal(false);
     /********************************
         END: TEMPORARY
     ********************************/
 
     function renderModal()
     {
-        if (showNoteTagManagerModal)
+        if (isOpenedNoteTagManagerModal)
         {
             return (
                 <MainModal
-                    showModal={showNoteTagManagerModal}
+                    showModal={isOpenedNoteTagManagerModal}
                     onHide={handleClosNoteTagManagereModal}
                     title={"Add Tags To INote #?"}
                     onApplyBtnClick={handleClosNoteTagManagereModal}
