@@ -1,0 +1,308 @@
+@import "../mixins";
+
+:root
+{
+    --daterange-picker-btn-txt-color: #333;
+    --daterange-picker-btn-txt-color: #FAFAFA;
+    --daterange-picker-btn-hover-bg-color: #556478;
+    --daterange-picker-input-txt-color: #FAFAFA;
+
+    --daterange-picker-day-txt-color: #333;
+    --daterange-picker-day-of-the-week-txt-color: #333;
+    --daterange-picker-holiday-txt-color: #ff685d;
+    // --daterange-picker-holiday-txt-color: #7722FF;
+    --daterange-picker-active-day-number-bg-color: #25ccaf;
+    --daterange-picker-active-day-number-txt-color: #444;
+    --daterange-picker-active-day-number-shadow-color: #DDD;
+    --daterange-picker-day-number-today-border-color: #25ccaf;
+    
+    --daterange-picker-footer-btn-bg-color: var(--accent-color);
+    --daterange-picker-footer-btn-bg-color: #25ccaf;
+    --daterange-picker-footer-btn-shadow-color: #DDD;
+    --daterange-picker-footer-btn-hover-bg-color: #1c9f88;
+    --daterange-picker-footer-btn-hover-border-color: #333;
+    --daterange-picker-footer-btn-txt-color: #FAFAFA;
+    --daterange-picker-footer-btn-txt-color: #444;
+    --daterange-picker-footer-btn-hover-txt-color: #111;
+
+    --daterange-picker-selector-active-border-color: var(--accent-color);
+    --daterange-picker-selector-active-bg-color: #84e8d7; // lighten accent color by 40%
+    --daterange-picker-selector-active-bg-color: #eafbf8; // lighten accent color by 70%
+}
+
+.daterange-picker__bootstrap-modal-body--padding-0
+{
+    padding: 0;
+}
+
+// .daterange-picker__main-container
+// {
+// }
+
+// ******************************************************************
+//                                 Header
+// ******************************************************************
+.daterange-picker__btn,
+.daterange-picker__month-dropdown-menu,
+.daterange-picker__year-input-field
+{
+    padding: 0 3px;
+    align-self: stretch;
+
+    border: 1px dashed transparent;
+    border-radius: 3px;
+    outline: none;
+    background: transparent;
+    font-family: (--main-font);
+    text-align: center;
+
+    transition: background-color 80ms linear,
+                border-color 100ms linear;
+
+    &:hover, &:focus
+    {
+        // background-color: var(--daterange-picker-btn-hover-bg-color);
+        background: var(--daterange-picker-btn-hover-bg-color);
+        border-color: var(--accent-color);
+    }
+}
+
+.daterange-picker__month-dropdown-menu,
+.daterange-picker__year-input-field
+{
+    margin: 0;
+    padding: 0 10px;
+    box-sizing: border-box;
+    font-size: 1.4rem;
+    color: var(--daterange-picker-input-txt-color);
+}
+
+.daterange-picker__btn
+{
+    margin: 0 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--daterange-picker-btn-txt-color);
+}
+
+.daterange-picker__header,
+.daterange-picker__month-selector-container,
+.daterange-picker__year-selector-container
+{
+    display: flex;
+    align-items: center;
+}
+
+.daterange-picker__year-selector-container
+{
+    display: inline-flex;
+}
+
+.daterange-picker__header
+{
+    padding: 7px 13px;
+    justify-content: space-around;
+    --daterange-picker-header-bg-color: var(--main-navigation-bg-color);
+    background-color: var(--daterange-picker-header-bg-color);
+}
+
+.daterange-picker__button-group
+{
+    margin-left: 3px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    .daterange-picker__btn
+    {
+        margin: 0;
+    }
+}
+
+.daterange-picker__button-group--vertical
+{
+    flex-flow: column nowrap;
+}
+
+.daterange-picker__month-selector-container,
+.daterange-picker__btn
+{
+    align-self: stretch;
+}
+
+.daterange-picker__year-input-field
+{
+    display: inline-block;
+    width: max-content;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    margin: 0;
+}
+
+
+// ******************************************************************
+//                               Body
+// ******************************************************************
+.daterange-picker__day-grid-container
+{
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    grid-gap: 5px;
+
+    // more specificity needed because of MUI ripple effect
+    .daterange-picker__day
+    {
+        border: 2px dashed transparent;
+    }
+}
+
+.daterange-picker__day
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    @include disable-text-selection;
+
+    // more specificity needed because of MUI ripple effect
+    &.daterange-picker__day-number
+    {
+        color: var(--daterange-picker-day-txt-color);
+        border-radius: 3px;
+        cursor: pointer;
+    }
+}
+
+.daterange-picker__day-of-the-week
+{
+    font-weight: 700;
+    color: var(--daterange-picker-day-of-the-week-txt-color);
+    font-size: 1.2rem;
+}
+
+.daterange-picker__day-number
+{
+    transition: background-color 120ms ease;
+}
+
+.daterange-picker__day-of-the-week:nth-child(7),
+.daterange-picker__day-number:nth-child(7n)
+{
+    color: var(--daterange-picker-holiday-txt-color);
+}
+
+.daterange-picker__day-number.daterange-picker__day-number--active,
+.daterange-picker__day-number:hover
+{
+    background: var(--daterange-picker-active-day-number-bg-color);
+    color: var(--daterange-picker-active-day-number-txt-color);
+    box-shadow: 2px 2px 1px var(--daterange-picker-active-day-number-shadow-color);
+    font-weight: 700;
+}
+
+.daterange-picker__day-number.daterange-picker__day-number--today
+{
+    border-color: var(--daterange-picker-day-number-today-border-color);
+}
+
+// ******************************************************************
+//                               Footer
+// ******************************************************************
+.daterange-picker__footer
+{
+    padding: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    row-gap: 20px;
+}
+
+.daterange-picker__footer-button-container
+{
+    margin-left: auto;
+
+    & > *
+    {
+        margin-right: 7px;
+
+        &:last-child
+        {
+            margin-right: 0;
+        }
+    }
+}
+
+.daterange-picker__ok-button,
+.daterange-picker__cancel-button
+{
+    padding: 3px 7px;
+    min-width: 70px;
+
+    border: 2px dashed transparent;
+    border-radius: 3px;
+    outline: none;
+    background: var(--daterange-picker-footer-btn-bg-color);
+    box-shadow: 2px 2px 1px var(--daterange-picker-footer-btn-shadow-color);
+
+    font-family: var(--main-font);
+    font-size: 1.1rem;
+    // font-weight: bold;
+    color: var(--daterange-picker-footer-btn-txt-color);
+
+    transition: background-color 100ms ease,
+                border-color 100ms ease,
+                color 100ms ease;
+
+    &:focus, &:hover
+    {
+        background-color: var(--daterange-picker-footer-btn-hover-bg-color);
+        border-color: var(--daterange-picker-footer-btn-hover-border-color);
+        color: var(--daterange-picker-footer-btn-hover-txt-color);
+    }
+}
+
+.daterange-picker__start-end-date-selector
+{
+    margin: 0 7px;
+    padding: 3px 0;
+    // border: 2px solid var(--accent-color);
+    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    font-size: 1.1rem;
+    cursor: pointer;
+
+    transition: border-bottom-color .4s ease,
+                background-color .4s ease;
+}
+
+.daterange-picker__start-end-date-selector--active
+{
+    border-bottom-color: var(--daterange-picker-selector-active-border-color);
+    background-color: var(--daterange-picker-selector-active-bg-color);
+}
+
+
+// ******************************************************************
+//                               Desktop
+// ******************************************************************
+@media only screen and (min-width: 800px)
+{
+    .daterange-picker__btn,
+    .daterange-picker__month-dropdown-menu,
+    .daterange-picker__year-input-field,
+    .daterange-picker__ok-button,
+    .daterange-picker__cancel-button
+    {
+        &:hover
+        {
+            border-color: transparent;
+        }
+    }
+
+}
