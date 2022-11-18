@@ -58,11 +58,11 @@ async function (req, res)
                     for (let i = 0; i < categories.length; i++)
                     {
                         if (i === 0)
-                            filterStr += `(category_id = ${categories[i]} `;
+                            filterStr += `(category_id = ${categories[i]}`;
                         else if ((i === categories.length-1) && (categories.length > 1))
-                            filterStr += `OR category_id = ${categories[i]}) `;
+                            filterStr += ` OR category_id = ${categories[i]}`;
                         else
-                            filterStr += `OR category_id = ${categories[i]} `;
+                            filterStr += ` OR category_id = ${categories[i]}`;
                     }
                     filterStr += ") ";
                 }
@@ -169,14 +169,14 @@ async function (req, res)
                 (req.query.hasOwnProperty("date-range-start") && 
                 req.query.hasOwnProperty("date-range-end")))
             {
-                queryTable = 
+                queryArray = 
                 [
                     `SELECT COUNT(*) count FROM note ${filterStr};`
                 ];
             }
             else
             {
-                queryTable = 
+                queryArray = 
                 [
                     `SELECT COUNT(*) count FROM note `,
                     `WHERE user_id = ${req.session.passport.user.id};`,
@@ -184,7 +184,7 @@ async function (req, res)
             }
 
             query = "";
-            for (let line of queryTable)
+            for (let line of queryArray)
             {
                 query += line;
             }
@@ -234,11 +234,11 @@ async function (req, res)
                     for (let i = 0; i < categories.length; i++)
                     {
                         if (i === 0)
-                            filterStr += `(category_id = ${categories[i]} `;
+                            filterStr += `(category_id = ${categories[i]}`;
                         else if ((i === categories.length-1) && (categories.length > 1))
-                            filterStr += `OR category_id = ${categories[i]}) `;
+                            filterStr += ` OR category_id = ${categories[i]}`;
                         else
-                            filterStr += `OR category_id = ${categories[i]} `;
+                            filterStr += ` OR category_id = ${categories[i]}`;
                     }
                     filterStr += ") ";
                 }
@@ -337,14 +337,14 @@ async function (req, res)
                 (req.query.hasOwnProperty("date-range-start") && 
                 req.query.hasOwnProperty("date-range-end")))
             {
-                queryTable = 
+                queryArray = 
                 [
                     `SELECT COUNT(*) count FROM note ${filterStr};`
                 ];
             }
             else
             {
-                queryTable = 
+                queryArray = 
                 [
                     `SELECT COUNT(*) count FROM note `,
                     // `WHERE user_id = ${req.session.passport.user.id};`,
@@ -353,7 +353,7 @@ async function (req, res)
             }
 
             query = "";
-            for (let line of queryTable)
+            for (let line of queryArray)
             {
                 query += line;
             }
