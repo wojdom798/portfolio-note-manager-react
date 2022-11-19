@@ -39,10 +39,14 @@ export default function FilterMenu(props: any)
 
             <CategoryFilter />
 
+            <button
+                className="filters-menu-item filters-menu-button"
+            >tags</button>
+
             <DateRangeFilter />
             
             <button
-                className="filters-menu-item filters-menu-button"
+                className="filters-menu-item filters-menu-button filters-menu__apply-filters-button"
                 onClick={handleApplyFiltersBtnClick}
                 >apply filters</button>
         </div>

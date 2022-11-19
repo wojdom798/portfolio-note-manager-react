@@ -32,6 +32,12 @@
     align-items: center;
     flex-flow: row wrap;
 
+    display: grid;
+    // grid-template-columns: auto auto;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 7px;
+    // justify-items: center;
+
     > *
     {
         margin-right: 7px;
@@ -78,6 +84,9 @@
     border: 1px solid $pagination-border-color;
     background-color: #FAFAFA;
     transition: border-color 120ms linear;
+
+    grid-column: 1 / span 2;
+    // justify-self: center;
 
     &:hover,
     &:focus
@@ -225,5 +234,27 @@
     {
         background-color: var(--category-filter-close-button-hover-bg-color);
         color: var(--category-filter-close-button-hover-txt-color);
+    }
+}
+
+.filters-menu__apply-filters-button
+{
+    grid-column: 1 / span 2;
+    justify-self: center;
+}
+
+@media only screen and (min-width: 650px)
+{
+    .filters-main-container
+    {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        & > *
+        {
+            grid-column: auto;
+            justify-self: auto;
+        }
     }
 }
