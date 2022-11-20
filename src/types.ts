@@ -67,6 +67,18 @@ export interface INote
     tagIds: number[] | null;
 };
 
+export interface NoteProps
+{
+    id: number;
+    title: string;
+    contents: string;
+    date_added: string;
+    category_id: number;
+    tagIds: number[] | null;
+    onNoteEditButtonClick: (noteId: number) => void;
+    onOpenNoteTagManagerButtonClick: (noteId: number) => void;
+};
+
 export enum NoteActionTypesEnum
 {
     EDIT = "EDIT",

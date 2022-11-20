@@ -27,6 +27,7 @@ import { add as addAlert } from "../../redux/alertListSlice";
 import { AlertTypesEnum, INote, NoteActionTypesEnum } from "../../types";
 
 // App component imports
+import Note from "./Note";
 import NoteForm from './NoteForm';
 import DateTimeFilter from "../filters/DateRangeFilter";
 import NoteTagManager from "./NoteTagManager";
@@ -128,45 +129,10 @@ function NoteList(props: any)
         }
     }
 
-    async function deleteNote(id: number)
-    {
-        // console.log("deleting note id = " + id);
-        const url = `/api/notes/delete/${id}`;
-        const init = {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        const response = await fetch(url, init);
-        if (!response.ok) throw new Error("Failed to delete a note.");
-        // const data = await response.json();
-
-        const numOfNotesOnCurrentPage = Object.keys(notes).length;
-        if (numOfNotesOnCurrentPage === 1)
-        {
-            dispatch(removeNote(id));
-            dispatch(setCurrentPage(pagination.currentPage - 1));
-            dispatch(fetchNotes);
-        }
-        else
-        {
-            dispatch(removeNote(id));
-            dispatch(setNumberOfAllNotes(pagination.numberOfAllNotes - 1));
-        }
-    }
-
-    function handleEditNoteButtonClick(noteId: number)
-    {
-        // console.log(`edit button #${noteId} was clicked`);
-        setNoteToEdit(notes[noteId]);
-        setShowModal(true);
-    }
-
     async function handleSubmitEditedNote(editedNote: INote)
     {
-        console.log("edited note:");
-        console.log(editedNote);
+        // console.log("edited note:");
+        // console.log(editedNote);
 
         let payload = JSON.stringify({
             noteToEdit: editedNote
@@ -192,64 +158,29 @@ function NoteList(props: any)
         console.log("adding tags to noteId: " + noteId);
     }
 
-    function handleActionClick(type: NoteActionTypesEnum, noteId: number)
+    function handleEditNoteButtonClick(noteId: number)
     {
-        switch (type)
-        {
-            case (NoteActionTypesEnum.EDIT):
-                setNoteToEdit(notes[noteId]);
-                setShowModal(true);
-                break;
-            case (NoteActionTypesEnum.DELETE):
-                deleteNote(noteId);
-                break;
-            case (NoteActionTypesEnum.MANAGE_TAGS):
-                showNoteTagManagerModal(noteId);
-                break;
-        }
+        // console.log(`edit button #${noteId} was clicked`);
+        setNoteToEdit(notes[noteId]);
+        setShowModal(true);
     }
 
-    function notesToElement()
+    function renderNotes()
     {
-        // console.log("notesToElement()");
+        // console.log("renderNotes()");
         // console.log(Object.values(notes));
         return Object.values(notes).map((item: INote, index: number) => {
-            return (
-                <div className="note-container" key={item.id}>
-                    <div className="note-header-container">
-                        <h2 className="note-title">{item.title}</h2>
-                        <div className="note-header-buttons-container">
-                            <MultiActionButton
-                                onEditAction={() => handleActionClick(NoteActionTypesEnum.EDIT, item.id)}
-                                onDeleteAction={() => handleActionClick(NoteActionTypesEnum.DELETE, item.id)}
-                                onManageTagsAction={() => handleActionClick(NoteActionTypesEnum.MANAGE_TAGS, item.id)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="note-contents-container">
-                        <p>{item.contents}</p>
-                        
-                    </div>
-                    
-                    <div className="note-contents-footer">
-                        <span>{item.date_added}</span>
-                        <span>{categories[item.category_id].name}</span>
-                    </div>
-                    
-                    <div className="tag-container">
-                        <MuiStack direction="row" spacing={1} alignItems="center">
-                            { item.tagIds != null ?
-                                item.tagIds.map((id: number) =>
-                                { return (
-                                    <MuiChip key={id} label={tags[id].name} color="primary" />
-                                );}) :
-                                null
-                            }
-                        </MuiStack>
-                    </div>
-                </div>
-            );
+            return <Note
+                        key={item.id}
+                        id={item.id}
+                        title={item.title}
+                        contents={item.contents}
+                        date_added={item.date_added}
+                        category_id={item.category_id}
+                        tagIds={item.tagIds}
+                        onNoteEditButtonClick={handleEditNoteButtonClick}
+                        onOpenNoteTagManagerButtonClick={showNoteTagManagerModal}
+                    />;
         });
     }
 
@@ -511,7 +442,7 @@ function NoteList(props: any)
 
                 <Pagination>
                     <div className="note-list-container">
-                        { notesToElement() }
+                        { renderNotes() }
                     </div>
                 </Pagination>
 

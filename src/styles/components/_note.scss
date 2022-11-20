@@ -1,0 +1,55 @@
+.note
+{
+    background: #FAFAFA;
+    border: 1px solid #DFDFDF;
+    margin-bottom: 15px;
+    flex: 1 1 auto;
+}
+
+.note__header
+{
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $left-side-bar-bg-color;
+    color: $main-bg-color;
+}
+
+// .note__header-action-button-container
+// {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+
+//     & > &
+//     {
+//         margin-right: 5px;
+//     }
+// }
+
+.note__contents
+{
+    padding: 10px;
+}
+
+.note__footer
+{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+// ******************************************************************
+//                               Desktop
+// ******************************************************************
+@media only screen and (min-width: 1090px)
+{
+    .note
+    {
+        flex: 0 1 49%;
+    }
+    
+}
