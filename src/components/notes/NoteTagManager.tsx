@@ -177,6 +177,10 @@ function NoteTagManager(props: any)
                     </TabPanel>
                 </MuiBox>
 
+                <button onClick={props.onCloseButtonClick}>
+                    close
+                </button>
+
             </div>
         </div>
     );

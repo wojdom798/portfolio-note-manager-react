@@ -63,7 +63,7 @@ export interface INote
     contents: string;
     date_added: string;
     category_id: number;
-    user_id: number;
+    user_id?: number;
     tagIds: number[] | null;
 };
 
@@ -77,6 +77,14 @@ export interface NoteProps
     tagIds: number[] | null;
     onNoteEditButtonClick: (noteId: number) => void;
     onOpenNoteTagManagerButtonClick: (noteId: number) => void;
+};
+
+export interface NoteFormProps
+{
+    noteToEdit?: INote;
+    onEditNoteFormSubmit?: (editedNote: INote) => void;
+    updateNoteList?: (newNote: INote) => void;
+    onCloseButtonClick: () => void;
 };
 
 export enum NoteActionTypesEnum

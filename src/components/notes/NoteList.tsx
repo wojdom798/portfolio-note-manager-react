@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 
 // Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { store } from "../../redux/store";
 import {
     add, remove as removeNote,
     removeAll as removeAllNotes,
@@ -24,29 +23,23 @@ import {
 import { add as addAlert } from "../../redux/alertListSlice";
 
 // Type imports
-import { AlertTypesEnum, INote, NoteActionTypesEnum } from "../../types";
+import { AlertTypesEnum, INote } from "../../types";
 
 // App component imports
 import Note from "./Note";
 import NoteForm from './NoteForm';
-import DateTimeFilter from "../filters/DateRangeFilter";
 import NoteTagManager from "./NoteTagManager";
-import MainModal from "../MainModal";
 import AlertList from "../alerts/AlertList";
 import UserLoginForm from "../users/UserLoginForm";
 import UserRegisterForm from "../users/UserRegisterForm";
 import FilterMenu from "../filters/FilterMenu";
 import Pagination from "../pagination/Pagination";
-import MultiActionButton from "./MultiActionButton";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
-import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import {
+    Modal as BootstrapModal
+} from "react-bootstrap/";
 
 // Material UI imports
 import {
@@ -58,22 +51,24 @@ import {
 
 function NoteList(props: any)
 {
+    const dispatch = useAppDispatch();
     // const [notes, setNotes] = useState([]);
     const notes = useAppSelector(selectNoteList);
     const categories = useAppSelector(selectCategoryList);
     const tags = useAppSelector(selectTagList);
     const pagination = useAppSelector(selectPagination);
     const loggedInUser = useAppSelector(selectUser);
-    const dispatch = useAppDispatch();
     // const [areNotesFetched, setAreNotesFetched] = useState(0);
-    const [showModal, setShowModal] = useState(false);
-    const [noteToEdit, setNoteToEdit] = useState<INote | null>(null);
     // const [itemsPerPageInput, setItemsPerPageInput] = useState<number>(5);
-    const [isLoginFormActive, setIsLoginFormActive] = useState<boolean>(false);
-    const [isRegisterFormActive, setIsRegisterFormActive] = useState<boolean>(false);
-    const [user, setUser] = useState<string>("");
+    
+    const [isModalActive, setIsModalActive] = useState<boolean>(false);
+    // if truthy, then edit note form will show up in modal body
+    const [noteToEdit, setNoteToEdit] = useState<INote | null>(null);
+    // if truthy, then tag manager will show up in modal body
+    const [tagManagerNoteId, setTagManagerNoteId] =
+        useState<number | undefined>(undefined);
 
-
+    
     useEffect(() =>
     {
         /*const init = {
@@ -99,13 +94,26 @@ function NoteList(props: any)
     // }, [areNotesFetched]);
     }, []);
 
-    const handleShowModal = () =>
+    const handleCloseModal = () =>
     {
-        setNoteToEdit(null);
-        setShowModal(true);
-    };
+        setIsModalActive(false);
+        setTimeout(() =>
+        {
+            setNoteToEdit(null);
+            setTagManagerNoteId(undefined);
+        }, 200);
+    }
+    
+    const handleAddNewNoteButtonClick = () =>
+    {
+        setIsModalActive(true);
+    }
 
-    const handleCloseModal = () => setShowModal(false);
+    const showNoteTagManagerModal = (noteId: number) =>
+    {
+        setTagManagerNoteId(noteId);
+        setIsModalActive(true);
+    };
 
     function handleAddNoteToList(newNote: INote)
     {
@@ -162,14 +170,15 @@ function NoteList(props: any)
     {
         // console.log(`edit button #${noteId} was clicked`);
         setNoteToEdit(notes[noteId]);
-        setShowModal(true);
+        setIsModalActive(true);
     }
 
     function renderNotes()
     {
         // console.log("renderNotes()");
         // console.log(Object.values(notes));
-        return Object.values(notes).map((item: INote, index: number) => {
+        return Object.values(notes).map((item: INote, index: number) =>
+        {
             return <Note
                         key={item.id}
                         id={item.id}
@@ -184,254 +193,35 @@ function NoteList(props: any)
         });
     }
 
-
-    /********************************
-        TEMPORARY
-    ********************************/
-    const [isOpenedNoteTagManagerModal, setIsOpenedNoteTagManagerModal] = useState<boolean>(false);
-    const [noteToAddTagsTo, setNoteToAddTagsTo] = useState<number>(-1);
-    const showNoteTagManagerModal = (noteId: number) =>
+    function renderSelectedModalBody()
     {
-        setNoteToEdit(null); // will close the previous modal if opened by chance
-        setNoteToAddTagsTo(noteId);
-        setIsOpenedNoteTagManagerModal(true);
-    };
-
-    const handleClosNoteTagManagereModal = () => setIsOpenedNoteTagManagerModal(false);
-    /********************************
-        END: TEMPORARY
-    ********************************/
-
-    function renderModal()
-    {
-        if (isOpenedNoteTagManagerModal)
+        if (tagManagerNoteId)
         {
             return (
-                <MainModal
-                    showModal={isOpenedNoteTagManagerModal}
-                    onHide={handleClosNoteTagManagereModal}
-                    title={"Add Tags To INote #?"}
-                    onApplyBtnClick={handleClosNoteTagManagereModal}
-                    applyBtnText={"Apply"}
-                    onCloseBtnClick={handleClosNoteTagManagereModal}
-                    closeBtnText={"Close"}
-                >
-                    <NoteTagManager
-                        noteId={noteToAddTagsTo}
-                    />
-                </MainModal>
+                <NoteTagManager
+                    noteId={tagManagerNoteId}
+                    onCloseButtonClick={handleCloseModal}
+                />
             );
         }
-        else if (showModal) // edit/add note modal
+        else if (noteToEdit) // edit/add note modal
         {
             return (
-                <MainModal
-                    showModal={showModal}
-                    onHide={handleCloseModal}
-                    title={"Add / Edit INote #?"}
-                    onApplyBtnClick={handleCloseModal}
-                    applyBtnText={"Apply"}
-                    onCloseBtnClick={handleCloseModal}
-                    closeBtnText={"Close"}
-                >
-                    <NoteForm
-                        noteToEdit={noteToEdit}
-                        updateNoteList={handleAddNoteToList}
-                        submitEditedNote={handleSubmitEditedNote}/>
-                </MainModal>
+                <NoteForm
+                    noteToEdit={noteToEdit}
+                    updateNoteList={handleAddNoteToList}
+                    onEditNoteFormSubmit={handleSubmitEditedNote}
+                    onCloseButtonClick={handleCloseModal}
+                />
             );
         }
-        else if (isLoginFormActive)
-        {
-            return (
-                <MainModal
-                    showModal={isLoginFormActive}
-                    onHide={handleCloseLoginModal}
-                    title={"Log In"}
-                    onApplyBtnClick={handleCloseLoginModal}
-                    applyBtnText={"Apply"}
-                    onCloseBtnClick={handleCloseLoginModal}
-                    closeBtnText={"Close"}
-                >
-                    <UserLoginForm onUserLoggedIn={(u: string) => { setUser(u) }} />
-                    {/* <UserLoginForm /> */}
-                </MainModal>
-            );
-        }
-        else if (isRegisterFormActive)
-        {
-            return (
-                <MainModal
-                    showModal={isRegisterFormActive}
-                    onHide={handleCloseRegisterModal}
-                    title={"Sign Up"}
-                    onApplyBtnClick={handleCloseRegisterModal}
-                    applyBtnText={"Apply"}
-                    onCloseBtnClick={handleCloseRegisterModal}
-                    closeBtnText={"Close"}
-                >
-                    <UserRegisterForm />
-                </MainModal>
-            );
-        }
-        return <MainModal />;
+        return (
+            <NoteForm
+                updateNoteList={handleAddNoteToList}
+                onCloseButtonClick={handleCloseModal}
+            />
+        );
     }
-
-    const handleCloseLoginModal = () =>
-    {
-        setIsLoginFormActive(false);
-    };
-
-    const handleCloseRegisterModal = () =>
-    {
-        setIsRegisterFormActive(false);
-    };
-
-    // debug
-    const handleOnAddAlertDebugBtnClick = () =>
-    {
-        const alertToAddDbg =
-        {
-            id: (new Date()).getTime(),
-            type: AlertTypesEnum.Info,
-            message: "Some Event Happened"
-        }
-        dispatch(addAlert(alertToAddDbg));
-    };
-
-    // debug
-    const handleOnSignUpDebugBtnClick = async () =>
-    {
-        let alert;
-
-        // const url = `api/auth/login/`;
-        const url = `api/auth/sign-up/`;
-
-        const newUsers =
-        [
-            { username: "User 1", password: "123qwe99" },
-            { username: "User 2", password: "123qwe33" },
-        ];
-
-        const init = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newUsers[1])
-        };
-        try
-        {
-            const response = await fetch(url, init);
-            // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
-            const data = await response.json();
-            alert = 
-            {
-                id: (new Date()).getTime(),
-                type: AlertTypesEnum.Info,
-                message: data.responseMsg
-            };
-            dispatch(addAlert(alert));
-        }
-        catch (error: any)
-        {
-            alert = 
-            {
-                id: (new Date()).getTime(),
-                type: AlertTypesEnum.Error,
-                message: error.message
-            };
-            dispatch(addAlert(alert));
-        }
-    };
-
-    const handleOnLogInDebugBtnClick = async () =>
-    {
-        let alert;
-
-        const url = `api/auth/login/`;
-
-        const users =
-        [
-            { username: "User 1", password: "123qwe99" },
-            { username: "User 2", password: "123qwe33" },
-        ];
-
-        const init = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(users[1])
-        };
-        try
-        {
-            const response = await fetch(url, init);
-            // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
-            const data = await response.json();
-            alert = 
-            {
-                id: (new Date()).getTime(),
-                type: AlertTypesEnum.Info,
-                message: data.responseMsg
-            };
-            dispatch(addAlert(alert));
-        }
-        catch (error: any)
-        {
-            alert = 
-            {
-                id: (new Date()).getTime(),
-                type: AlertTypesEnum.Error,
-                message: error.message
-            };
-            dispatch(addAlert(alert));
-        }
-    };
-
-    // duplicate code
-    const handleUserLogOutBtnClick = async () =>
-    {
-        let alert;
-
-        const url = `api/auth/logout/`;
-
-        const init = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        try
-        {
-            const response = await fetch(url, init);
-            // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
-            const data = await response.json();
-            alert = 
-            {
-                id: (new Date()).getTime(),
-                type: AlertTypesEnum.Info,
-                message: data.responseMsg
-            };
-            localStorage.removeItem("user");
-            localStorage.setItem("wasUserLoggedOut", "true");
-            dispatch(setWasUserLoggedOut(true));
-            dispatch(removeUser());
-            dispatch(addAlert(alert));
-            setUser("n/a");
-        }
-        catch (error: any)
-        {
-            alert = 
-            {
-                id: (new Date()).getTime(),
-                type: AlertTypesEnum.Error,
-                message: error.message
-            };
-            dispatch(addAlert(alert));
-        }
-    };
-
     
     if (pagination.numberOfAllNotes)
     {
@@ -447,7 +237,7 @@ function NoteList(props: any)
                 </Pagination>
 
                 <Button
-                    onClick={handleShowModal}
+                    onClick={handleAddNewNoteButtonClick}
                     variant="primary"
                     className="floating-action-btn-round"
                     type="button"
@@ -457,15 +247,25 @@ function NoteList(props: any)
                 </Button>
             </Fragment>
 
-            {/* Alerts */}
             <AlertList />
-            
-            {/* Modals */}
-            { renderModal() }
+
+            <BootstrapModal
+                show={isModalActive}
+                backdrop="static"
+                keyboard={false}>
+                <BootstrapModal.Body
+                    className="daterange-picker__bootstrap-modal-body--padding-0"
+                >
+                    
+                    { renderSelectedModalBody() }
+
+                </BootstrapModal.Body>
+            </BootstrapModal>
+
         </Fragment>
         );
     }
-    else
+    else // pagination.numberOfAllNotes = falsy
     {
         return (
         <Fragment>
@@ -477,27 +277,34 @@ function NoteList(props: any)
                         <h3 className="title">Couldn't Find Any Notes For This Filter.</h3>
                         <div className="message-container">
                             <p className="message">Consider using some other filter.</p>
-                            <p className="message">If you haven't added any notes yet, <span className="add-new-note-span" onClick={handleShowModal}>click here to add one</span>.</p>
+                            <p className="message">If you haven't added any notes yet, <span className="add-new-note-span" onClick={handleAddNewNoteButtonClick}>click here to add one</span>.</p>
                         </div>
                     </div>
                 </div>
                 
                 <Button
-                    onClick={handleShowModal}
+                    onClick={handleAddNewNoteButtonClick}
                     variant="primary"
                     className="floating-action-btn-round"
-                    type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal">
+                    type="button">
                 <span>&#x2B;</span>
                 </Button>
             </Fragment>
 
-            {/* Alerts */}
             <AlertList />
-            
-            {/* Modals */}
-            { renderModal() }
+
+            <BootstrapModal
+                show={isModalActive}
+                backdrop="static"
+                keyboard={false}>
+                <BootstrapModal.Body
+                    className="daterange-picker__bootstrap-modal-body--padding-0"
+                >
+                    
+                    { renderSelectedModalBody() }
+
+                </BootstrapModal.Body>
+            </BootstrapModal>
         </Fragment>
         );
     }

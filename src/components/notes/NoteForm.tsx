@@ -7,7 +7,7 @@ import { selectCategoryList } from "../../redux/categorySlice";
 import { add as addAlert } from "../../redux/alertListSlice";
 
 // Type imports
-import { AlertTypesEnum, ICategory } from "../../types";
+import { NoteFormProps, AlertTypesEnum, ICategory } from "../../types";
 
 // Helper funtions / Utils
 import helper from '../../helper';
@@ -20,7 +20,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 
-function NoteForm(props: any)
+function NoteForm({
+    noteToEdit, onEditNoteFormSubmit,
+    updateNoteList, onCloseButtonClick
+}: NoteFormProps)
 {
     const [titleInput, setTitleInput] = useState("");
     const [contentsInput, setContentsInput] = useState("");
@@ -31,12 +34,12 @@ function NoteForm(props: any)
 
     useEffect(() =>
     {
-        if (props.noteToEdit)
+        if (noteToEdit)
         {
-            setTitleInput(props.noteToEdit.title);
-            setContentsInput(props.noteToEdit.contents);
-            setDateAddedInput(props.noteToEdit.date_added);
-            setCategoryInput(props.noteToEdit.category_id);
+            setTitleInput(noteToEdit.title);
+            setContentsInput(noteToEdit.contents);
+            setDateAddedInput(noteToEdit.date_added);
+            setCategoryInput(noteToEdit.category_id);
         }
         else
         {
@@ -73,17 +76,18 @@ function NoteForm(props: any)
         // console.log("title= " + titleInput);
         // console.log("contents= " + contentsInput);
         
-        if (props.noteToEdit)
+        if (noteToEdit)
         {
-            const noteToEdit = {
-                id: props.noteToEdit.id,
+            const submittedNoteToEdit = {
+                id: noteToEdit.id,
                 title: titleInput,
                 contents: contentsInput,
                 date_added: dateAddedInput,
                 category_id: categoryInput,
+                tagIds: noteToEdit.tagIds
                 // user_id: 1,
             }
-            props.submitEditedNote(noteToEdit);
+            onEditNoteFormSubmit!(submittedNoteToEdit);
         }
         else
         {
@@ -93,7 +97,8 @@ function NoteForm(props: any)
                     contents: contentsInput,
                     date_added: dateAddedInput,
                     category_id: categoryInput,
-                    user_id: 1,
+                    tagIds: null
+                    // user_id: 1,
                 }
             };
 
@@ -110,10 +115,10 @@ function NoteForm(props: any)
             fetch(apiUrl, init)
             .then(response => response.json())
             .then(data => {
-                console.log("NoteForm.tsx, handleFormSubmit() [response]");
-                console.log(data);
+                // console.log("NoteForm.tsx, handleFormSubmit() [response]");
+                // console.log(data);
 
-                props.updateNoteList({
+                updateNoteList!({
                     ...submittedData.newNote,
                     id: data.responseData.id,
                 });
@@ -127,7 +132,7 @@ function NoteForm(props: any)
                 dispatch(addAlert(alert));
             })
             .catch(err => {
-                console.log("Error [NoteForm.tsx, handleFormSubmit()]: ", err.message);
+                // console.log("Error [NoteForm.tsx, handleFormSubmit()]: ", err.message);
                 const alert =
                 {
                     id: (new Date()).getTime(),
@@ -155,7 +160,9 @@ function NoteForm(props: any)
                 <Form.Label htmlFor="note-title-input">Title</Form.Label>
                 <Form.Control
                     defaultValue={titleInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "TITLE") }}
+                    onChange={(event: any) => {
+                        handleNoteFormInputFieldChange(event, "TITLE")
+                    }}
                     id="note-title-input"
                     type="text"/>
             </Form.Group>
@@ -163,7 +170,9 @@ function NoteForm(props: any)
                 <Form.Label  htmlFor="note-contents-input">Contents</Form.Label>
                 <Form.Control
                     defaultValue={contentsInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "CONTENTS") }}
+                    onChange={(event: any) => {
+                        handleNoteFormInputFieldChange(event, "CONTENTS")
+                    }}
                     id="note-contents-input"
                     as="textarea"/>
             </Form.Group>
@@ -171,7 +180,9 @@ function NoteForm(props: any)
                 <Form.Label  htmlFor="note-dateadded-input">Date Added</Form.Label>
                 <Form.Control
                     defaultValue={dateAddedInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "DATE_ADDED") }}
+                    onChange={(event: any) => {
+                        handleNoteFormInputFieldChange(event, "DATE_ADDED")
+                    }}
                     id="note-dateadded-input"
                     type="text"/>
             </Form.Group>
@@ -180,7 +191,9 @@ function NoteForm(props: any)
                 <Form.Select
                     aria-label="select category"
                     value={categoryInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "CATEGORY") }}
+                    onChange={(event: any) => {
+                        handleNoteFormInputFieldChange(event, "CATEGORY")
+                    }}
                     id="note-category-input">
                     {/* <option value={-1}>-- select category --</option> */}
                     { getCategoryOptions() }
@@ -191,6 +204,10 @@ function NoteForm(props: any)
                 variant="primary"
                 type="submit"
             >Submit</Button>
+            <Button
+                onClick={onCloseButtonClick}
+                variant="primary"
+            >Close</Button>
         </Form>
     );
 }
