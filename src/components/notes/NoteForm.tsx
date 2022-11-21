@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, SyntheticEvent } from 'react';
 import { createPortal } from "react-dom";
 
 // Redux imports
@@ -25,12 +25,15 @@ function NoteForm({
     updateNoteList, onCloseButtonClick
 }: NoteFormProps)
 {
+    const dispatch = useAppDispatch();
+    const categories = useAppSelector(selectCategoryList);
+    const [formTitle, setFormTitle] = useState<string>("");
     const [titleInput, setTitleInput] = useState("");
     const [contentsInput, setContentsInput] = useState("");
     const [dateAddedInput, setDateAddedInput] = useState("");
-    const [categoryInput, setCategoryInput] = useState<number>(-1);
-    const categories = useAppSelector(selectCategoryList);
-    const dispatch = useAppDispatch();
+    const [categoryInput, setCategoryInput] =
+        useState<number>(Object.values(categories).length ?
+        Object.values(categories)[0].id: -1);
 
     useEffect(() =>
     {
@@ -40,10 +43,12 @@ function NoteForm({
             setContentsInput(noteToEdit.contents);
             setDateAddedInput(noteToEdit.date_added);
             setCategoryInput(noteToEdit.category_id);
+            setFormTitle("Edit Note");
         }
         else
         {
             setDateAddedInput(helper.getCurrentDateTimeString());
+            setFormTitle("Add New Note");
         }
     }, []);
 
@@ -144,71 +149,97 @@ function NoteForm({
         }
     }
 
-    function getCategoryOptions()
+    function renderCategorySelectOptions()
     {
-        return Object.values(categories).map((item: ICategory) =>
+        return Object.values(categories).map(({id, name}: ICategory) =>
         {
             return (
-                <option key={ item.id } value={ item.id }>{ item.name }</option>
+                <option key={id} value={id}>{name}</option>
             );
         });
     }
 
+    const handleFormCloseButtonClick = (event: SyntheticEvent) =>
+    {
+        event.preventDefault();
+        onCloseButtonClick();
+    }
+
     return (
-        <Form>
-            <Form.Group className="mb-3">
-                <Form.Label htmlFor="note-title-input">Title</Form.Label>
-                <Form.Control
-                    defaultValue={titleInput}
+        <form>
+            <h2 className="form__title">{formTitle}</h2>
+            <div className="form__container">
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="note-title-input-1">Title</label>
+                <input
+                    id="note-title-input-1"
+                    name="note-title-input-1"
+                    className="form__input-field"
+                    type="text"
+                    value={titleInput}
                     onChange={(event: any) => {
                         handleNoteFormInputFieldChange(event, "TITLE")
-                    }}
-                    id="note-title-input"
-                    type="text"/>
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <Form.Label  htmlFor="note-contents-input">Contents</Form.Label>
-                <Form.Control
-                    defaultValue={contentsInput}
+                    }}/>
+            </div>
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="note-contents-input-1">Contents</label>
+                <textarea
+                    id="note-contents-input-1"
+                    name="note-contents-input-1"
+                    className="form__input-field"
+                    value={contentsInput}
                     onChange={(event: any) => {
                         handleNoteFormInputFieldChange(event, "CONTENTS")
-                    }}
-                    id="note-contents-input"
-                    as="textarea"/>
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <Form.Label  htmlFor="note-dateadded-input">Date Added</Form.Label>
-                <Form.Control
-                    defaultValue={dateAddedInput}
+                    }}></textarea>
+            </div>
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="note-dateadded-input-1">Date Added</label>
+                <input
+                    id="note-dateadded-input-1"
+                    name="note-dateadded-input-1"
+                    className="form__input-field"
+                    type="text"
+                    value={dateAddedInput}
                     onChange={(event: any) => {
                         handleNoteFormInputFieldChange(event, "DATE_ADDED")
-                    }}
-                    id="note-dateadded-input"
-                    type="text"/>
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <Form.Label  htmlFor="note-category-input">Category</Form.Label>
-                <Form.Select
-                    aria-label="select category"
+                    }}/>
+            </div>
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="note-category-input-1">Category</label>
+                <select
+                    name="note-category-input-1"
+                    id="note-category-input-1"
+                    className="form__input-field"
                     value={categoryInput}
                     onChange={(event: any) => {
                         handleNoteFormInputFieldChange(event, "CATEGORY")
                     }}
-                    id="note-category-input">
-                    {/* <option value={-1}>-- select category --</option> */}
-                    { getCategoryOptions() }
-                </Form.Select>
-            </Form.Group>
-            <Button
-                onClick={handleFormSubmit}
-                variant="primary"
-                type="submit"
-            >Submit</Button>
-            <Button
-                onClick={onCloseButtonClick}
-                variant="primary"
-            >Close</Button>
-        </Form>
+                >
+                    { renderCategorySelectOptions() }
+                </select>
+            </div>
+
+            <div className="form__button-group">
+                <button
+                    className="form__button daterange-picker__ok-button"
+                    type="submit"
+                    onClick={handleFormSubmit}
+                >submit</button>
+                <button
+                    className="form__button daterange-picker__ok-button"
+                    onClick={handleFormCloseButtonClick}
+                >close</button>
+            </div>
+            </div>
+        </form>
     );
 }
 

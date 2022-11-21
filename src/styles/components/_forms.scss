@@ -78,10 +78,10 @@ form,
     width: 100%;
 }
 
-form
-{
-    padding: 30px 20px;
-}
+// form
+// {
+//     padding: 30px 20px;
+// }
 
 .form-title
 {
@@ -116,5 +116,104 @@ form
     &:hover
     {
         text-decoration: underline;
+    }
+}
+
+
+:root
+{
+    --form-title-txt-color: #333;
+    --form-label-txt-color: #333;
+    --form-input-field-border-color: #AAA;
+    --form-input-field-bg-color: #FEFEFE;
+    --form-input-field-focus-border-color: #333;
+    --form-input-field-txt-color: #555;
+    --form-input-field-active-txt-color: #333;
+}
+
+.form__container
+{
+    padding: 10px;
+}
+
+.form__title
+{
+    padding-top: 13px;
+    text-align: center;
+    color: var(--form-title-txt-color);
+}
+
+// contains a label and an input field
+// possibly and error field of sorts in the near (hopefully) future
+.form__field-container
+{
+    // border: 1px dotted red;
+    font-family: var(--main-font);
+    font-size: 1.05rem;
+}
+
+.form__label,
+.form__input-field
+{
+    padding: 7px 12px;
+}
+
+.form__label
+{
+    // border: 1px dotted blue;
+    display: inline-block;
+    padding-left: 0;
+    color: var(--form-label-txt-color);
+
+    &:focus
+    {
+        color: red;
+    }
+}
+
+.form__input-field
+{
+    // border: 1px dotted green;
+    display: block;
+    width: 100%;
+    border: 1px solid var(--form-input-field-border-color);
+    border-radius: 2px;
+    outline: none; // DEBUG!
+    font-size: inherit;
+    font-family: inherit;
+    // color: inherit;
+    color: var(--form-input-field-txt-color);
+    background-color: var(--form-input-field-bg-color);
+
+    transition: border-color 120ms ease,
+                color 120ms ease;
+
+    &:focus
+    {
+        border-color: var(--form-input-field-focus-border-color);
+        color: var(--form-input-field-active-txt-color);
+    }
+}
+
+.form__button-group
+{
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+
+    // &:last-child
+    // {
+    //     margin-right: 0;
+    // }
+}
+
+.form__button
+{
+    padding: 5px 20px;
+    margin-right: 15px;
+
+    &:last-of-type
+    {
+        margin-right: 0;
     }
 }
