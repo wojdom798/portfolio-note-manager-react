@@ -25,9 +25,17 @@ export const categoryListSlice = createSlice(
         {
             state.categories[action.payload.id] = action.payload;
         },
-        remove: (state, action: PayloadAction<number>) =>
+        remove: (state, action: PayloadAction<number | number[]>) =>
         {
-            delete state.categories[action.payload];
+            if (Array.isArray(action.payload))
+            {
+                for (const categoryId of action.payload)
+                {
+                    delete state.categories[categoryId];
+                }
+            }
+            else
+                delete state.categories[action.payload];
         },
         removeAll: (state) =>
         {
