@@ -28,6 +28,36 @@ async function (req, res)
 
     let userId = req.session.passport.user.id;
 
+    let param = JSON.parse(req.params.id);
+    console.log(param);
+    console.log(param[0]);
+
+    let sqlCategoryIdCondition = "";
+    if (!Array.isArray(param))
+    {
+        sqlCategoryIdCondition = `(id = ${param})`;
+    }
+    else
+    {
+        sqlCategoryIdCondition = "(";
+        param.forEach((id, index) =>
+        {
+            if (index !== param.length-1)
+                sqlCategoryIdCondition += `(id = ${id}) OR `;
+            else
+                sqlCategoryIdCondition += `(id = ${id})`;
+        });
+        sqlCategoryIdCondition += ")";
+    }
+    
+
+    // res.json({
+    //     msg: "test completed",
+    //     data: req.params.id,
+    //     isArray: Array.isArray(param),
+    //     sqlCond: sqlCategoryIdCondition
+    // });
+
     if (projectSettings.database.selected_database === "sqlite")
     {
         try
@@ -36,16 +66,21 @@ async function (req, res)
             const databaseHandle = await createDbConnection(
                 path.join(__projectDir, projectSettings.database.filename));
             
-            queryArray = 
-            [
-                `DELETE FROM category WHERE `,
-                `(user_id = ${req.session.passport.user.id}) AND `,
-                `(id = ${req.params.id});`,
-            ];
-            for (let line of queryArray)
-            {
-                query += line;
-            }
+            // queryArray = 
+            // [
+            //     `DELETE FROM category WHERE `,
+            //     `(user_id = ${req.session.passport.user.id}) AND `,
+            //     `(id = ${req.params.id});`,
+            // ];
+            // for (let line of queryArray)
+            // {
+            //     query += line;
+            // }
+
+            query =
+                "DELETE FROM category WHERE " +
+                `(user_id = ${req.session.passport.user.id}) AND ` +
+                sqlCategoryIdCondition + ";";
 
             queryResult = await databaseHandle.all(query);
             await databaseHandle.close();
@@ -75,8 +110,13 @@ async function (req, res)
     {
         try
         {
-            query = "DELETE FROM category WHERE (user_id = $1) AND (id = $2) RETURNING id;";
-            queryValues = [userId, req.params.id];
+            // query = "DELETE FROM category WHERE (user_id = $1) AND (id = $2) RETURNING id;";
+            // queryValues = [userId, req.params.id];
+            query =
+                "DELETE FROM category" +
+                " WHERE (user_id = $1) AND " +
+                `${sqlCategoryIdCondition} RETURNING id;`;
+            queryValues = [userId];
 
             queryResult = (await postgresPool.query(query, queryValues)).rows[0];
 
