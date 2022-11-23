@@ -1,11 +1,22 @@
 :root
 {
     --accent-color: #33dabd;
+    --accent-color-d30: #1c9f88; // darken by 30%
+
+    --palette-color-1-light-main-theme: #f3f5f6;
+    --palette-color-2-dark-main-theme: #3f4a59;
 
     //***************************************************************
     //                     Main App Container
     //***************************************************************
     --main-navigation-bg-color: #3f4a59;
+    --main-navigation-bg-color-l10: #4d5b6d; // lighten by 10%
+    --main-navigation-bg-color-l30: #6c7e97; // lighten by 30%
+    --main-navigation-bg-color-l70: #c0c7d2; // lighten by 70%
+    --main-navigation-bg-color-l85: #dfe3e8; // lighten by 85%
+    --main-navigation-bg-color-l90: #eaecf0; // lighten by 90%
+    --main-navigation-bg-color-l95: #f4f5f7; // lighten by 95%
+
     --app-main-section-bg-color: #f3f5f6;
 
 

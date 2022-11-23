@@ -1,0 +1,111 @@
+:root
+{
+    --table-view-even-row-bg-color: #FAFAFA;
+    --table-view-even-row-txt-color: #444;
+    --table-view-odd-row-bg-color: var(--main-navigation-bg-color-l90);
+    --table-view-odd-row-txt-color: #333;
+    --table-view-header-bg-color: var(--main-navigation-bg-color);
+    --table-view-header-txt-color: #FAFAFA;
+    --table-view-body-border-color: var(--main-navigation-bg-color);
+    --table-view-row-active-bg-color: var(--accent-color);
+    --table-view-row-active-txt-color: #333;
+    --table-view-row-active-txt-color: #444;
+    --table-view-row-active-separator-color: var(--accent-color-d30);
+}
+
+.table-view
+{
+    width: 100%;
+    overflow: hidden;
+    border-collapse: collapse;
+    text-align: left;
+    border: 1px solid var(--table-view-body-border-color);
+}
+
+// .table-view__header
+// {
+
+// }
+
+.table-view__header-row
+{
+    background-color: var(--table-view-header-bg-color);
+    color: var(--table-view-header-txt-color);
+}
+
+// .table-view__body
+// {
+//     border: 1px solid var(--table-view-body-border-color);
+// }
+
+.table-view__row
+{
+    border-bottom: 1px solid transparent;
+    transition: background-color 200ms ease,
+                color 200ms ease;
+
+    &:last-child
+    {
+        border-bottom: none;
+    }
+
+    &:nth-child(2n)
+    {
+        
+        background-color: var(--table-view-even-row-bg-color);
+        color: var(--table-view-even-row-txt-color);
+    }
+
+    &:nth-child(2n+1)
+    {
+        
+        background-color: var(--table-view-odd-row-bg-color);
+        color: var(--table-view-odd-row-txt-color);
+    }
+}
+
+.table-view__row--active
+{
+    background-color: var(--table-view-row-active-bg-color) !important;
+    color: var(--table-view-row-active-txt-color) !important;
+    border-bottom-color: var(--table-view-row-active-separator-color);
+}
+
+.table-view__column
+{
+    padding: 5px;
+    padding-left: 10px;
+    margin: 0 auto;
+
+    &:first-child
+    {
+        padding-left: 5px;
+    }
+}
+
+.table-view__column--header
+{
+    font-size: 1.2rem;
+}
+
+.table-view__column--horizontally-scrollable
+{
+    // width: 20%;
+    max-width: 80px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+@media only screen and (min-width: 800px)
+{
+    .table-view
+    {
+        // max-width: 700px;
+        max-width: 70%;
+    }
+
+    .table-view__column--horizontally-scrollable
+    {
+        max-width: 250px;
+    }
+}
