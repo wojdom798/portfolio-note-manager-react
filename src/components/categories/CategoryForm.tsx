@@ -1,89 +1,132 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState, useEffect, Fragment, SyntheticEvent } from 'react';
+
+// Type imports
+import { ICategory, CategoryFormInputsEnum, CategoryFormProps } from "../../types";
+
+// Helper imports
 import helper from '../../helper';
 
-function CategoryForm(props: any)
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
+function CategoryForm({
+    categoryToEdit, onFormSubmit, onFormClose
+}: CategoryFormProps)
 {
+    const [formTitle, setFormTitle] = useState<string>("");
     const [nameInput, setNameInput] = useState("");
     const [dateAddedInput, setDateAddedInput] = useState("");
 
     useEffect(() =>
     {
-        if (props.hasOwnProperty("categoryToEdit"))
+        if (categoryToEdit)
         {
-            setNameInput(props.categoryToEdit.name);
-            setDateAddedInput(props.categoryToEdit.date_added);
+            setNameInput(categoryToEdit.name);
+            setDateAddedInput(categoryToEdit.date_added);
+            setFormTitle("Edit Category");
         }
         else
         {
             setDateAddedInput(helper.getCurrentDateTimeString());
+            setFormTitle("Add New Category");
         }
     }, []);
 
-    function handleNoteFormInputFieldChange(event: any, fieldName: any)
+    function handleFormInputFieldChange(event: SyntheticEvent, fieldName: any)
     {
-        // console.log(event.target.value + "; fieldName= " + fieldName);
-        if (fieldName === "NAME")
+        if (fieldName === CategoryFormInputsEnum.NAME)
         {
-            if (typeof event.target.value === "string")
-                setNameInput(event.target.value);
+            if (typeof (event.target as HTMLInputElement).value === "string")
+                setNameInput((event.target as HTMLInputElement).value);
         }
-        else if (fieldName === "DATE_ADDED")
+        else if (fieldName === CategoryFormInputsEnum.DATE_ADDED)
         {
-            setDateAddedInput(event.target.value);
+            setDateAddedInput((event.target as HTMLInputElement).value);
         }
     };
 
-    function handleFormSubmit(event: any)
+    function handleFormSubmit(event: SyntheticEvent)
     {
         event.preventDefault();
         
-        if (props.hasOwnProperty("categoryToEdit"))
+        if (categoryToEdit)
         {
-            const categoryToEdit = {
-                id: props.categoryToEdit.id,
+            const categoryToEditSubmitted = {
+                id: categoryToEdit.id,
                 name: nameInput,
                 date_added: dateAddedInput,
-                user_id: 1,
-            }
-            props.onFormSubmit(categoryToEdit);
+                // user_id: 1,
+            } as ICategory;
+            onFormSubmit(categoryToEditSubmitted);
         }
         else
         {
-            
-            props.onFormSubmit({
+            onFormSubmit({
                 name: nameInput,
                 date_added: dateAddedInput,
-                user_id: 1,
-            });
+                // user_id: 1,
+            } as ICategory);
         }
     }
 
+    const handleCloseFormButtonClick = (event: SyntheticEvent) =>
+    {
+        event.preventDefault();
+        onFormClose();
+    };
+
     return (
-        <Form>
-            <Form.Group className="mb-3">
-                <Form.Label htmlFor="category-name-input">Name</Form.Label>
-                <Form.Control
-                    defaultValue={nameInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "NAME") }}
+        <form>
+            <h2 className="form__title">{formTitle}</h2>
+            <div className="form__container">
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="category-name-input">Name</label>
+                <input
                     id="category-name-input"
-                    type="text"/>
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <Form.Label  htmlFor="category-dateadded-input">Date Added</Form.Label>
-                <Form.Control
-                    defaultValue={dateAddedInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "DATE_ADDED") }}
+                    name="category-name-input"
+                    className="form__input-field"
+                    type="text"
+                    value={nameInput}
+                    onChange={(event: any) => {
+                        handleFormInputFieldChange(
+                            event,
+                            CategoryFormInputsEnum.NAME
+                        );
+                    }}/>
+            </div>
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="category-dateadded-input">Date Added</label>
+                <input
                     id="category-dateadded-input"
-                    type="text"/>
-            </Form.Group>
-            <Button
-                onClick={handleFormSubmit}
-                variant="primary"
-                type="submit"
-            >Submit</Button>
-        </Form>
+                    name="category-dateadded-input"
+                    className="form__input-field"
+                    type="text"
+                    value={dateAddedInput}
+                    onChange={(event: any) => {
+                        handleFormInputFieldChange(
+                            event,
+                            CategoryFormInputsEnum.DATE_ADDED
+                        );
+                    }}/>
+            </div>
+            <div className="form__button-group">
+                <button
+                    className="form__button daterange-picker__ok-button"
+                    type="submit"
+                    onClick={handleFormSubmit}
+                >submit</button>
+                <button
+                    className="form__button daterange-picker__ok-button"
+                    onClick={handleCloseFormButtonClick}
+                >close</button>
+            </div>
+            </div>
+        </form>
     );
 }
 

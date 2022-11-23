@@ -29,6 +29,19 @@ export interface ICategory
     user_id: number;
 };
 
+export interface CategoryFormProps
+{
+    categoryToEdit?: ICategory;
+    onFormSubmit: (category: ICategory) => void;
+    onFormClose: () => void;
+};
+
+export enum CategoryFormInputsEnum
+{
+    NAME = "NAME",
+    DATE_ADDED = "DATE_ADDED"
+};
+
 export interface IDate
 {
     year: number;
