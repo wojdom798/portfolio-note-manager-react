@@ -26,9 +26,15 @@ export const tagListSlice = createSlice(
         {
             state.tags[action.payload.id] = action.payload;
         },
-        remove: (state, action: PayloadAction<number>) =>
+        remove: (state, action: PayloadAction<number | number[]>) =>
         {
-            delete state.tags[action.payload];
+            if (Array.isArray(action.payload))
+            {
+                for (const tagId of action.payload)
+                    delete state.tags[tagId];
+            }
+            else
+                delete state.tags[action.payload];
         },
         removeAll: (state) =>
         {
