@@ -14,6 +14,8 @@ const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 const { Pool, Client } = require("pg");
 const postgresPool = new Pool(projectSettings.database.postgresql);
 
+const helper = require("../../server_helper");
+
 // route: /api/tags/delete
 router.delete("/:id",
 async function (req, res)
@@ -28,6 +30,8 @@ async function (req, res)
 
     let userId = req.session.passport.user.id;
 
+    const tagIdsToDelete = JSON.parse(req.params.id);
+    let sqlTagIdCondition = ""; // this string will be attached to WHERE clause
 
     if (projectSettings.database.selected_database === "sqlite")
     {
@@ -36,17 +40,29 @@ async function (req, res)
             sqlite3.verbose();
             const databaseHandle = await createDbConnection(
                 path.join(__projectDir, projectSettings.database.filename));
-            
-            queryArray = 
-            [
-                `DELETE FROM tag `,
-                `WHERE (user_id = ${req.session.passport.user.id}) AND `,
-                `(id = ${req.params.id});`,
-            ];
-            for (let line of queryArray)
+
+            if (!Array.isArray(tagIdsToDelete))
             {
-                query += line;
+                sqlTagIdCondition = helper.generateSQLMultiORCondition(
+                    1, "id", "sqlite"
+                );
             }
+            else
+            {
+                sqlTagIdCondition = helper.generateSQLMultiORCondition(
+                    tagIdsToDelete.length, "id",  "sqlite"
+                );
+            }
+
+            query =
+                "DELETE FROM tag" +
+                " WHERE (user_id = ?) AND " +
+                `${sqlTagIdCondition};`;
+            
+            if (Array.isArray(tagIdsToDelete))
+                queryValues = [userId, ...tagIdsToDelete];
+            else
+                queryValues = [userId, tagIdsToDelete];
 
             queryResult = await databaseHandle.all(query);
             await databaseHandle.close();
@@ -74,8 +90,31 @@ async function (req, res)
     {
         try
         {
-            query = "DELETE FROM tag WHERE (user_id = $1) AND (id = $2) RETURNING id;";
-            queryValues = [userId, req.params.id];
+            // query = "DELETE FROM tag WHERE (user_id = $1) AND (id = $2) RETURNING id;";
+            // queryValues = [userId, req.params.id];
+
+            if (!Array.isArray(tagIdsToDelete))
+            {
+                sqlTagIdCondition = helper.generateSQLMultiORCondition(
+                    1, "id", "postgres"
+                );
+            }
+            else
+            {
+                sqlTagIdCondition = helper.generateSQLMultiORCondition(
+                    tagIdsToDelete.length, "id",  "postgres"
+                );
+            }
+
+            query =
+                "DELETE FROM tag" +
+                " WHERE (user_id = $1) AND " +
+                `${sqlTagIdCondition} RETURNING id;`;
+            
+            if (Array.isArray(tagIdsToDelete))
+                queryValues = [userId, ...tagIdsToDelete];
+            else
+                queryValues = [userId, tagIdsToDelete];
 
             queryResult = (await postgresPool.query(query, queryValues)).rows[0];
 
