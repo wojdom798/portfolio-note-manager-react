@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, SyntheticEvent } from "react";
 
 // Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
@@ -17,21 +17,17 @@ import TagForm from "./TagForm";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import BootstrapModal from 'react-bootstrap/Modal';
 import Card from "react-bootstrap/Card";
 
 
 function TagList()
 {
-    const tags = useAppSelector(selectTagList);
     const dispatch = useAppDispatch();
+    const tags = useAppSelector(selectTagList);
     const [showModal, setShowModal] = useState(false);
     const [tagToEdit, setTagToEdit] = useState<ITag | null>(null);
-
-    useEffect(() =>
-    {
-        
-    }, []);
+    const [selectedTags, setSelectedTags] = useState<number[]>([]);
 
     const handleShowModal = () =>
     {
@@ -39,38 +35,54 @@ function TagList()
         setShowModal(true);
     };
 
-    const handleCloseModal = () => setShowModal(false);
-
-    function categoriesToElement()
+    const handleFormClose = () =>
     {
-        return Object.values(tags).map((item: any) =>
+        setTagToEdit(null);
+        setShowModal(false);
+    };
+
+    const handleToggleAllItemSelection = (event: SyntheticEvent) =>
+    {
+        if ((event.target as HTMLInputElement).checked)
         {
-            return (
-            <Card key={item.id} border="primary" style={{ width: '18rem' }}>
-                <Card.Header>{item.date_added}</Card.Header>
-                <Card.Body>
-                <Card.Title>{item.name}</Card.Title>
-                <Button
-                    onClick={() => { handleEditTagButtonClick(item.id) }}
-                    variant="primary">edit</Button>
-                <Button
-                    onClick={ () => { handleDeleteTagButtonClick(item.id); }}
-                    variant="danger">delete</Button>
-                </Card.Body>
-            </Card>
-            );
-        });
+            const allIds: number[] = [];
+            Object.values(tags).forEach(({id}: ITag) =>
+            {
+                allIds.push(id)
+            });
+            setSelectedTags(allIds);
+        }
+        else
+        {
+            setSelectedTags([]);
+        }
     }
 
-    function handleEditTagButtonClick(tagId: number)
+    const handleToggleItemSelection = (itemId: number) =>
     {
-        setTagToEdit(tags[tagId]);
-        setShowModal(true);
+        if (selectedTags.includes(itemId))
+        {
+            setSelectedTags(selectedTags.filter((currentItem) =>
+            {
+                return currentItem !== itemId;
+            }));
+        }
+        else
+        {
+            setSelectedTags([...selectedTags, itemId]);
+        }
     }
 
-    async function handleDeleteTagButtonClick(tagId: number)
+    async function deleteTagsDB(tagIds: number[])
     {
-        const url = `api/tags/delete/${tagId}`;
+        let url;
+        console.log("deleting tags: ");
+        console.log(tagIds);
+        if (tagIds.length === 1)
+            url = `api/tags/delete/${tagIds[0]}`;
+        else
+            url = `api/tags/delete/${JSON.stringify(tagIds)}`;
+        
         const init = {
             method: "DELETE",
             headers: {
@@ -80,146 +92,144 @@ function TagList()
         try
         {
             const response = await fetch(url, init);
-            dispatch(deleteTag(tagId));
+            dispatch(deleteTag(tagIds));
         }
         catch (error: any)
         {
-            console.log("Error [TagList.tsx, handleDeleteTagButtonClick()]: ", error.message);
+            console.log(
+                "Error [TagList.tsx, handleDeleteTagButtonClick()]: ",
+                error.message
+            );
         }
     }
 
-    function handleAddNewTagFormSubmit(newTag: ITag)
+    const handleEditActionClick = () =>
     {
-        let apiUrl = "/api/tags/add";
-        let payload = JSON.stringify({ newTag: newTag });
+        if (selectedTags.length === 1)
+        {
+            setTagToEdit(tags[selectedTags[0]]);
+            setShowModal(true);
+        }
+    }
 
-        const init = {
-            method: "POST",
-            body: payload,
-            headers: { 'Content-Type': 'application/json' }
-        };
-        fetch(apiUrl, init)
-        .then(response => response.json())
-        .then(data => {
+    const handleDeleteActionClick = () =>
+    {
+        console.log("deleting tags: ");
+        console.log(selectedTags);
 
-            dispatch(addTag({
-                ...newTag,
-                id: data.responseData.id,
-            }));
-        })
-        .catch(err => {
-            console.log("Error [TagList.tsx, handleAddNewTagFormSubmit()]: ", err.message);
+        deleteTagsDB(selectedTags);
+        setSelectedTags([]);
+    }
+
+    function renderTagsAsTableRows(tags: ITag[])
+    {
+        return tags.map(
+            ({ id, name, date_added }: ITag, index: number) =>
+        {
+            return (
+                <tr
+                    className={
+                        selectedTags.includes(id) ?
+                        "table-view__row table-view__row--active" : "table-view__row"
+                    }
+                    key={id}
+                    onClick={() => {handleToggleItemSelection(id)}}
+                >
+                    <td className="table-view__column">
+                        <input
+                            checked={selectedTags.includes(id)}
+                            type="checkbox"
+                            onChange={() => {handleToggleItemSelection(id)}}/>
+                    </td>
+                    <td className="table-view__column">{index+1}</td>
+                    <td
+                        className={
+                            "table-view__column " +
+                            "table-view__column--horizontally-scrollable"
+                        }
+                    >{name}</td>
+                    <td className="table-view__column">{date_added}</td>
+                </tr>
+            );
         });
     }
 
-    async function handleEditTagFormSubmit(tagToEdit: ITag)
-    {
-        let payload = JSON.stringify({ tagToEdit: tagToEdit });
+    return (
+    <Fragment>
+        <div className="tag-list">
+            <h2 className="tag-list__title">Tags</h2>
+            <div className="tag-list__button-container">
+                <button
+                    className="notes-app-btn"
+                    disabled={selectedTags.length !== 1}
+                    onClick={handleEditActionClick}
+                >Edit</button>
+                <button
+                    className="notes-app-btn notes-app-btn--danger"
+                    disabled={selectedTags.length === 0}
+                    onClick={handleDeleteActionClick}
+                >Delete</button>
+            </div>
+            <div className="tag-list__table-container">
+            <table className="table-view">
+                <thead className="table-view__header">
+                    <tr className="table-view__header-row">
+                        <th className="table-view__column table-view__column--header">
+                            <input
+                                disabled={Object.values(tags).length === 0}
+                                checked={
+                                    Object.values(tags).length !== 0 &&
+                                    Object.values(tags).length === 
+                                    selectedTags.length
+                                }
+                                type="checkbox"
+                                onChange={handleToggleAllItemSelection}/>
+                        </th>
+                        <th
+                            className="table-view__column table-view__column--header"
+                        >#</th>
+                        <th
+                            className="table-view__column table-view__column--header"
+                        >Name</th>
+                        <th
+                            className="table-view__column table-view__column--header"
+                        >Date Added</th>
+                    </tr>
+                </thead>
+                <tbody className="table-view__body">
+                    { renderTagsAsTableRows(Object.values(tags)) }
+                </tbody>
+            </table>
+            </div>
 
-        const init = {
-            method: "PUT",
-            body: payload,
-            headers: { 'Content-Type': 'application/json' }
-        };
-        try
-        {
-            const response = await fetch("/api/tags/edit", init);
-            const data = await response.json();
-            dispatch(editTag(tagToEdit));
-        }
-        catch (error: any)
-        {
-            console.log("Error [TagList.tsx, handleEditTagFormSubmit()]: ", error.message);
-        }
-        finally
-        {
-            setTagToEdit(null);
-            setShowModal(false);
-        }
-    }
-    
-    if (!tagToEdit)
-    {
-        return (
-        <Fragment>
-            <Fragment>
-                {categoriesToElement()}
-                <Button
-                    onClick={handleShowModal}
-                    variant="primary"
-                    className="floating-action-btn-round"
-                    type="button">
-                <span>&#x2B;</span>
-                </Button>
-            </Fragment>
-    
-            {/* modal dialog */}
-            <Modal
-                show={showModal}
-                onHide={handleCloseModal}
-                backdrop="static"
-                keyboard={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
-    
-                <Modal.Body>
-                    <TagForm onFormSubmit={handleAddNewTagFormSubmit} />
-                </Modal.Body>
-    
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-                    <Button variant="primary" onClick={handleCloseModal}>Save changes</Button>
-                </Modal.Footer>
-            </Modal>
-            {/* end: modal dialog */}
-        </Fragment>
-        );
-    }
-    else
-    {
-        return (
-        <Fragment>
-            <Fragment>
-                {categoriesToElement()}
-                <Button
-                    onClick={handleShowModal}
-                    variant="primary"
-                    className="floating-action-btn-round"
-                    type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal">
-                <span>&#x2B;</span>
-                </Button>
-            </Fragment>
-    
-            {/* modal dialog */}
-            <Modal
-                show={showModal}
-                onHide={handleCloseModal}
-                backdrop="static"
-                keyboard={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
-                </Modal.Header>
+            <Button
+                onClick={handleShowModal}
+                variant="primary"
+                className="floating-action-btn-round"
+                type="button">
+            <span>&#x2B;</span>
+            </Button>
+        </div>
 
-                <Modal.Body>
-                    {/* display edit form */}
+        <BootstrapModal
+            show={showModal}
+            backdrop="static"
+            keyboard={false}>
+            <BootstrapModal.Body>
+                { tagToEdit ? (
                     <TagForm
                         tagToEdit={tagToEdit}
-                        onFormSubmit={handleEditTagFormSubmit}
+                        onFormClose={handleFormClose}
                     />
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-                    <Button variant="primary" onClick={handleCloseModal}>Save changes</Button>
-                </Modal.Footer>
-            </Modal>
-            {/* end: modal dialog */}
-        </Fragment>
-        );
-    }
+                ) : (
+                    <TagForm
+                        onFormClose={handleFormClose}
+                    />
+                )}
+            </BootstrapModal.Body>
+        </BootstrapModal>
+    </Fragment>
+    );
 }
 
 export default TagList;
