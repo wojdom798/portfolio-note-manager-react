@@ -1,87 +1,166 @@
-import React, { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState, useEffect, SyntheticEvent } from 'react';
+
+// Redux imports
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import {
+    add as addTag,
+    edit as editTag,
+    selectTagList
+} from "../../redux/tagSlice";
+
+// Type imports
+import { ITag, TagFormInputsEnum, TagFormProps } from "../../types";
+
+// Helper imports
 import helper from '../../helper';
 
-function TagForm(props: any)
+// Bootstrap imports
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
+function TagForm({ tagToEdit, onFormClose }: TagFormProps)
 {
+    const dispatch = useAppDispatch();
+    const [formTitle, setFormTitle] = useState<string>("");
     const [nameInput, setNameInput] = useState("");
     const [dateAddedInput, setDateAddedInput] = useState("");
 
     useEffect(() =>
     {
-        if (props.hasOwnProperty("tagToEdit"))
+        if (tagToEdit)
         {
-            setNameInput(props.tagToEdit.name);
-            setDateAddedInput(props.tagToEdit.date_added);
+            setNameInput(tagToEdit.name);
+            setDateAddedInput(tagToEdit.date_added);
+            setFormTitle("Edit Tag");
         }
         else
         {
             setDateAddedInput(helper.getCurrentDateTimeString());
+            setFormTitle("Add New Tag");
         }
     }, []);
 
-    function handleNoteFormInputFieldChange(event: any, fieldName: any)
+    function handleFormInputFieldChange(
+        event: SyntheticEvent, fieldName: TagFormInputsEnum)
     {
-        if (fieldName === "NAME")
+        const evTarget = event.target as HTMLInputElement;
+        if (fieldName === TagFormInputsEnum.NAME)
         {
-            if (typeof event.target.value === "string")
-                setNameInput(event.target.value);
+            if (typeof evTarget.value === "string")
+                setNameInput(evTarget.value);
         }
-        else if (fieldName === "DATE_ADDED")
+        else if (fieldName === TagFormInputsEnum.DATE_ADDED)
         {
-            setDateAddedInput(event.target.value);
+            setDateAddedInput(evTarget.value);
         }
     };
 
-    function handleFormSubmit(event: any)
+    async function handleFormSubmit(event: SyntheticEvent)
     {
         event.preventDefault();
-        
-        if (props.hasOwnProperty("tagToEdit"))
+
+        let tagToSubmit;
+        let payload;
+
+        if (tagToEdit)
         {
-            const tagToEdit = {
-                id: props.tagToEdit.id,
+            tagToSubmit = {
+                id: tagToEdit.id,
                 name: nameInput,
                 date_added: dateAddedInput,
-                user_id: 1,
-            }
-            props.onFormSubmit(tagToEdit);
+            };
+            payload = JSON.stringify({ "tagToEdit": tagToSubmit });
+            const init = {
+                method: "PUT",
+                body: payload,
+                headers: { "Content-Type": "application/json" }
+            };
+            const response = await fetch("/api/tags/edit", init);
+            // if (!response.ok) // ...
+            const data = await response.json();
+
+            dispatch(editTag(tagToSubmit));
         }
         else
         {
-            props.onFormSubmit({
+            tagToSubmit = {
                 name: nameInput,
                 date_added: dateAddedInput,
-                user_id: 1,
-            });
+            };
+            payload = JSON.stringify({ newTag: tagToSubmit });
+            const init = {
+                method: "POST",
+                body: payload,
+                headers: { "Content-Type": "application/json" }
+            };
+            const response = await fetch("/api/tags/add", init);
+            // if (!response.ok) // ...
+            const data = await response.json();
+
+            dispatch(addTag({
+                ...tagToSubmit,
+                id: data.responseData.id,
+            }));
         }
     }
 
+    const handleCloseFormButtonClick = (event: SyntheticEvent) =>
+    {
+        event.preventDefault();
+        onFormClose();
+    };
+
     return (
-        <Form>
-            <Form.Group className="mb-3">
-                <Form.Label htmlFor="tag-name-input">Name</Form.Label>
-                <Form.Control
-                    defaultValue={nameInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "NAME") }}
+        <form>
+            <h2 className="form__title">{formTitle}</h2>
+            <div className="form__container">
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="tag-name-input">Name</label>
+                <input
                     id="tag-name-input"
-                    type="text"/>
-            </Form.Group>
-            <Form.Group className="mb-3">
-                <Form.Label  htmlFor="tag-dateadded-input">Date Added</Form.Label>
-                <Form.Control
-                    defaultValue={dateAddedInput}
-                    onChange={(event: any) => { handleNoteFormInputFieldChange(event, "DATE_ADDED") }}
+                    name="tag-name-input"
+                    className="form__input-field"
+                    type="text"
+                    value={nameInput}
+                    onChange={(event: SyntheticEvent) => {
+                        handleFormInputFieldChange(
+                            event,
+                            TagFormInputsEnum.NAME
+                        );
+                    }}/>
+            </div>
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="tag-dateadded-input">Date Added</label>
+                <input
                     id="tag-dateadded-input"
-                    type="text"/>
-            </Form.Group>
-            <Button
-                onClick={handleFormSubmit}
-                variant="primary"
-                type="submit"
-            >Submit</Button>
-        </Form>
+                    name="tag-dateadded-input"
+                    className="form__input-field"
+                    type="text"
+                    value={dateAddedInput}
+                    onChange={(event: SyntheticEvent) => {
+                        handleFormInputFieldChange(
+                            event,
+                            TagFormInputsEnum.DATE_ADDED
+                        );
+                    }}/>
+            </div>
+            <div className="form__button-group">
+                <button
+                    className="form__button daterange-picker__ok-button"
+                    type="submit"
+                    onClick={handleFormSubmit}
+                >submit</button>
+                <button
+                    className="form__button daterange-picker__ok-button"
+                    onClick={handleCloseFormButtonClick}
+                >close</button>
+            </div>
+            </div>
+        </form>
     );
 }
 

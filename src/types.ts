@@ -119,7 +119,19 @@ export interface ITag
     id: number;
     name: string;
     date_added: string;
-    user_id: number;
+    user_id?: number;
+};
+
+export enum TagFormInputsEnum
+{
+    NAME = "NAME",
+    DATE_ADDED = "DATE_ADDED"
+};
+
+export interface TagFormProps
+{
+    tagToEdit?: ITag;
+    onFormClose: () => void;
 };
 
 export interface IUser
