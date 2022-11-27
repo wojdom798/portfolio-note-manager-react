@@ -30,8 +30,7 @@ import UserLoginForm from "./users/UserLoginForm";
 import UserRegisterForm from "./users/UserRegisterForm";
 
 // Bootstrap imports
-import Button from 'react-bootstrap/Button';
-// import Modal from 'react-bootstrap/Modal';
+// [...]
 
 function MainDashboard()
 {
@@ -41,6 +40,7 @@ function MainDashboard()
     const [currentView, setCurrentView] = useState(0);
     // false = register form, true = login form
     const [shouldShowLoginForm, setShouldShowLoginForm] = useState<boolean>(false);
+    const [wasAddItemButtonClicked, setWasAddItemButtonClicked] = useState<boolean>(false);
 
     useEffect(() =>
     {
@@ -82,16 +82,32 @@ function MainDashboard()
     function getCurrentView()
     {
         if (currentView === 0 || currentView > 2)
-            return <NoteList />
+            return (
+                <NoteList
+                    wasAddItemButtonClicked={wasAddItemButtonClicked}
+                    onAddItemFormClose={() => { setWasAddItemButtonClicked(false); }}
+                />
+            );
         else if (currentView === 1)
-            return <CategoryList />
+            return (
+                <CategoryList
+                    wasAddItemButtonClicked={wasAddItemButtonClicked}
+                    onAddItemFormClose={() => { setWasAddItemButtonClicked(false); }}
+                />
+            );
         else if (currentView === 2)
-            return <TagList />
+            return (
+                <TagList
+                    wasAddItemButtonClicked={wasAddItemButtonClicked}
+                    onAddItemFormClose={() => { setWasAddItemButtonClicked(false); }}
+                />
+            );
     }
 
     function handleNavigationItemClick(menuItemIndex: number)
     {
         setCurrentView(menuItemIndex);
+        setWasAddItemButtonClicked(false);
     }
 
     const handleOnChangeFormTypeBtnClick = () =>
@@ -103,7 +119,9 @@ function MainDashboard()
         loggedInUser ? (
             <div className="app-main-container">
                 <Navigation
-                    onNavigationItemClick={handleNavigationItemClick} />
+                    onNavigationItemClick={handleNavigationItemClick}
+                    onAddItemButtonClick={() => { setWasAddItemButtonClicked(true); }}
+                />
                 <main id="main-section" className="app-main-section">
                     { getCurrentView() }
                 </main>

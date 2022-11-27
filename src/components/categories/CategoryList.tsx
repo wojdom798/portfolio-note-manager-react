@@ -30,8 +30,12 @@ function CategoryList(props: any)
 
     useEffect(() =>
     {
-        // store.dispatch(fetchCategories);
-    }, []);
+        if (props.wasAddItemButtonClicked)
+        {
+            setShowModal(true);
+            setCategoryToEdit(null);
+        }
+    }, [props.wasAddItemButtonClicked]);
 
     const handleShowModal = () =>
     {
@@ -297,14 +301,6 @@ function CategoryList(props: any)
                 </tbody>
             </table>
             </div>
-
-            <Button
-                onClick={handleShowModal}
-                variant="primary"
-                className="floating-action-btn-round"
-                type="button">
-            <span>&#x2B;</span>
-            </Button>
         </div>
 
         <BootstrapModal

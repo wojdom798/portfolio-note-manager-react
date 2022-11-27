@@ -128,6 +128,13 @@ function Navigation(props: any)
             >
                 <IonIcon name="menu-outline"></IonIcon>
             </button>
+
+            <button
+                disabled={isMobileNavActive}
+                className="notes-app-add-item-btn"
+                onClick={props.onAddItemButtonClick}
+            // ><IonIcon name="add-outline"></IonIcon></button>
+            ><span>&#43;</span></button>
             
             <div className={isMobileNavActive ? "navigation-blur-overlay active" : "navigation-blur-overlay"}></div>
 

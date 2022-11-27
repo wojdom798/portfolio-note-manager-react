@@ -71,32 +71,17 @@ function NoteList(props: any)
     
     useEffect(() =>
     {
-        /*const init = {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        if (props.wasAddItemButtonClicked)
+        {
+            setIsModalActive(true);
+            setNoteToEdit(null);
         }
-        fetch("/api/notes/get", init)
-        .then(response => response.json())
-        .then(data => {
-            // console.log("MainDashboard.tsx, useEffect(): ");
-            // console.log(data.responseData);
-
-            // setNotes(data.responseData.notes);
-        })
-        .catch(err => {
-            console.log("Error (MainDashboard.tsx, useEffect()):", err.message);
-        });*/
-
-        // store.dispatch(fetchNotes);
-        
-    // }, [areNotesFetched]);
-    }, []);
+    }, [props.wasAddItemButtonClicked]);
 
     const handleCloseModal = () =>
     {
         setIsModalActive(false);
+        props.onAddItemFormClose();
         setTimeout(() =>
         {
             setNoteToEdit(null);
@@ -235,16 +220,6 @@ function NoteList(props: any)
                         { renderNotes() }
                     </div>
                 </Pagination>
-
-                <Button
-                    onClick={handleAddNewNoteButtonClick}
-                    variant="primary"
-                    className="floating-action-btn-round"
-                    type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal">
-                <span>&#x2B;</span>
-                </Button>
             </Fragment>
 
             <AlertList />
@@ -281,14 +256,6 @@ function NoteList(props: any)
                         </div>
                     </div>
                 </div>
-                
-                <Button
-                    onClick={handleAddNewNoteButtonClick}
-                    variant="primary"
-                    className="floating-action-btn-round"
-                    type="button">
-                <span>&#x2B;</span>
-                </Button>
             </Fragment>
 
             <AlertList />

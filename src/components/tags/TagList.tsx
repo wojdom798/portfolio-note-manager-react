@@ -21,13 +21,22 @@ import BootstrapModal from 'react-bootstrap/Modal';
 import Card from "react-bootstrap/Card";
 
 
-function TagList()
+function TagList(props: any)
 {
     const dispatch = useAppDispatch();
     const tags = useAppSelector(selectTagList);
     const [showModal, setShowModal] = useState(false);
     const [tagToEdit, setTagToEdit] = useState<ITag | null>(null);
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
+
+    useEffect(() =>
+    {
+        if (props.wasAddItemButtonClicked)
+        {
+            setShowModal(true);
+            setTagToEdit(null);
+        }
+    }, [props.wasAddItemButtonClicked]);
 
     const handleShowModal = () =>
     {
@@ -201,14 +210,6 @@ function TagList()
                 </tbody>
             </table>
             </div>
-
-            <Button
-                onClick={handleShowModal}
-                variant="primary"
-                className="floating-action-btn-round"
-                type="button">
-            <span>&#x2B;</span>
-            </Button>
         </div>
 
         <BootstrapModal
