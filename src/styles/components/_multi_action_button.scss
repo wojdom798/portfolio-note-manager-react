@@ -5,17 +5,17 @@
 
 .multi-action-btn
 {
-    padding: 4px;
+    padding: 5px 0;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: var(--main-font);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     background-color: var(--multi-action-btn-bg-color);
     box-shadow: 2px 2px 3px var(--multi-action-btn-shadow-color);
     outline: none;
     border: 2px dashed transparent;
-    border-radius: 50%;
+    border-radius: 3px;
     transition: background-color 130ms linear,
                 border-color 130ms linear;
 
@@ -31,6 +31,12 @@
         // --multi-action-btn-focus-border-color: var(--accent-color);
         border-color: var(--multi-action-btn-focus-border-color);
         background-color: var(--multi-action-btn-hover-bg-color);
+    }
+
+    &--round
+    {
+        padding: 5px;
+        border-radius: 50%;
     }
 }
 
