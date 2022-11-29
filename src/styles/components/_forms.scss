@@ -108,12 +108,14 @@ form,
 
 .form-type-change-btn
 {
+    margin: 13px 0 3px;
     border: none;
     outline: none;
     background: none;
     color: #2222FF;
     opacity: .7;
-    &:hover
+
+    &:hover, &:focus
     {
         text-decoration: underline;
     }
@@ -131,9 +133,17 @@ form,
     --form-input-field-active-txt-color: #333;
 }
 
-.form__container
+.form__padding-container
 {
-    padding: 10px;
+    width: 100%;
+    padding: 0 7px;
+}
+
+.form__main-container
+{
+    background-color: #FAFAFA;
+    border: 1px solid #AAA;
+    border-radius: 2px;
 }
 
 .form__title
@@ -143,11 +153,18 @@ form,
     color: var(--form-title-txt-color);
 }
 
-// contains a label and an input field
-// possibly and error field of sorts in the near (hopefully) future
+// includes all field-containers
+// used to add padding without affecting the title header
+.form__container
+{
+    padding: 0 10px;
+}
+
+// contains a label, an input field, and an error message
 .form__field-container
 {
     // border: 1px dotted red;
+    position: relative;
     font-family: var(--main-font);
     font-size: 1.05rem;
 }
@@ -174,6 +191,7 @@ form,
 .form__input-field
 {
     // border: 1px dotted green;
+    position: relative;
     display: block;
     width: 100%;
     border: 1px solid var(--form-input-field-border-color);
@@ -193,6 +211,18 @@ form,
         border-color: var(--form-input-field-focus-border-color);
         color: var(--form-input-field-active-txt-color);
     }
+
+    &--invalid, &--invalid:focus
+    {
+        --form-input-field-invalid-border-color: #FA2222;
+        border-color: var(--form-input-field-invalid-border-color);
+    }
+
+    &--validated, &--validated:focus
+    {
+        --form-input-field-validated-border-color: #22DA22;
+        border-color: var(--form-input-field-validated-border-color);
+    }
 }
 
 .form__button-group
@@ -205,6 +235,11 @@ form,
     // {
     //     margin-right: 0;
     // }
+
+    &--centered
+    {
+        justify-content: center;
+    }
 }
 
 .form__button
@@ -212,8 +247,59 @@ form,
     padding: 5px 20px;
     margin-right: 15px;
 
-    &:last-of-type
+    &:last-child
     {
         margin-right: 0;
     }
+}
+
+.form__error-messages-container
+{
+    display: flex;
+    flex-flow: column nowrap;
+
+    position: absolute;
+    top:0;
+    left:0;
+
+    // border: 1px dashed #EE22EE;
+    transform: translateY(10px);
+    visibility: hidden;
+
+    transition: transform 170ms ease,
+                color 170ms ease,
+                opacity 50ms ease;
+
+    &--active
+    {
+        position: static;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+.form__error-message-container
+{
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+    color: #FA2222;
+    font-size: 1.2rem;
+
+    & > *
+    {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
+
+    ion-icon
+    {
+        margin-right: 10px;
+    }
+}
+
+.form__error-message
+{
+    font-size: 1rem;
 }

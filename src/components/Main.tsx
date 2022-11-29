@@ -27,7 +27,7 @@ import CategoryList from "./categories/CategoryList";
 import TagList from "./tags/TagList";
 import Navigation from "./Navigation";
 import UserLoginForm from "./users/UserLoginForm";
-import UserRegisterForm from "./users/UserRegisterForm";
+import UserRegistrationForm from "./users/UserRegistrationForm";
 
 // Bootstrap imports
 // [...]
@@ -140,7 +140,7 @@ function MainDashboard()
                 </div>
             ) : (
                 <div className="main-container-login-signup">
-                    <UserRegisterForm
+                    <UserRegistrationForm
                         isolated={true}
                         includeOptionalButton={true}
                         optionalBtnText={"I already have an account"}

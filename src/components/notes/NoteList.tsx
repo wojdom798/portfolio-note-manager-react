@@ -31,7 +31,6 @@ import NoteForm from './NoteForm';
 import NoteTagManager from "./NoteTagManager";
 import AlertList from "../alerts/AlertList";
 import UserLoginForm from "../users/UserLoginForm";
-import UserRegisterForm from "../users/UserRegisterForm";
 import FilterMenu from "../filters/FilterMenu";
 import Pagination from "../pagination/Pagination";
 
