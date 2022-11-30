@@ -303,3 +303,12 @@ form,
 {
     font-size: 1rem;
 }
+
+@media only screen and (min-width: 800px)
+{
+    .form__padding-container
+    {
+        max-width: 370px;
+        // max-width: 25%;
+    }
+}
