@@ -131,6 +131,8 @@ form,
     --form-input-field-focus-border-color: #333;
     --form-input-field-txt-color: #555;
     --form-input-field-active-txt-color: #333;
+
+    --form-error-msg-warning-color: #ff8800;
 }
 
 .form__padding-container
@@ -223,6 +225,12 @@ form,
         --form-input-field-validated-border-color: #22DA22;
         border-color: var(--form-input-field-validated-border-color);
     }
+
+    &--warning, &--warning:focus
+    {
+        --form-input-field-warning-border-color: var(--form-error-msg-warning-color);
+        border-color: var(--form-input-field-warning-border-color);
+    }
 }
 
 .form__button-group
@@ -296,6 +304,12 @@ form,
     ion-icon
     {
         margin-right: 10px;
+        flex-shrink: 0;
+    }
+
+    &--warning
+    {
+        color: var(--form-error-msg-warning-color);
     }
 }
 
