@@ -107,14 +107,14 @@ const verifyCallback = async (username, password, done) =>
         path.join(__projectDir, projectSettings.database.sqlite.filename));
       user = await databaseHandle.get("SELECT * FROM users WHERE username = ?", [username]);
       await databaseHandle.close();
-      console.log(`user (sqlite) = `);
-      console.log(user)
+      // console.log(`user (sqlite) = `);
+      // console.log(user)
     }
     else if (projectSettings.database.selected_database === "postgresql")
     {
       user = (await postgresPool.query(`SELECT * FROM users WHERE username = '${username}'`)).rows[0];
-      console.log(`user (postgres) = `);
-      console.log(user)
+      // console.log(`user (postgres) = `);
+      // console.log(user)
     }
     if (!user)
       return done(null, false, { message: "Incorrect username or password" });

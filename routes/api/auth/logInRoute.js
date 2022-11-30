@@ -14,7 +14,10 @@ const passport = require("passport");
 
 // route: /api/auth/login
 router.post("/",
-passport.authenticate("local", { failureRedirect: "/api/auth/unauthorized", failureMessage: false }),
+passport.authenticate("local", { 
+    failureRedirect: "/api/auth/unauthorized",
+    failureMessage: true 
+}),
 async function (req, res, next)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
@@ -27,8 +30,19 @@ async function (req, res, next)
     // console.log("req.session.passport.user =");
     // console.log(req.session.passport.user);
 
+    // if (!req.hasOwnProperty("user"))
+    // {
+    //     res.json({
+    //         responseData: {
+    //             requestObject: req,
+    //             responseObject: res
+    //         }
+    //     });
+    // }
+
     res.json({
         responseMsg: `Successfully authenticated ${req.session.passport.user.username}`,
+        isAuthorized: true,
         user: {
             id: req.session.passport.user.id,
             username: req.session.passport.user.username

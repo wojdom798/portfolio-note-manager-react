@@ -13,17 +13,28 @@ const projectSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf8"));
 const passport = require("passport");
 
 // route: /api/auth/unauthorized
-router.get("/",
-async function (req, res, next)
+router.get("/", unauthorizedMiddleware);
+router.post("/", unauthorizedMiddleware);
+
+async function unauthorizedMiddleware(req, res, next)
 {
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
 
-    // console.log(req)
+    console.log("\x1b[37m", "\x1b[43m", "request = ", "\x1b[40m");
+    console.log(req)
+
+    // console.log("\x1b[37m", "\x1b[45m", "response = ", "\x1b[40m");
+    // console.log(res)
+    
+
     res.status(401);
     res.json({
-        responseMsg: `unathorized route`,
+        responseData: {
+            responseMsg: "User unauthorized",
+            isAuthorized: false
+        }
     });
-});
+}
 
 module.exports = router;

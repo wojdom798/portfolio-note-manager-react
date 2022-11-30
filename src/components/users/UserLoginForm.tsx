@@ -26,10 +26,30 @@ import {
 // App component imports
 // [...]
 
-// Bootstrap imports
+// Third party component imports
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { IonIcon } from "react-ion-icon";
 
+
+enum LoginFormInputsEnum
+{
+    USERNAME = "USERNAME",
+    PASSWORD = "PASSWORD"
+};
+
+enum FormInputStatesEnum
+{
+    INITIAL = 0,
+    ERROR,
+    VALID
+}
+
+interface IInputValidation
+{
+    state: FormInputStatesEnum;
+    errorMsg: string;
+};
 
 function UserLoginForm(props: any)
 {
@@ -37,17 +57,42 @@ function UserLoginForm(props: any)
     const [usernameInput, setUsernameInput] = useState<string>("");
     const [passwordInput, setPasswordInput] = useState<string>("");
 
-    function handleNoteFormInputFieldChange(event: any, fieldName: any)
+    const [usernameValidation, setUsernameValidation] =
+        useState<IInputValidation>(
+            {
+                state: FormInputStatesEnum.INITIAL,
+                errorMsg: ""
+            });
+
+    const [passwordValidation, setPasswordValidation] =
+        useState<IInputValidation>(
+            {
+                state: FormInputStatesEnum.INITIAL,
+                errorMsg: ""
+            });
+
+    function handleFormInputFieldChange(
+        event: SyntheticEvent,
+        fieldName: LoginFormInputsEnum)
     {
-        if (fieldName === "USERNAME")
+        const inputValue = (event.target as HTMLInputElement).value;
+        if (fieldName === LoginFormInputsEnum.USERNAME)
         {
-            if (typeof event.target.value === "string")
-                setUsernameInput(event.target.value);
+            setUsernameValidation({
+                state: FormInputStatesEnum.INITIAL,
+                errorMsg: ""
+            });
+            if (typeof inputValue === "string")
+                setUsernameInput(inputValue);
         }
-        else if (fieldName === "PASSWORD")
+        else if (fieldName === LoginFormInputsEnum.PASSWORD)
         {
-            if (typeof event.target.value === "string")
-                setPasswordInput(event.target.value);
+            setPasswordValidation({
+                state: FormInputStatesEnum.INITIAL,
+                errorMsg: ""
+            });
+            if (typeof inputValue === "string")
+                setPasswordInput(inputValue);
         }
     };
 
@@ -69,32 +114,53 @@ function UserLoginForm(props: any)
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(userToLogIn)
+            body: JSON.stringify(userToLogIn),
+            mode: "cors" as RequestMode
         };
         try
         {
             let alertType: AlertTypesEnum = AlertTypesEnum.Success;
             const response = await fetch(url, init);
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
-            if (response.status === 401) alertType = AlertTypesEnum.Error;
             const data = await response.json();
+            if (response.status === 401) // unauthorized
+            {
+                alertType = AlertTypesEnum.Error;
 
-            const user = { 
-                id: data.user.id,
-                username: data.user.username
-            } as { id: number, username: string };
+                const validationErrorObj = {
+                    state: FormInputStatesEnum.ERROR,
+                    errorMsg: "Incorrect username and/or password."
+                };
+                setUsernameValidation(validationErrorObj);
+                setPasswordValidation(validationErrorObj);
+            }
+            else
+            {
+                const user = { 
+                    id: data.user.id,
+                    username: data.user.username
+                } as { id: number, username: string };
 
-            setUserInStorage(user); // save logged-in user to local storage
-            setSessionExpirationDateInLocalStorage(new Date(`${data.sessionExpirationDate}`));
-            dispatch(setUser(user));
+                setUserInStorage(user); // save logged-in user to local storage
+                setSessionExpirationDateInLocalStorage(new Date(`${data.sessionExpirationDate}`));
+                dispatch(setUser(user));
 
-            await dispatch(fetchMaxDateRange);
-            await dispatch(fetchCategories);
-            await dispatch(fetchTags);
-            await dispatch(fetchNotes);
+                const validationSuccessObj = {
+                    state: FormInputStatesEnum.VALID,
+                    errorMsg: ""
+                };
+                setUsernameValidation(validationSuccessObj);
+                setPasswordValidation(validationSuccessObj);
 
-            props.onUserLoggedIn(data.username);
-            alert = 
+                await dispatch(fetchMaxDateRange);
+                await dispatch(fetchCategories);
+                await dispatch(fetchTags);
+                await dispatch(fetchNotes);
+
+                props.onUserLoggedIn(data.username);
+            }
+            
+            alert =
             {
                 id: (new Date()).getTime(),
                 type: alertType,
@@ -104,7 +170,7 @@ function UserLoginForm(props: any)
         }
         catch (error: any)
         {
-            alert = 
+            alert =
             {
                 id: (new Date()).getTime(),
                 type: AlertTypesEnum.Error,
@@ -114,117 +180,118 @@ function UserLoginForm(props: any)
         }
     }
 
+    const getFormInputClassBasedOnItsState = (inputState: FormInputStatesEnum) =>
+    {
+        if (inputState === FormInputStatesEnum.INITIAL)
+            return "form__input-field";
+        else if (inputState === FormInputStatesEnum.ERROR)
+            return "form__input-field form__input-field--invalid";
+        else if (inputState === FormInputStatesEnum.VALID)
+            return "form__input-field form__input-field--validated";
+    }
+
 
     return (
-        !props.isolated ? (
-            <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label htmlFor="login-username-input">Username</Form.Label>
-                    <Form.Control
-                        defaultValue={usernameInput}
-                        onChange={(event: SyntheticEvent) => { handleNoteFormInputFieldChange(event, "USERNAME") }}
-                        id="login-username-input"
-                        type="text"/>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label  htmlFor="login-password-input">Password</Form.Label>
-                    <Form.Control
-                        defaultValue={passwordInput}
-                        onChange={(event: SyntheticEvent) => { handleNoteFormInputFieldChange(event, "PASSWORD") }}
-                        id="login-password-input"
-                        type="password" />
-                </Form.Group>
-                <Button
+        <div className="form__padding-container">
+        <form
+            className="form__main-container"
+        >
+            <h2 className="form__title">Log Into Your Account</h2>
+            <div className="form__container">
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="username-input">Username</label>
+                <input
+                    required={true}
+                    placeholder="Username"
+                    type="text"
+                    id="username-input"
+                    name="username-input"
+                    className={getFormInputClassBasedOnItsState(usernameValidation.state)}
+                    value={usernameInput}
+                    onChange={(event: SyntheticEvent) => {
+                        handleFormInputFieldChange(event, LoginFormInputsEnum.USERNAME)
+                    }}
+                    // onBlur={(event: SyntheticEvent) => {
+                    //     handleFormInputBlur(event, LoginFormInputsEnum.USERNAME)
+                    // }}
+                />
+                <div className={
+                    (usernameValidation.state === FormInputStatesEnum.VALID) ||
+                    (usernameValidation.state === FormInputStatesEnum.INITIAL) ?
+                    "form__error-messages-container" :
+                    "form__error-messages-container " +
+                    "form__error-messages-container--active"
+                }>
+                    <div
+                        className={"form__error-message-container"}
+                    >
+                        <IonIcon name="warning-outline" />
+                        <p
+                            className="form__error-message"
+                        >{usernameValidation.errorMsg}</p>
+                    </div>
+                </div>
+                
+            </div>
+            <div className="form__field-container">
+                <label
+                    className="form__label"
+                    htmlFor="password-input">Password</label>
+                <input
+                    required={true}
+                    placeholder="Password"
+                    type="password"
+                    id="password-input"
+                    name="password-input"
+                    className={getFormInputClassBasedOnItsState(passwordValidation.state)}
+                    value={passwordInput}
+                    onChange={(event: SyntheticEvent) => {
+                        handleFormInputFieldChange(event, LoginFormInputsEnum.PASSWORD)
+                    }}
+                    // onBlur={(event: SyntheticEvent) => {
+                    //     handleFormInputBlur(event, LoginFormInputsEnum.PASSWORD)
+                    // }}
+                />
+                <div className={
+                    (passwordValidation.state === FormInputStatesEnum.VALID) ||
+                    (passwordValidation.state === FormInputStatesEnum.INITIAL) ?
+                    "form__error-messages-container" :
+                    "form__error-messages-container " +
+                    "form__error-messages-container--active"
+                }>
+                    <div
+                        className={"form__error-message-container"}
+                    >
+                        <IonIcon name="warning-outline" />
+                        <p
+                            className="form__error-message"
+                        >{passwordValidation.errorMsg}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="form__button-group form__button-group--centered">
+                <input
+                    className="form__button daterange-picker__ok-button"
                     onClick={handleFormSubmit}
-                    variant="primary"
                     type="submit"
-                >Log In</Button>
-            </Form>
-        ) : props.includeOptionalButton ? (
-            // isolated = not in modal; e.g. no user is logged in
-            <div className="form-container-isolated">
-                <h2 className="form-title">Log Into Your Account</h2>
-                <form onSubmit={handleFormSubmit}>
-                    <div className="form-row">
-                        <div className="form-input-container">
-                            <label htmlFor="username-input">Username</label>
-                            <input
-                                placeholder="Username"
-                                type="text"
-                                id="username-input"
-                                value={usernameInput}
-                                onChange={(event: SyntheticEvent) => { handleNoteFormInputFieldChange(event, "USERNAME") }}/>
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="form-input-container">
-                            <label htmlFor="password-input">Password</label>
-                            <input
-                                placeholder="Password"
-                                type="password"
-                                id="password-input"
-                                value={passwordInput}
-                                onChange={(event: SyntheticEvent) => { handleNoteFormInputFieldChange(event, "PASSWORD") }}/>
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="form-input-container">
-                        <div className="form-button-group">
-                            <input onClick={handleFormSubmit} type="submit" value="Log in" />
-                        </div>
-                        </div>
-                    </div>
-
-                    {/* optional switch button between login/signup forms */}
-                    <div className="form-row">
-                        <div className="form-input-container">
-                            <button
-                                className="form-type-change-btn"
-                                onClick={props.handleOnOptionalBtnClick}
-                            >{props.optionalBtnText}</button> 
-                        </div>
-                    </div>
-                </form>
+                    value={"Log in"}
+                />
             </div>
-        ) : (
-            // isolated = not in modal; e.g. no user is logged in
-            <div className="form-container-isolated">
-                <h2 className="form-title">Log Into Your Account</h2>
-                <form onSubmit={handleFormSubmit}>
-                    <div className="form-row">
-                        <div className="form-input-container">
-                            <label htmlFor="username-input">Username</label>
-                            <input
-                                placeholder="Username"
-                                type="text"
-                                id="username-input"
-                                value={usernameInput}
-                                onChange={(event: SyntheticEvent) => { handleNoteFormInputFieldChange(event, "USERNAME") }}/>
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="form-input-container">
-                            <label htmlFor="password-input">Password</label>
-                            <input
-                                placeholder="Password"
-                                type="password"
-                                id="password-input"
-                                value={passwordInput}
-                                onChange={(event: SyntheticEvent) => { handleNoteFormInputFieldChange(event, "PASSWORD") }}/>
-                        </div>
-                    </div>
 
-                    <div className="form-row">
-                        <div className="form-input-container">
-                        <div className="form-button-group">
-                            <input onClick={handleFormSubmit} type="submit" value="Log in" />
-                        </div>
-                        </div>
-                    </div>
-                </form>
+            <div className="form-row">
+                <div className="form-input-container">
+                    <button
+                        className="form-type-change-btn"
+                        onClick={props.handleOnOptionalBtnClick}
+                    >{props.optionalBtnText}</button> 
+                </div>
             </div>
-        )
+            </div>
+        </form>
+        </div>
     );
 }
 
