@@ -21,8 +21,8 @@ async function unauthorizedMiddleware(req, res, next)
     let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
 
-    console.log("\x1b[37m", "\x1b[43m", "request = ", "\x1b[40m");
-    console.log(req)
+    // console.log("\x1b[37m", "\x1b[43m", "request = ", "\x1b[40m");
+    // console.log(req)
 
     // console.log("\x1b[37m", "\x1b[45m", "response = ", "\x1b[40m");
     // console.log(res)

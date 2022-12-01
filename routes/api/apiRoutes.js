@@ -10,6 +10,7 @@ const tagsMainRoute = require("./tags/tagsMainRoute");
 const authRoute = require("./auth/authenticationMainRoute");
 const getDateRangeRoute = require("./getDateRangeRoute");
 const isUsernameAvailableRoute = require("./isUsernameAvailableRoute");
+const isCategoryAvailableRoute = require("./isCategoryAvailableRoute");
 
 router.use("/notes", notesMainRoute);
 router.use("/categories", categoriesMainRoute);
@@ -17,5 +18,6 @@ router.use("/tags", tagsMainRoute);
 router.use("/auth", authRoute);
 router.use("/get-date-range", getDateRangeRoute);
 router.use("/is-username-available", isUsernameAvailableRoute);
+router.use("/is-category-available", isCategoryAvailableRoute);
 
 module.exports = router;
