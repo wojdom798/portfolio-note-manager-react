@@ -49,6 +49,7 @@ function CategoryList(props: any)
     {
         setCategoryToEdit(null);
         setShowModal(false);
+        props.onAddItemFormClose();
     };
 
     const handleToggleAllItemSelection = (event: SyntheticEvent) =>
