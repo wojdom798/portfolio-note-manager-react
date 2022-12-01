@@ -44,6 +44,79 @@ interface IInput
     errorMsg: string;
 };
 
+export const validateDateAddedField = (
+    dateAddedStr: string,
+    dateAddedInput: IInput,
+    setDateAddedInput: React.Dispatch<React.SetStateAction<IInput>>
+    ): boolean =>
+{
+    const dateRegex = new RegExp(/^\d+-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/);
+    if (!dateAddedStr)
+    {
+        setDateAddedInput({
+            ...dateAddedInput,
+            state: FormInputStatesEnum.ERROR,
+            errorMsg: "This field is required. Correct format: YYYY-MM-DD hh:mm:ss"
+        });
+        return false;
+    }
+    else if (!dateRegex.test(dateAddedStr))
+    {
+        setDateAddedInput({
+            ...dateAddedInput,
+            state: FormInputStatesEnum.ERROR,
+            errorMsg: "Incorrect date format. This format is correct: YYYY-MM-DD hh:mm:ss"
+        });
+        return false;
+    }
+    else if (!isDateTimeStringValid(dateAddedStr))
+    {
+        setDateAddedInput({
+            ...dateAddedInput,
+            state: FormInputStatesEnum.ERROR,
+            errorMsg: "Incorrect date or time. Make sure that month is within 1 and 12, day number is correct for given month, hours are within 0 and 23, minutes and seconds are within 0 and 59"
+        });
+        return false;
+    }
+    else // field is valid
+    {
+        setDateAddedInput({
+            ...dateAddedInput,
+            state: FormInputStatesEnum.VALID,
+            errorMsg: ""
+        });
+        return true;
+    }
+}
+
+export const isDateTimeStringValid = (dtStr: string): boolean =>
+{
+    const dateTimeRegex = new RegExp(/^\d+-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/);
+    if (!dateTimeRegex.test(dtStr)) return false
+
+    const date = dtStr.split(" ")[0];
+    const time = dtStr.split(" ")[1];
+
+    const year = Number(date.split("-")[0]);
+    const month = Number(date.split("-")[1]);
+    const day = Number(date.split("-")[2]);
+
+    const hour = Number(time.split(":")[0]);
+    const minutes = Number(time.split(":")[1]);
+    const seconds = Number(time.split(":")[2]);
+
+    if ((month <= 0) || (month > 12)) return false;
+
+    const numOfDaysinMonth = helper.getNumberOfDaysInMonth(year, month);
+    if ((day <= 0) || (day > numOfDaysinMonth)) return false;
+
+    if ((hour < 0) || (hour >= 24)) return false;
+    if ((minutes < 0) || (minutes >= 60)) return false;
+    if ((seconds < 0) || (seconds >= 60)) return false;
+
+    return true;
+}
+
 
 function NoteForm({
     noteToEdit, onEditNoteFormSubmit,
@@ -181,78 +254,9 @@ function NoteForm({
         }
         else if (input === NoteFormInputsEnum.DATE_ADDED)
         {
-            validateDateAddedField(inputValue);
+            validateDateAddedField(inputValue, dateAddedInput, setDateAddedInput);
         }
     };
-
-    const isDateTimeStringValid = (dtStr: string): boolean =>
-    {
-        const dateTimeRegex = new RegExp(/^\d+-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/);
-        if (!dateTimeRegex.test(dtStr)) return false
-
-        const date = dtStr.split(" ")[0];
-        const time = dtStr.split(" ")[1];
-
-        const year = Number(date.split("-")[0]);
-        const month = Number(date.split("-")[1]);
-        const day = Number(date.split("-")[2]);
-
-        const hour = Number(time.split(":")[0]);
-        const minutes = Number(time.split(":")[1]);
-        const seconds = Number(time.split(":")[2]);
-
-        if ((month <= 0) || (month > 12)) return false;
-
-        const numOfDaysinMonth = helper.getNumberOfDaysInMonth(year, month);
-        if ((day <= 0) || (day > numOfDaysinMonth)) return false;
-
-        if ((hour < 0) || (hour >= 24)) return false;
-        if ((minutes < 0) || (minutes >= 60)) return false;
-        if ((seconds < 0) || (seconds >= 60)) return false;
-
-        return true;
-    }
-
-    const validateDateAddedField = (dateAddedStr: string): boolean =>
-    {
-        const dateRegex = new RegExp(/^\d+-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/);
-        if (!dateAddedStr)
-        {
-            setDateAddedInput({
-                ...dateAddedInput,
-                state: FormInputStatesEnum.ERROR,
-                errorMsg: "This field is required. Correct format: YYYY-MM-DD hh:mm:ss"
-            });
-            return false;
-        }
-        else if (!dateRegex.test(dateAddedStr))
-        {
-            setDateAddedInput({
-                ...dateAddedInput,
-                state: FormInputStatesEnum.ERROR,
-                errorMsg: "Incorrect date format. This format is correct: YYYY-MM-DD hh:mm:ss"
-            });
-            return false;
-        }
-        else if (!isDateTimeStringValid(dateAddedStr))
-        {
-            setDateAddedInput({
-                ...dateAddedInput,
-                state: FormInputStatesEnum.ERROR,
-                errorMsg: "Incorrect date or time. Make sure that month is within 1 and 12, day number is correct for given month, hours are within 0 and 23, minutes and seconds are within 0 and 59"
-            });
-            return false;
-        }
-        else // field is valid
-        {
-            setDateAddedInput({
-                ...dateAddedInput,
-                state: FormInputStatesEnum.VALID,
-                errorMsg: ""
-            });
-            return true;
-        }
-    }
 
     function handleFormSubmit(event: SyntheticEvent)
     {
@@ -282,7 +286,7 @@ function NoteForm({
         }
         if (dateAddedInput.state === FormInputStatesEnum.INITIAL)
         {
-            if(!validateDateAddedField(dateAddedInput.value))
+            if(!validateDateAddedField(dateAddedInput.value, dateAddedInput, setDateAddedInput))
                 currentDateAddedState = false;
         }
 
