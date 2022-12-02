@@ -48,6 +48,10 @@ function TagList(props: any)
     {
         setTagToEdit(null);
         setShowModal(false);
+        // the add item (note, category, tag) button belongs to Navigation component
+        // this prop resets "wasAddItemButtonClicked" which allows modal
+        // to reopen when add item button is clicked again
+        props.onAddItemFormClose();
     };
 
     const handleToggleAllItemSelection = (event: SyntheticEvent) =>
