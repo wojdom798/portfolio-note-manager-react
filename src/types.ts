@@ -62,6 +62,21 @@ export interface IFilter
     dateRangeLimit: IDateRange | null;
 };
 
+export interface IFormInput
+{
+    value: string;
+    state: FormInputStatesEnum;
+    errorMsg: string;
+};
+
+export enum FormInputStatesEnum
+{
+    INITIAL = 0,
+    ERROR,
+    VALID,
+    WARNING
+}
+
 export interface MultiActionButtonProps
 {
     onEditAction: () => void;
