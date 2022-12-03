@@ -1,0 +1,26 @@
+.confirmation-dialog
+{
+    padding: 7px;
+    font-family: var(--main-forn);
+
+    &__title
+    {
+        font-size: 1.5rem;
+    }
+
+    &__button-group
+    {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__button
+    {
+        margin-right: 7px;
+
+        &:last-child
+        {
+            margin: 0;
+        }
+    }
+}

@@ -33,6 +33,7 @@ import AlertList from "../alerts/AlertList";
 import UserLoginForm from "../users/UserLoginForm";
 import FilterMenu from "../filters/FilterMenu";
 import Pagination from "../pagination/Pagination";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -67,6 +68,22 @@ function NoteList(props: any)
     const [tagManagerNoteId, setTagManagerNoteId] =
         useState<number | undefined>(undefined);
 
+    // it's set by clicking on the note's delete button
+    // if truthy (not null or 0; ids are always greater than 0)
+    // then show the confirmation dialog
+    const [
+        noteIdToConfirmDelete, 
+        setNoteIdToConfirmDelete
+    ] = useState<number | null>(null);
+
+    // this variable will be set to "noteIdToConfirmDelete" (state variable above)
+    // when the confirm button is clicked in the confirmation dialog
+    // and then this variable will be used to determine whether
+    // a note will be deleted or not (during note rendering, in note's useEffect)
+    const [
+        noteIdDeletionConfirmed, 
+        setNoteIdDeletionConfirmed
+    ] = useState<number | null>(null);
     
     useEffect(() =>
     {
@@ -75,6 +92,7 @@ function NoteList(props: any)
             setIsModalActive(true);
             setNoteToEdit(null);
         }
+
     }, [props.wasAddItemButtonClicked]);
 
     const handleCloseModal = () =>
@@ -98,6 +116,38 @@ function NoteList(props: any)
         setTagManagerNoteId(noteId);
         setIsModalActive(true);
     };
+
+    const showDeleteNoteConfirmationDialog = (noteId: number) =>
+    {
+        console.log("note id to delete", noteId)
+        setNoteIdToConfirmDelete(noteId);
+        setIsModalActive(true);
+    }
+
+    const handleDeleteNoteConfirmationDialogCloseBtnClick = () =>
+    {
+        setIsModalActive(false);
+        setTimeout(() =>
+        {
+            setNoteIdToConfirmDelete(null);
+        }, 200);
+    }
+
+    const handleNoteDeletionConfirmed = () =>
+    {
+        setNoteIdDeletionConfirmed(noteIdToConfirmDelete);
+        setIsModalActive(false);
+    }
+
+    // without this reset function, ID of previously deleted note
+    // would still be held in those state variables;
+    // depending on DBMS, newly added note could potentially be assigned
+    // this ID and then would be deleted immediately afterwards
+    const handleResetNoteIdToDelete = () =>
+    {
+        setNoteIdToConfirmDelete(null);
+        setNoteIdDeletionConfirmed(null);
+    }
 
     function handleAddNoteToList(newNote: INote)
     {
@@ -161,20 +211,30 @@ function NoteList(props: any)
     {
         // console.log("renderNotes()");
         // console.log(Object.values(notes));
-        return Object.values(notes).map((item: INote, index: number) =>
+        const notesToReturn = Object.values(notes).map(
+            (item: INote, index: number) =>
         {
-            return <Note
-                        key={item.id}
-                        id={item.id}
-                        title={item.title}
-                        contents={item.contents}
-                        date_added={item.date_added}
-                        category_id={item.category_id}
-                        tagIds={item.tagIds}
-                        onNoteEditButtonClick={handleEditNoteButtonClick}
-                        onOpenNoteTagManagerButtonClick={showNoteTagManagerModal}
-                    />;
+            return (
+                <Note
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    contents={item.contents}
+                    date_added={item.date_added}
+                    category_id={item.category_id}
+                    tagIds={item.tagIds}
+                    onNoteEditButtonClick={handleEditNoteButtonClick}
+                    onOpenNoteTagManagerButtonClick={showNoteTagManagerModal}
+                    onDeleteNoteButtonClick={showDeleteNoteConfirmationDialog}
+                    isDeletionConfirmed={item.id === noteIdDeletionConfirmed}
+                    resetNoteIdToDelete={handleResetNoteIdToDelete}
+                />
+            );
         });
+        // this will trigger re-rendering (bug)
+        // setNoteIdToConfirmDelete(null);
+        // setNoteIdDeletionConfirmed(null);
+        return notesToReturn;
     }
 
     function renderSelectedModalBody()
@@ -199,12 +259,29 @@ function NoteList(props: any)
                 />
             );
         }
+        else if (noteIdToConfirmDelete)
+        {
+            return (
+                <ConfirmationDialog
+                    title={"Confirm Note Deletion"}
+                    message={"Are you sure you want to delete this note?"}
+                    onConfirmBtnClick={handleNoteDeletionConfirmed}
+                    onCancelBtnClick={handleDeleteNoteConfirmationDialogCloseBtnClick}
+                />
+            );
+        }
         return (
             <NoteForm
                 updateNoteList={handleAddNoteToList}
                 onCloseButtonClick={handleCloseModal}
             />
         );
+    }
+
+    const handleDbgLogNoteToDelete = () =>
+    {
+        console.log("noteIdToConfirmDelete: ", noteIdToConfirmDelete);
+        console.log("noteIdDeletionConfirmed: ", noteIdDeletionConfirmed);
     }
     
     if (pagination.numberOfAllNotes)
@@ -214,6 +291,10 @@ function NoteList(props: any)
             <Fragment>
                 <FilterMenu />
 
+                {/* <button
+                    onClick={handleDbgLogNoteToDelete}
+                >log note to delete</button> */}
+                
                 <Pagination>
                     <div className="note-list-container">
                         { renderNotes() }

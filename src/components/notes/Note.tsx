@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Redux imports
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
@@ -31,13 +31,24 @@ import {
 export default function Note({
     id, title, contents,
     date_added, category_id, tagIds,
-    onNoteEditButtonClick, onOpenNoteTagManagerButtonClick }: NoteProps)
+    onNoteEditButtonClick,
+    onOpenNoteTagManagerButtonClick,
+    onDeleteNoteButtonClick, isDeletionConfirmed, resetNoteIdToDelete }: NoteProps)
 {
     const dispatch = useAppDispatch();
     const notes = useAppSelector(selectNoteList);
     const categories = useAppSelector(selectCategoryList);
     const tags = useAppSelector(selectTagList);
     const pagination = useAppSelector(selectPagination);
+
+    useEffect(() =>
+    {
+        if (isDeletionConfirmed)
+        {
+            deleteNote(id);
+            resetNoteIdToDelete();
+        }
+    }, [isDeletionConfirmed]);
 
     async function deleteNote(id: number)
     {
@@ -75,7 +86,8 @@ export default function Note({
                 onNoteEditButtonClick(noteId);
                 break;
             case (NoteActionTypesEnum.DELETE):
-                deleteNote(noteId);
+                // deleteNote(noteId);
+                onDeleteNoteButtonClick(noteId);
                 break;
             case (NoteActionTypesEnum.MANAGE_TAGS):
                 onOpenNoteTagManagerButtonClick(noteId);

@@ -42,6 +42,16 @@ export enum CategoryFormInputsEnum
     DATE_ADDED = "DATE_ADDED"
 };
 
+export interface ConfirmationDialogProps
+{
+    title: string;
+    message: string;
+    confirmButtonText?: string;
+    cancelButtonText?: string;
+    onConfirmBtnClick: () => void;
+    onCancelBtnClick: () => void;
+};
+
 export interface IDate
 {
     year: number;
@@ -105,6 +115,9 @@ export interface NoteProps
     tagIds: number[] | null;
     onNoteEditButtonClick: (noteId: number) => void;
     onOpenNoteTagManagerButtonClick: (noteId: number) => void;
+    onDeleteNoteButtonClick: (noteId: number) => void;
+    isDeletionConfirmed: boolean;
+    resetNoteIdToDelete: () => void;
 };
 
 export interface NoteFormProps
