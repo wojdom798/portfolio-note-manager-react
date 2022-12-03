@@ -143,7 +143,7 @@ function TagForm({ tagToEdit, onFormClose }: TagFormProps)
             const response = await fetch(url, init);
             if (response.status !== 200) throw new Error("Response status is not 200");
             const data = await response.json();
-            return data.responseData.isCategoryNameAvailable;
+            return data.responseData.isTagNameAvailable;
         }
         catch (error: any)
         {
