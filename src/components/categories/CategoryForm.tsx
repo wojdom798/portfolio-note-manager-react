@@ -173,7 +173,8 @@ function CategoryForm({
 
         // if submit button clicked with unchanged inputs
         // then perform validation for initial fields
-        if ((nameInput.state === FormInputStatesEnum.INITIAL) &&
+        if ((nameInput.state === FormInputStatesEnum.INITIAL ||
+            nameInput.state === FormInputStatesEnum.VALID) &&
             (!nameInput.value || !(await isCategoryAvailable(nameInput.value))))
         {
             setNameInput({
