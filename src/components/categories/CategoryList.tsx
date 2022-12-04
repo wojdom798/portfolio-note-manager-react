@@ -14,6 +14,7 @@ import { ICategory } from "../../types";
 
 // App component imports
 import CategoryForm from "./CategoryForm";
+import ConfirmationDialog from "../notes/ConfirmationDialog";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -25,6 +26,7 @@ function CategoryList(props: any)
     const categories = useAppSelector(selectCategoryList);
     const dispatch = useAppDispatch();
     const [showModal, setShowModal] = useState(false);
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState<ICategory | null>(null);
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
@@ -242,11 +244,26 @@ function CategoryList(props: any)
 
     const handleDeleteActionClick = () =>
     {
-        console.log("deleting categories: ");
-        console.log(selectedCategories);
+        // console.log("deleting categories: ");
+        // console.log(selectedCategories);
 
+        // deleteCategoriesDB(selectedCategories);
+        // setSelectedCategories([]);
+
+        setShowModal(false); // make sure edit/add form modal is closed
+        setShowConfirmationModal(true);
+    }
+
+    const handleCategoryDeletionConfirmed = () =>
+    {
         deleteCategoriesDB(selectedCategories);
         setSelectedCategories([]);
+        setShowConfirmationModal(false);
+    }
+
+    const handleDeleteCategoryConfirmationDialogCloseBtnClick = () =>
+    {
+        setShowConfirmationModal(false);
     }
 
     return (
@@ -321,6 +338,25 @@ function CategoryList(props: any)
                         onFormClose={handleFormClose}
                     />
                 )}
+            </BootstrapModal.Body>
+        </BootstrapModal>
+
+        <BootstrapModal
+            show={showConfirmationModal}
+            backdrop="static"
+            keyboard={false}>
+            <BootstrapModal.Body>
+                <ConfirmationDialog
+                    title={"Confirm Category Deletion"}
+                    message={"Are you sure you want to delete "
+                        + (selectedCategories.length > 1 ?
+                            `these categories (${selectedCategories.length} categories selected)?` :
+                            "this category?"
+                        )
+                    }
+                    onConfirmBtnClick={handleCategoryDeletionConfirmed}
+                    onCancelBtnClick={handleDeleteCategoryConfirmationDialogCloseBtnClick}
+                />
             </BootstrapModal.Body>
         </BootstrapModal>
     </Fragment>
