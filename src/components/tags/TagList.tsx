@@ -14,6 +14,7 @@ import { ITag } from "../../types";
 
 // App component imports
 import TagForm from "./TagForm";
+import ConfirmationDialog from "../notes/ConfirmationDialog";
 
 // Bootstrap imports
 import Button from 'react-bootstrap/Button';
@@ -26,6 +27,7 @@ function TagList(props: any)
     const dispatch = useAppDispatch();
     const tags = useAppSelector(selectTagList);
     const [showModal, setShowModal] = useState(false);
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
     const [tagToEdit, setTagToEdit] = useState<ITag | null>(null);
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
 
@@ -127,11 +129,26 @@ function TagList(props: any)
 
     const handleDeleteActionClick = () =>
     {
-        console.log("deleting tags: ");
-        console.log(selectedTags);
+        // console.log("deleting tags: ");
+        // console.log(selectedTags);
 
+        // deleteTagsDB(selectedTags);
+        // setSelectedTags([]);
+
+        setShowModal(false); // make sure edit/add form modal is closed
+        setShowConfirmationModal(true);
+    }
+
+    const handleTagDeletionConfirmed = () =>
+    {
         deleteTagsDB(selectedTags);
         setSelectedTags([]);
+        setShowConfirmationModal(false);
+    }
+
+    const handleDeleteTagConfirmationDialogCloseBtnClick = () =>
+    {
+        setShowConfirmationModal(false);
     }
 
     function renderTagsAsTableRows(tags: ITag[])
@@ -231,6 +248,25 @@ function TagList(props: any)
                         onFormClose={handleFormClose}
                     />
                 )}
+            </BootstrapModal.Body>
+        </BootstrapModal>
+
+        <BootstrapModal
+            show={showConfirmationModal}
+            backdrop="static"
+            keyboard={false}>
+            <BootstrapModal.Body>
+                <ConfirmationDialog
+                    title={"Confirm Tag Deletion"}
+                    message={"Are you sure you want to delete "
+                        + (selectedTags.length > 1 ?
+                            `these tags (${selectedTags.length} tags selected)?` :
+                            "this tag?"
+                        )
+                    }
+                    onConfirmBtnClick={handleTagDeletionConfirmed}
+                    onCancelBtnClick={handleDeleteTagConfirmationDialogCloseBtnClick}
+                />
             </BootstrapModal.Body>
         </BootstrapModal>
     </Fragment>
