@@ -1,85 +1,129 @@
-.pagination-main-container
+// the "nts-app-" prefix is used to prevent any potential
+// class name conflicts with other library
+
+:root
+{
+    --nts-app-pagination-border-color: #AAA;
+
+    //***************************************************************
+    //                 pagination - page buttons
+    //***************************************************************
+    --nts-app-pagination-page-btn-size: 15px;
+    --nts-app-pagination-page-btn-bg-color: #FAFAFA;
+    --nts-app-pagination-page-btn-txt-color: #3f4a59;
+    // hover (enabled)
+    --nts-app-pagination-page-btn-hover-bg-color: #eaecf0;
+    --nts-app-pagination-page-btn-hover-txt-color: #333;
+    // active
+    --nts-app-pagination-page-btn-active-bg-color: #3f4a59;
+    --nts-app-pagination-page-btn-active-txt-color: #FAFAFA;
+    // disabled
+    --nts-app-pagination-page-btn-disabled-bg-color: #E2E2E2;
+    --nts-app-pagination-page-btn-disabled-txt-color: #3f4a59;
+}
+
+.nts-app-pagination
 {
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: space-between;
     flex-grow: 1;
-}
 
-.pagination-container-top-main
-{
-    // border: 3px dashed #2222FF; // debug
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: left;
-    margin: 10px 0px;
-}
-
-.items-per-page-container
-{
-    display: flex;
-    justify-content: left;
-    align-items: center;
-
-    label
+    &__header // contains number of items and items per page selector
     {
-        margin-right: 10px;
+        // border: 3px dashed #2222FF; // debug
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: left;
+        margin: 10px 0px;
     }
 
-    select
+    &__items-per-page
     {
-        padding: 7px 10px;
-        font-family: $main-font;
-        font-size: 1rem;
-        outline: none;
-        background-color: #FAFAFA;
-        border: 1px solid $pagination-border-color;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+
+        label
+        {
+            margin-right: 10px;
+        }
+
+        select
+        {
+            padding: 7px 10px;
+            font-family: var(--main-font);
+            font-size: 1rem;
+            outline: none;
+            background-color: #FAFAFA;
+            border: 1px solid var(--nts-app-pagination-border-color);
+            border-radius: 4px;
+        }
+    }
+
+    &__footer
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        margin-top: auto;
+    }
+
+    // contains the list of page number buttons, the next page button
+    // and the previous page button; belongs to __footer
+    &__page-number-container
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border-radius: 4px;
-    }
-}
-
-.pagination-container-bottom-main
-{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-    margin-top: auto;
-}
-
-.pagination-container-bottom
-{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid $pagination-border-color;
-}
-
-
-$pagination-btn-size: 15px;
-.pagination-button
-{
-    outline: none;
-    border: none;
-    padding: $pagination-btn-size;
-    background-color: #FAFAFA;
-    cursor: pointer;
-
-    &:hover
-    {
-        background-color: $pagination-button-bg-hover-color;
-        color: $pagination-button-txt-hover-color;
+        overflow: hidden;
+        border: 1px solid var(--nts-app-pagination-border-color);
     }
 
-    &.active
+    &__button
     {
-        background-color: $left-side-bar-bg-color;
-        color: #FAFAFA;
-        cursor: default;
+        // center the icon
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: stretch;
+
+        outline: none;
+        border: none;
+        padding: var(--nts-app-pagination-page-btn-size);
+        background-color: var(--nts-app-pagination-page-btn-bg-color);
+        color: var(--nts-app-pagination-page-btn-txt-color);
+        cursor: pointer;
+
+        &:enabled:hover
+        {
+            background-color: var(--nts-app-pagination-page-btn-hover-bg-color);
+            color: var(--nts-app-pagination-page-btn-hover-txt-color);
+        }
+
+        &--active
+        {
+            background-color: var(--nts-app-pagination-page-btn-active-bg-color);
+            color: var(--nts-app-pagination-page-btn-active-txt-color);
+
+            &:hover
+            {
+                background-color: var(--nts-app-pagination-page-btn-active-bg-color) !important;
+                color: var(--nts-app-pagination-page-btn-active-txt-color) !important;
+                cursor: default !important;
+            }
+        }
+
+        &:disabled
+        {
+            background-color: var(--nts-app-pagination-page-btn-disabled-bg-color) !important;
+            color: var(--nts-app-pagination-page-btn-disabled-txt-color) !important;
+            cursor: default !important;
+        }
     }
 }
