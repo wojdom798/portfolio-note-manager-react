@@ -24,6 +24,8 @@ const { Pool, Client } = require("pg");
 
 const postgresPool = new Pool(projectSettings.database.postgresql);
 
+const helper = require("./routes/server_helper");
+
 function createDbConnection(filename)
 {
   return sqliteOpen({
@@ -139,7 +141,7 @@ const portNumber = process.env.PORT || 8001;
 const jsonParser = bodyParser.json();
 let urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { index: false } ));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -183,17 +185,19 @@ passport.deserializeUser(function(user, done)
 });
 
 app.use(passport.initialize());
-app.use(passport.session())
+app.use(passport.session());
+
+app.use(helper.logRequestInfo);
 
 app.get('/', function (req, res, next)
 {
-  console.log(`Request: [${req.method}], `, req.originalUrl);
+  // console.log(`Request: [${req.method}], `, req.originalUrl);
   res.sendFile('index.html', { root: path.join(__dirname, "public") });
 });
 
 app.get("/postgres-test", function(req, res, next)
 {
-  console.log(`Request: [${req.method}], `, req.originalUrl);
+  // console.log(`Request: [${req.method}], `, req.originalUrl);
   postgresPool.query("SELECT * FROM note", (err, queryResult) =>
   {
     if (err) res.json({msg: "error"});

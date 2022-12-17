@@ -22,9 +22,6 @@ router.get("/:name",
 // (req, res, next) => {console.log("bodyparser", req.body); next();},
 async function (req, res, next)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     let query = "";
     let queryResult;
 

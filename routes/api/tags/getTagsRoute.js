@@ -18,13 +18,8 @@ const postgresPool = new Pool(projectSettings.database.postgresql);
 
 // route: /api/tags/get
 router.get("/",
-// passport.authenticate("local", { failureRedirect: "/api/auth/logout" }),
-// passport.authenticate("local", { failureRedirect: "/api/auth/unauthorized" }),
 async function (req, res)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     let queryArray = [];
     let query = "";
     let queryResult;

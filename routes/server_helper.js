@@ -67,10 +67,18 @@ function generateSQLMultiORCondition(numOfConditions, columnName, dbType)
     }
     return undefined;
 }
+
+const logRequestInfo = (req, res, next) =>
+{
+    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
+    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
+    next();
+};
     
 return {
     sanitizeText: sanitizeText,
-    generateSQLMultiORCondition: generateSQLMultiORCondition
+    generateSQLMultiORCondition: generateSQLMultiORCondition,
+    logRequestInfo: logRequestInfo
 };
 
 })();

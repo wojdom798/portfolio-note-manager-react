@@ -18,9 +18,6 @@ const postgresPool = new Pool(projectSettings.database.postgresql);
 router.delete("/:id",
 async function (req, res)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     let queryArray = [];
     let query = "";
     let queryResult;

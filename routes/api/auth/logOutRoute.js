@@ -14,9 +14,6 @@ const passport = require("passport");
 
 async function logOutRoute(req, res, next)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     let username = "";
     if (req.hasOwnProperty("user"))
         username = req.user.username;

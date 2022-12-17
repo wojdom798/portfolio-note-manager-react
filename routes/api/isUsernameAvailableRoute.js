@@ -20,9 +20,6 @@ const postgresPool = new Pool(projectSettings.database.postgresql);
 router.get("/:username",
 async function (req, res, next)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     let queryArray = [];
     let query = "";
     let queryResult;

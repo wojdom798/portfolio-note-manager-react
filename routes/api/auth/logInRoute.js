@@ -20,9 +20,6 @@ passport.authenticate("local", {
 }),
 async function (req, res, next)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     // console.log(req.session.cookie._expires);
 
     // console.log("req.user =");

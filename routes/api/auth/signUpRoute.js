@@ -20,9 +20,6 @@ const postgresPool = new Pool(projectSettings.database.postgresql);
 router.post("/",
 async function (req, res, next)
 {
-    let currentTime = new Date().toLocaleString("pl-PL",{ hour12: false });
-    console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
-
     const salt = crypto.randomBytes(16);
     crypto.pbkdf2(req.body.password, salt, 310000, 32, "sha256", async function(err, hashedPswd)
     {
