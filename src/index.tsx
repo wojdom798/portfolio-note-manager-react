@@ -17,9 +17,7 @@ const root = createRoot(container);
 // store.dispatch(fetchNotes);
 
 root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <Main />
-        </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+        <Main />
+    </Provider>
 );
