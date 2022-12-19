@@ -167,3 +167,23 @@ export interface IUser
     id: number;
     username: string;
 };
+
+export enum NavigationViewEnum
+{
+    NOTE_LIST,
+    CATEGORY_LIST,
+    TAG_LIST,
+    SETTINGS
+};
+
+export interface IMenuItem
+{
+    name: string;
+    identifier: NavigationViewEnum;
+};
+
+export interface NavigationProps
+{
+    onNavigationItemClick: (menuItemIdentifier: NavigationViewEnum) => any;
+    onAddItemButtonClick: () => any;
+};

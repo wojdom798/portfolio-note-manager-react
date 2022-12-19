@@ -13,6 +13,9 @@ import {
 } from "../redux/authSlice";
 import { fetchMaxDateRange } from "../redux/filterSlice";
 
+// Type imports
+import { NavigationViewEnum } from "../types";
+
 // Helper functions
 import {
     createDefaultUserDataInStorage,
@@ -28,6 +31,7 @@ import TagList from "./tags/TagList";
 import Navigation from "./Navigation";
 import UserLoginForm from "./users/UserLoginForm";
 import UserRegistrationForm from "./users/UserRegistrationForm";
+import Settings from "./Settings";
 
 // Bootstrap imports
 // [...]
@@ -37,7 +41,9 @@ function MainDashboard()
     const dispatch = useAppDispatch();
     const loggedInUser = useAppSelector(selectUser);
     const wasUserLoggedOut = useAppSelector(selectWasUserLoggedOut);
-    const [currentView, setCurrentView] = useState(0);
+    const [currentView, setCurrentView] = useState<NavigationViewEnum>(
+        NavigationViewEnum.NOTE_LIST
+    );
     // false = register form, true = login form
     const [shouldShowLoginForm, setShouldShowLoginForm] = useState<boolean>(false);
     const [wasAddItemButtonClicked, setWasAddItemButtonClicked] = useState<boolean>(false);
@@ -79,34 +85,38 @@ function MainDashboard()
         }
     }, [wasUserLoggedOut]);
 
-    function getCurrentView()
+    function renderCurrentView(currentView: NavigationViewEnum)
     {
-        if (currentView === 0 || currentView > 2)
+        if (currentView === NavigationViewEnum.NOTE_LIST)
             return (
                 <NoteList
                     wasAddItemButtonClicked={wasAddItemButtonClicked}
                     onAddItemFormClose={() => { setWasAddItemButtonClicked(false); }}
                 />
             );
-        else if (currentView === 1)
+        else if (currentView === NavigationViewEnum.CATEGORY_LIST)
             return (
                 <CategoryList
                     wasAddItemButtonClicked={wasAddItemButtonClicked}
                     onAddItemFormClose={() => { setWasAddItemButtonClicked(false); }}
                 />
             );
-        else if (currentView === 2)
+        else if (currentView === NavigationViewEnum.TAG_LIST)
             return (
                 <TagList
                     wasAddItemButtonClicked={wasAddItemButtonClicked}
                     onAddItemFormClose={() => { setWasAddItemButtonClicked(false); }}
                 />
             );
+        else if (currentView === NavigationViewEnum.SETTINGS)
+            return (
+                <Settings />
+            );
     }
 
-    function handleNavigationItemClick(menuItemIndex: number)
+    function handleNavigationItemClick(menuItemIdentifier: NavigationViewEnum)
     {
-        setCurrentView(menuItemIndex);
+        setCurrentView(menuItemIdentifier);
         setWasAddItemButtonClicked(false);
     }
 
@@ -123,7 +133,7 @@ function MainDashboard()
                     onAddItemButtonClick={() => { setWasAddItemButtonClicked(true); }}
                 />
                 <main id="main-section" className="app-main-section">
-                    { getCurrentView() }
+                    { renderCurrentView(currentView) }
                 </main>
                 {/* <nav className="item-navigation">
                         

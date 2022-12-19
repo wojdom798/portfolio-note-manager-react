@@ -15,7 +15,12 @@ import { removeAll as removeTags } from "../redux/tagSlice";
 import { reset as resetPagination } from "../redux/paginationSlice";
 
 // Type imports
-import { AlertTypesEnum } from "../types";
+import {
+    AlertTypesEnum,
+    NavigationViewEnum,
+    IMenuItem,
+    NavigationProps
+} from "../types";
 
 // Helper function imports
 import {
@@ -30,51 +35,60 @@ import { useMediaQuery } from "react-responsive";
 // Component imports
 import Alert from "./alerts/Alert";
 
+export const menuItemsInit = [
+    {
+        name: "Notes",
+        identifier: NavigationViewEnum.NOTE_LIST
+    },
+    {
+        name: "Categories",
+        identifier: NavigationViewEnum.CATEGORY_LIST
+    },
+    {
+        name: "Tags",
+        identifier: NavigationViewEnum.TAG_LIST
+    },
+    {
+        name: "Settings",
+        identifier: NavigationViewEnum.SETTINGS
+    },
+];
 
-function Navigation(props: any)
+function Navigation({ onNavigationItemClick, onAddItemButtonClick }: NavigationProps)
 {
     const dispatch = useAppDispatch();
     const loggedInUser = useAppSelector(selectUser);
-    const [menuItems, setMenuItems] = useState<string[]>([]);
-    const [activeMenuItem, setActiveMenuItem] = useState(0);
+    const [menuItems, setMenuItems] = useState<IMenuItem[]>([]);
+    const [activeMenuItem, setActiveMenuItem] = useState<IMenuItem>(menuItemsInit[0]);
     const isMobile = useMediaQuery({ query: "(max-width: 800px)" });
     const [isMobileNavActive, setIsMobileNavActive] = useState<boolean>(false);
 
     useEffect(() =>
     {
-        
-        const menuItems = [
-            "Notes",
-            "Categories",
-            "Tags",
-            "Settings"
-        ];
-
         // console.log(`isMobile=${isMobile}`);
-
-        setMenuItems(menuItems);
+        setMenuItems(menuItemsInit);
 
     }, []);
 
-    function handleMenuItemClick(index: number)
+    function handleMenuItemClick(item: IMenuItem)
     {
-        setActiveMenuItem(index);
-        props.onNavigationItemClick(index);
+        setActiveMenuItem(item);
+        onNavigationItemClick(item.identifier);
     };
 
     function menuItemsToElements()
     {
-        const itemElements = menuItems.map((item: string, index: number) =>
+        const itemElements = menuItems.map((item: IMenuItem) =>
         {
             let className = "navmenu-list-item";
-            if (activeMenuItem === index)
+            if (activeMenuItem.identifier === item.identifier)
                 className = "navmenu-list-item active";
             return (
-                <li className={className} key={index}>
+                <li className={className} key={item.identifier}>
                     <button
                         className="navmenu-btn"
-                        onClick={() => handleMenuItemClick(index)}
-                    ><span>{item}</span></button>
+                        onClick={() => handleMenuItemClick(item)}
+                    ><span>{item.name}</span></button>
                 </li>
             );
         });
@@ -132,13 +146,20 @@ function Navigation(props: any)
             <button
                 disabled={isMobileNavActive}
                 className="notes-app-add-item-btn"
-                onClick={props.onAddItemButtonClick}
+                onClick={onAddItemButtonClick}
             // ><IonIcon name="add-outline"></IonIcon></button>
             ><span>&#43;</span></button>
             
-            <div className={isMobileNavActive ? "navigation-blur-overlay active" : "navigation-blur-overlay"}></div>
+            <div className={isMobileNavActive ?
+                "navigation-blur-overlay active" :
+                "navigation-blur-overlay"
+            }></div>
 
-            <div className={isMobileNavActive ? "navmenu-sticky-container active" : "navmenu-sticky-container"}>
+            <div className={
+                isMobileNavActive ?
+                "navmenu-sticky-container active" :
+                "navmenu-sticky-container"
+            }>
                 <div className="navmenu-user-container">
                     <h3 className="username-header">{loggedInUser!.username}</h3>
                     <div className="logout-button-container">
