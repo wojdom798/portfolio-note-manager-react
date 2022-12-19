@@ -10,7 +10,7 @@ const editTagRoute = require("./editTagRoute");
 router.use("/get", getTagsRoute);
 // route: /api/tags/add
 router.use("/add", addTagRoute);
-// route: /api/tags/delete
+// route: /api/tags/delete/:id
 router.use("/delete", deleteTagRoute);
 // route: /api/tags/edit
 router.use("/edit", editTagRoute);

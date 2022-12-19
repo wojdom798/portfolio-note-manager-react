@@ -10,7 +10,7 @@ const editCategoryRoute = require("./editCategoryRoute");
 router.use("/get", getCategoriesRoute);
 // route: /api/categories/add
 router.use("/add", addCategoryRoute);
-// route: /api/categories/delete
+// route: /api/categories/delete/:id
 router.use("/delete", deleteCategoryRoute);
 // route: /api/categories/edit
 router.use("/edit", editCategoryRoute);
