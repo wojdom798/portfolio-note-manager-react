@@ -4,6 +4,7 @@ const express = require("express");
 // const sqlite3 = require("sqlite3").verbose();
 const sqlite3 = require("sqlite3");
 const sqliteOpen = require("sqlite").open; // allows async/await calls
+const createSqliteConnection = require("../../server_helper").createSqliteConnection;
 const router = express.Router();
 
 const __projectDir = path.join(__dirname, "../../../");
@@ -35,8 +36,9 @@ async function (req, res)
         try
         {
             sqlite3.verbose();
-            const databaseHandle = await createDbConnection(
-                path.join(__projectDir, projectSettings.database.filename));
+            const databaseHandle = await createSqliteConnection(
+                path.join(__projectDir, projectSettings.database.sqlite.filename)
+            );
 
             if (!Array.isArray(tagIdsToDelete))
             {
@@ -52,8 +54,8 @@ async function (req, res)
             }
 
             query =
-                "DELETE FROM tag" +
-                " WHERE (user_id = ?) AND " +
+                "DELETE FROM tag " +
+                "WHERE (user_id = ?) AND " +
                 `${sqlTagIdCondition};`;
             
             if (Array.isArray(tagIdsToDelete))
@@ -61,7 +63,7 @@ async function (req, res)
             else
                 queryValues = [userId, tagIdsToDelete];
 
-            queryResult = await databaseHandle.all(query);
+            queryResult = await databaseHandle.all(query, queryValues);
             await databaseHandle.close();
 
             res.json({  
@@ -135,14 +137,5 @@ async function (req, res)
         }
     }
 }); // end route
-
-
-function createDbConnection(filename)
-{
-    return sqliteOpen({
-        filename: filename,
-        driver: sqlite3.Database
-    });
-}
 
 module.exports = router;

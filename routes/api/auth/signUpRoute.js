@@ -3,6 +3,8 @@ const path = require("path");
 const express = require("express");
 const sqlite3 = require("sqlite3");
 const sqliteOpen = require("sqlite").open;
+const createSqliteConnection = require("../../server_helper").createSqliteConnection;
+
 const router = express.Router();
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -36,8 +38,9 @@ async function (req, res, next)
             try
             {
                 sqlite3.verbose();
-                const databaseHandle = await createDbConnection(
-                    path.join(__projectDir, projectSettings.database.sqlite.filename));
+                const databaseHandle = await createSqliteConnection(
+                    path.join(__projectDir, projectSettings.database.sqlite.filename)
+                );
                 await databaseHandle.run(
                     "INSERT INTO users (username, hashed_password, salt) VALUES (?, ?, ?)",
                     [req.body.username, hashedPswd, salt]
@@ -47,16 +50,14 @@ async function (req, res, next)
                     id: this.lastID,
                     username: req.body.username
                 }
-                res.status(200);
-                res.json({
+                res.status(200).json({
                     responseMsg: `Added User: id=${user.id}, ${user.username}`,
                 });
             }
             catch (error)
             {
                 // return next(error);
-                res.status(404);
-                res.json({
+                res.status(404).json({
                     responseMsg: error.message,
                 });
             }
@@ -65,8 +66,7 @@ async function (req, res, next)
         {
             if (err)
             {
-                res.status(404);
-                res.json({
+                res.status(404).json({
                     responseMsg: error.message,
                 });
             }
@@ -82,30 +82,19 @@ async function (req, res, next)
                     id: lastId,
                     username: req.body.username
                 }
-                res.status(200);
-                res.json({
+                res.status(200).json({
                     responseMsg: `Added User: id=${user.id}, ${user.username}`,
                 });
             }
             catch (error)
             {
                 // return next(error);
-                res.status(404);
-                res.json({
+                res.status(404).json({
                     responseMsg: error.message,
                 });
             }
         }
     });
 });
-
-
-function createDbConnection(filename)
-{
-    return sqliteOpen({
-        filename: filename,
-        driver: sqlite3.Database
-    });
-}
 
 module.exports = router;

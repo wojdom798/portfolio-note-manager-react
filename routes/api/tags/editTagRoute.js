@@ -4,6 +4,7 @@ const express = require("express");
 // const sqlite3 = require("sqlite3").verbose();
 const sqlite3 = require("sqlite3");
 const sqliteOpen = require("sqlite").open; // allows for async/await calls
+const createSqliteConnection = require("../../server_helper").createSqliteConnection;
 const router = express.Router();
 
 const __projectDir = path.join(__dirname, "../../../");
@@ -21,7 +22,6 @@ const postgresPool = new Pool(projectSettings.database.postgresql);
 router.put("/",
 async function (req, res)
 {
-    let queryTable = [];
     let query = "";
     let queryResult;
     let queryValues;
@@ -35,23 +35,19 @@ async function (req, res)
         try
         {
             sqlite3.verbose();
-            const databaseHandle = await createDbConnection(
-                path.join(__projectDir, projectSettings.database.filename));
+            const databaseHandle = await createSqliteConnection(
+                path.join(__projectDir, projectSettings.database.sqlite.filename)
+            );
 
-            queryTable = 
-            [
-                `UPDATE tag `,
-                `SET `,
-                `name = '${h.sanitizeText(tagToEdit.name)}', `,
-                `date_added = '${tagToEdit.date_added}' `,
-                `WHERE (user_id = ${req.session.passport.user.id}) AND `
-                `(id = ${tagToEdit.id});`
+            query = "UPDATE tag SET name = ?, date_added = ? WHERE user_id = ? AND id = ?;";
+            queryValues = [
+                tagToEdit.name,
+                tagToEdit.date_added,
+                userId,
+                tagToEdit.id
             ];
-            for (let line of queryTable)
-            {
-                query += line;
-            }
-            queryResult = await databaseHandle.run(query);
+
+            queryResult = await databaseHandle.run(query, queryValues);
             lastID = queryResult.lastID;
 
             await databaseHandle.close();
@@ -104,14 +100,5 @@ async function (req, res)
         }
     }
 }); // end route
-
-
-function createDbConnection(filename)
-{
-    return sqliteOpen({
-        filename: filename,
-        driver: sqlite3.Database
-    });
-}
 
 module.exports = router;

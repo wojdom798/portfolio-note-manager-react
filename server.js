@@ -6,6 +6,7 @@ const fs = require('fs');
 const sqlite3 = require("sqlite3");
 sqlite3.verbose();
 const sqliteOpen = require("sqlite").open;
+const createSqliteConnection = require("./routes/server_helper").createSqliteConnection;
 
 const session = require("express-session");
 const Sequelize = require("sequelize");
@@ -25,14 +26,6 @@ const { Pool, Client } = require("pg");
 const postgresPool = new Pool(projectSettings.database.postgresql);
 
 const helper = require("./routes/server_helper");
-
-function createDbConnection(filename)
-{
-  return sqliteOpen({
-    filename: filename,
-    driver: sqlite3.Database
-  });
-}
 
 let sequelize;
 
@@ -105,8 +98,9 @@ const verifyCallback = async (username, password, done) =>
     let user;
     if (projectSettings.database.selected_database === "sqlite")
     {
-      const databaseHandle = await createDbConnection(
-        path.join(__projectDir, projectSettings.database.sqlite.filename));
+      const databaseHandle = await createSqliteConnection(
+        path.join(__projectDir, projectSettings.database.sqlite.filename)
+      );
       user = await databaseHandle.get("SELECT * FROM users WHERE username = ?", [username]);
       await databaseHandle.close();
       // console.log(`user (sqlite) = `);

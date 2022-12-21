@@ -1,3 +1,6 @@
+const sqliteOpen = require("sqlite").open;
+const sqlite3 = require("sqlite3");
+
 module.exports = (function()
 {
 
@@ -74,11 +77,20 @@ const logRequestInfo = (req, res, next) =>
     console.log(`[${req.method}] (${currentTime}) ${req.originalUrl}`);
     next();
 };
+
+const createSqliteConnection = (filename) =>
+{
+    return sqliteOpen({
+        filename: filename,
+        driver: sqlite3.Database
+    });
+}
     
 return {
     sanitizeText: sanitizeText,
     generateSQLMultiORCondition: generateSQLMultiORCondition,
-    logRequestInfo: logRequestInfo
+    logRequestInfo: logRequestInfo,
+    createSqliteConnection: createSqliteConnection
 };
 
 })();
