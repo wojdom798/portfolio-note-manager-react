@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
 import { INote } from "../types";
+import apiUrls from "../apiRoutes";
 
 import { setNumberOfAllNotes } from "./paginationSlice";
 
@@ -57,8 +58,8 @@ export const noteListSlice = createSlice(
 
 export async function fetchNotes(dispatch: any, getState: () => RootState)
 {
-    let url = `/api/notes/get/?items-per-page=`;
-    url += `${getState().pagination.itemsPerPage}`;
+    let url = apiUrls.getNotes;
+    url += `/?items-per-page=${getState().pagination.itemsPerPage}`;
     url += `&page=${getState().pagination.currentPage}`;
 
     if (getState().filters.categories.length !== 0)
@@ -81,7 +82,7 @@ export async function fetchNotes(dispatch: any, getState: () => RootState)
     const response = await fetch(url, init);
     // if (!response.ok) throw new Error("Couldn't fetch notes from database");
     const data = await response.json();
-    console.log(data.responseData.numberOfAllNotes);
+    // console.log(data.responseData.numberOfAllNotes);
     if (data.hasOwnProperty("isUserLoggedOut"))
     {
         console.log("user logged out when trying to fetch notes (session expired)");
@@ -101,13 +102,13 @@ export async function fetchNotes(dispatch: any, getState: () => RootState)
             normalisedList = { ...normalisedList,  [item.id]: item};
         });
 
-        console.log("Normalised list = ");
-        console.log(normalisedList);
+        // console.log("Normalised list = ");
+        // console.log(normalisedList);
 
         // dispatch(getFromDB(data.responseData.notes));
         dispatch(getFromDB(normalisedList));
-        console.log("all notes:");
-        console.log(data.responseData.numberOfAllNotes);
+        // console.log("all notes:");
+        // console.log(data.responseData.numberOfAllNotes);
         dispatch(setNumberOfAllNotes(data.responseData.numberOfAllNotes));
     }
 };

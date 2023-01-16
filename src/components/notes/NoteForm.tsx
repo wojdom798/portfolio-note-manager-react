@@ -11,6 +11,7 @@ import { NoteFormProps, AlertTypesEnum, ICategory, IAlert } from "../../types";
 
 // Helper funtions / Utils
 import helper from '../../helper';
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 // [...]
@@ -330,7 +331,7 @@ function NoteForm({
                     }
                 };
 
-                let apiUrl = "/api/notes/add";
+                let apiUrl = apiUrls.addNote;
                 let payload = JSON.stringify(submittedData);
 
                 const init = {

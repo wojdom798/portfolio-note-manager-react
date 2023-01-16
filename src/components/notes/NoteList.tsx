@@ -24,6 +24,7 @@ import { add as addAlert } from "../../redux/alertListSlice";
 
 // Type imports
 import { AlertTypesEnum, INote } from "../../types";
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 import Note from "./Note";
@@ -119,7 +120,7 @@ function NoteList(props: any)
 
     const showDeleteNoteConfirmationDialog = (noteId: number) =>
     {
-        console.log("note id to delete", noteId)
+        // console.log("note id to delete", noteId);
         setNoteIdToConfirmDelete(noteId);
         setIsModalActive(true);
     }
@@ -180,7 +181,7 @@ function NoteList(props: any)
             noteToEdit: editedNote
         });
 
-        const url = `/api/notes/edit`;
+        const url = apiUrls.editNote;
         const init = {
             method: "PUT",
             body: payload,

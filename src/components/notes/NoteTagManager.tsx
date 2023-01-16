@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 
 // Type imports
 import { ITag } from "../../types";
+import apiUrls from "../../apiRoutes";
 
 // Material UI imports
 import
@@ -111,7 +112,7 @@ function NoteTagManager(props: any)
     async function addTagToNote(tagId: number)
     {
         // console.log(`adding tag ${tagId} to note ${note.id}`);
-        let url = `/api/notes/add-tag-to-note/${note.id}/${tagId}`;
+        let url = apiUrls.addTagToNote + `${note.id}/${tagId}`;
         const init = {
             method: "PUT",
             headers: {
@@ -127,7 +128,7 @@ function NoteTagManager(props: any)
     async function removeTagFromNote(tagId: number)
     {
         // console.log(`removing tag ${tagId} from note ${note.id}`);
-        let url = `/api/notes/remove-tag-from-note/${note.id}/${tagId}`;
+        let url =  apiUrls.removeTagFromNote + `${note.id}/${tagId}`;
         const init = {
             method: "PUT",
             headers: {

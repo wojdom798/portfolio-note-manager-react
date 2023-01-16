@@ -16,6 +16,7 @@ import {
 
 // Type imports
 import { NoteActionTypesEnum, NoteProps } from "../../types";
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 import MultiActionButton from "./MultiActionButton";
@@ -53,7 +54,7 @@ export default function Note({
     async function deleteNote(id: number)
     {
         // console.log("deleting note id = " + id);
-        const url = `/api/notes/delete/${id}`;
+        const url = apiUrls.deleteNote + String(id);
         const init = {
             method: "DELETE",
             headers: {
