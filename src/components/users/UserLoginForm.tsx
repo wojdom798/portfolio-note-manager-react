@@ -22,6 +22,7 @@ import {
     setUserInStorage,
     setSessionExpirationDateInLocalStorage
 } from "../../localStorageUtils";
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 // [...]
@@ -102,8 +103,6 @@ function UserLoginForm(props: any)
         
         let alert;
 
-        const url = `api/auth/login/`;
-
         const userToLogIn = {
             username: usernameInput,
             password: passwordInput
@@ -120,7 +119,7 @@ function UserLoginForm(props: any)
         try
         {
             let alertType: AlertTypesEnum = AlertTypesEnum.Success;
-            const response = await fetch(url, init);
+            const response = await fetch(apiUrls.login, init);
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
             const data = await response.json();
             if (response.status === 401) // unauthorized

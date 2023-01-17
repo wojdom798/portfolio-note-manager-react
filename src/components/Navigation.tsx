@@ -27,6 +27,7 @@ import {
     setUserInStorage,
     setWasUserLoggedOutInStorage
 } from "../localStorageUtils";
+import apiUrls from "../apiRoutes";
 
 // 3rd party imports
 import { IonIcon } from "react-ion-icon";
@@ -100,8 +101,6 @@ function Navigation({ onNavigationItemClick, onAddItemButtonClick }: NavigationP
     {
         let alert;
 
-        const url = `api/auth/logout/`;
-
         const init = {
             method: "POST",
             headers: {
@@ -110,7 +109,7 @@ function Navigation({ onNavigationItemClick, onAddItemButtonClick }: NavigationP
         };
         try
         {
-            const response = await fetch(url, init);
+            const response = await fetch(apiUrls.logout, init);
             // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
             const data = await response.json();
             dispatch(removeNotes());

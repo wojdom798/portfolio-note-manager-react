@@ -9,6 +9,7 @@ import { add as addAlert,  } from "../../redux/alertListSlice";
 
 // Helper functions
 import helper from '../../helper';
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 // [...]
@@ -185,8 +186,6 @@ function UserRegiserForm(props: any)
         }
         else
         {
-            const url = `/api/auth/sign-up`;
-
             const userToLogIn = {
                 username: usernameInput,
                 password: passwordInput
@@ -202,7 +201,7 @@ function UserRegiserForm(props: any)
             try
             {
                 let alertType: AlertTypesEnum = AlertTypesEnum.Success;
-                const response = await fetch(url, init);
+                const response = await fetch(apiUrls.singup, init);
                 // if (!response.ok) throw new Error(`Couldn't reach ${url}`);
                 if (response.status === 401) alertType = AlertTypesEnum.Error;
                 const data = await response.json();
