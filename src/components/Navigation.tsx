@@ -34,6 +34,7 @@ import { IonIcon } from "react-ion-icon";
 import { useMediaQuery } from "react-responsive";
 
 // Component imports
+import AlertList from "./alerts/AlertList";
 import Alert from "./alerts/Alert";
 
 export const menuItemsInit = [
@@ -141,6 +142,8 @@ function Navigation({ onNavigationItemClick, onAddItemButtonClick }: NavigationP
             >
                 <IonIcon name="menu-outline"></IonIcon>
             </button>
+
+            <AlertList />
 
             <button
                 disabled={isMobileNavActive}

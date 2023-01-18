@@ -72,7 +72,7 @@ function Alert({ id, type, title }: AlertProps)
     }, [timeLeftProgress]);
 
     return (
-        <div className="alert-main-container">
+        <li className="alert-main-container">
             { renderAlertIcon(type) }
             <div className="alert-header-container">
                 <h3 className="alert-title">{title}</h3>
@@ -87,7 +87,7 @@ function Alert({ id, type, title }: AlertProps)
             <span
                 className="alert-disappear-progress"
                 style={ {width: `${timeLeftProgress}%`} }></span>
-        </div>
+        </li>
     );
 }
 

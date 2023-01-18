@@ -30,7 +30,6 @@ import apiUrls from "../../apiRoutes";
 import Note from "./Note";
 import NoteForm from './NoteForm';
 import NoteTagManager from "./NoteTagManager";
-import AlertList from "../alerts/AlertList";
 import UserLoginForm from "../users/UserLoginForm";
 import FilterMenu from "../filters/FilterMenu";
 import Pagination from "../pagination/Pagination";
@@ -284,12 +283,32 @@ function NoteList(props: any)
         console.log("noteIdToConfirmDelete: ", noteIdToConfirmDelete);
         console.log("noteIdDeletionConfirmed: ", noteIdDeletionConfirmed);
     }
+
+    const handleDBGAddAlert = () =>
+    {
+        const dbgAlert = {
+            id: (new Date()).getTime(),
+            type: AlertTypesEnum.Info,
+            message: "Debug alert"
+        }
+
+        dispatch(addAlert(dbgAlert));
+    }
     
     if (pagination.numberOfAllNotes)
     {
         return (
         <Fragment>
             <Fragment>
+                <button
+                style={{
+                    position: "fixed",
+                    bottom: "10px",
+                    left: "10px",
+                    zIndex: "1000"
+                }}
+                    onClick={handleDBGAddAlert}
+                >dbg - add alert</button>
                 <FilterMenu />
 
                 {/* <button
@@ -302,8 +321,6 @@ function NoteList(props: any)
                     </div>
                 </Pagination>
             </Fragment>
-
-            <AlertList />
 
             <BootstrapModal
                 show={isModalActive}
@@ -338,8 +355,6 @@ function NoteList(props: any)
                     </div>
                 </div>
             </Fragment>
-
-            <AlertList />
 
             <BootstrapModal
                 show={isModalActive}

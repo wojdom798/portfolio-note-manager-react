@@ -1,4 +1,4 @@
-$alert-list-main-container-bg-color: #00FF0033;
+$alert-list-container-bg-color: #00FF0033;
 $alert-main-container-bg-color: #FAFAFA;
 $alert-main-container-shadow-color: #999;
 $alert-icon-color: #FAFAFA;
@@ -7,19 +7,56 @@ $alert-icon-color-success: #33FA33;
 $alert-icon-color-info: #3333FA;
 $alert-icon-color-warning: #FAFA33;
 
-.alert-list-main-container
+.alert-list-container
 {
+    display: flex;
+    // flex-direction: column;
+    justify-content: flex-start;
+    // align-items: center;
+    align-self: stretch;
+
+    &__icon-container
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: stretch;
+
+        padding: 0 7px;
+
+        border: none;
+
+        font-weight: bold;
+        font-size: 1.2rem;
+
+        background: transparent;
+    }
+}
+
+.alert-list // the <ul> element that contains the list of alerts
+{
+    visibility: hidden;
+    position: fixed;
+    top: 50px;
+    left: 0;
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    position: fixed;
-    top: 10px;
-    right: 20px;
-    width: 350px;
-    max-height: 400px;
-    // background: $alert-list-main-container-bg-color;
-    // padding: 5px;
+
+    overflow-y: auto;
+    
+    width: 100vw;
+    max-height: 100vh;
+
+    &--active
+    {
+        visibility: visible;
+    }
 }
 
 .alert-main-container
@@ -137,3 +174,48 @@ $alert-icon-color-warning: #FAFA33;
     width: 100%;
     background: #555;
 }
+
+
+
+@media only screen and (min-width: 800px)
+{
+    .alert-list-container
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        position: fixed;
+        top: 10px;
+        right: 40px;
+        width: 350px;
+        max-height: 400px;
+        // background: $alert-list-container-bg-color;
+        // padding: 5px;
+
+        &__icon-container
+        {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 17px;
+
+            border-radius: 50%;
+
+            background-color: #FAFAFA;
+            box-shadow: 3px 3px 5px #DFDFDF;
+
+            cursor: pointer;
+        }
+    }
+
+    .alert-list // the <ul> element that contains the list of alerts
+    {
+        --alert-list-minwidth: 350px;
+        position: relative;
+        top: 80px;
+        right: 0;
+        
+        width: var(--alert-list-minwidth);
+    }
+} // end: only screen and (min-width: 800px)
