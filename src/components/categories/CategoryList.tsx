@@ -11,6 +11,7 @@ import {
 
 // Type imports
 import { ICategory } from "../../types";
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 import CategoryForm from "./CategoryForm";
@@ -130,9 +131,9 @@ function CategoryList(props: any)
     {
         let url;
         if (categoryIds.length === 1)
-            url = `api/categories/delete/${categoryIds[0]}`;
+            url = apiUrls.deleteCategory + String(categoryIds[0]);
         else
-            url = `api/categories/delete/${JSON.stringify(categoryIds)}`;
+            url = apiUrls.deleteCategory + JSON.stringify(categoryIds);
         
         const init = {
             method: "DELETE",
@@ -156,7 +157,7 @@ function CategoryList(props: any)
 
     async function handleDeleteCategoryButtonClick(categoryId: number)
     {
-        const url = `api/categories/delete/${categoryId}`;
+        const url = apiUrls.deleteCategory + String(categoryId);
         const init = {
             method: "DELETE",
             headers: {
@@ -179,7 +180,6 @@ function CategoryList(props: any)
 
     function handleAddNewCategoryFormSubmit(newCategory: ICategory)
     {
-        let apiUrl = "/api/categories/add";
         let payload = JSON.stringify({ newCategory: newCategory });
 
         const init = {
@@ -187,7 +187,7 @@ function CategoryList(props: any)
             body: payload,
             headers: { 'Content-Type': 'application/json' }
         };
-        fetch(apiUrl, init)
+        fetch(apiUrls.addCategory, init)
         .then(response => response.json())
         .then(data => {
 
@@ -215,7 +215,7 @@ function CategoryList(props: any)
         };
         try
         {
-            const response = await fetch("/api/categories/edit", init);
+            const response = await fetch(apiUrls.editCategory, init);
             const data = await response.json();
             dispatch(editCategory(categoryToEdit));
         }

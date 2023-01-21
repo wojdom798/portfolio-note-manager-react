@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
 import { ICategory } from "../types";
+import apiUrls from "../apiRoutes";
 
 export interface CategoryListState
 {
@@ -56,7 +57,7 @@ export async function fetchCategories(dispatch: any)
         mode: "cors" as RequestMode
         // mode: "no-cors" as RequestMode
     };
-    const response = await fetch("api/categories/get", init);
+    const response = await fetch(apiUrls.getCategories, init);
     // if (!response.ok) throw new Error("Couldn't fetch categories from database.");
     if (response.ok)
     {
