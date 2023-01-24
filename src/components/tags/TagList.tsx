@@ -11,6 +11,7 @@ import {
 
 // Type imports
 import { ITag } from "../../types";
+import apiUrls from "../../apiRoutes";
 
 // App component imports
 import TagForm from "./TagForm";
@@ -94,9 +95,9 @@ function TagList(props: any)
         console.log("deleting tags: ");
         console.log(tagIds);
         if (tagIds.length === 1)
-            url = `api/tags/delete/${tagIds[0]}`;
+            url = apiUrls.deleteTag + String(tagIds[0]);
         else
-            url = `api/tags/delete/${JSON.stringify(tagIds)}`;
+            url = apiUrls.deleteTag + JSON.stringify(tagIds);
         
         const init = {
             method: "DELETE",

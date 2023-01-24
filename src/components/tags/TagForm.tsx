@@ -19,6 +19,7 @@ import {
 // Helper imports
 import helper from '../../helper';
 import { validateDateAddedField } from "../notes/NoteForm";
+import apiUrls from "../../apiRoutes";
 
 // Third party imports
 import Button from 'react-bootstrap/Button';
@@ -210,7 +211,7 @@ function TagForm({ tagToEdit, onFormClose }: TagFormProps)
                     body: payload,
                     headers: { "Content-Type": "application/json" }
                 };
-                const response = await fetch("/api/tags/edit", init);
+                const response = await fetch(apiUrls.editTag, init);
                 // if (!response.ok) // ...
                 const data = await response.json();
 
@@ -228,7 +229,7 @@ function TagForm({ tagToEdit, onFormClose }: TagFormProps)
                     body: payload,
                     headers: { "Content-Type": "application/json" }
                 };
-                const response = await fetch("/api/tags/add", init);
+                const response = await fetch(apiUrls.addTag, init);
                 // if (!response.ok) // ...
                 const data = await response.json();
 

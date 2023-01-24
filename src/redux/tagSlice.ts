@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
 import { ITag } from "../types";
+import apiUrls from "../apiRoutes";
 
 
 export interface TagListState
@@ -55,7 +56,7 @@ export async function fetchTags(dispatch: any)
         mode: "cors" as RequestMode
         // mode: "no-cors" as RequestMode
     };
-    const response = await fetch("api/tags/get", init);
+    const response = await fetch(apiUrls.getTags, init);
     // if (!response.ok) throw new Error("Couldn't fetch tags from database.");
     if (response.ok)
     {
