@@ -9,6 +9,7 @@ import {
     ICategory, CategoryFormInputsEnum,
     CategoryFormProps, IAlert, AlertTypesEnum
 } from "../../types";
+import apiUrls from "../../apiRoutes";
 
 // Helper imports
 import helper from '../../helper';
@@ -141,7 +142,7 @@ function CategoryForm({
     {
         if (!categoryName) return false;
 
-        const url = `/api/is-category-available/${categoryName}`;
+        const url = apiUrls.isCategoryAvailable + categoryName;
 
         const init = {
             method: "GET",

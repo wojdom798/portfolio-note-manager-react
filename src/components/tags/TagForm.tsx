@@ -131,7 +131,7 @@ function TagForm({ tagToEdit, onFormClose }: TagFormProps)
     {
         if (!tagName) return false;
 
-        const url = `/api/is-tag-available/${tagName}`;
+        const url = apiUrls.isTagAvailable + tagName;
 
         const init = {
             method: "GET",

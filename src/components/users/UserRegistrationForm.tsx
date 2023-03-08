@@ -246,7 +246,7 @@ function UserRegiserForm(props: any)
         // if empty string, then don't even bother sending an API request
         if (!username) return false;
 
-        const url = `/api/is-username-available/${username}`;
+        const url = apiUrls.isUsernameAvailable + username;
 
         const init = {
             method: "GET",

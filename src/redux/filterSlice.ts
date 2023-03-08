@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
 import { IDateRange, IFilter } from "../types";
+import apiUrls from "../apiRoutes";
 
 const initialState: IFilter =
 {
@@ -31,7 +32,7 @@ export const filterSlice = createSlice(
 
 export async function fetchMaxDateRange(dispatch: any, getState: () => RootState)
 {
-    const url = "/api/get-date-range";
+    const url = apiUrls.getDateRange;
     const init = {
         method: "GET",
         headers: {
